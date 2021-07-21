@@ -13,6 +13,7 @@ endif()
 find_package(ageve_utils REQUIRED)
 find_package(xacro REQUIRED)
 find_package(ament_cmake REQUIRED)
+find_package(rplidar_ros REQUIRED)
 
 install(DIRECTORY
   launch

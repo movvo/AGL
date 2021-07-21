@@ -1,3 +1,13 @@
+/*
+   Copyright 2021 @ AGEVE
+   ---------------------------------------------------------
+   Authors: Iñaki Lorente
+   Contact: support.idi@ageve.net
+*/
+
+#ifndef AGL_WHEELMOTOR_DIFF_ODOM_HPP_
+#define AGL_WHEELMOTOR_DIFF_ODOM_HPP_
+
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 #include "std_msgs/msg/int64.hpp"
@@ -8,7 +18,6 @@
 #include <math.h>
 #include "ageve_interfaces/msg/channel_values.hpp"
 
-namespace roboteq {
 
 // ref) http://emanual.robotis.com/docs/en/dxl/x/xl430-w250/#goal-velocity104
 //constexpr double RPM_TO_MS = 0.229 * 0.0034557519189487725;
@@ -80,4 +89,4 @@ class Odometry {
 	void rightencoderCb(const ageve_interfaces::msg::ChannelValues::SharedPtr right_ticks);
 	void update();
 };
-} // namespace
+#endif // AGL_WHEELMOTOR_DIFF_ODOM_HPP_

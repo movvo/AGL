@@ -1,7 +1,13 @@
-#include "me00_wheelmotor/diff_odom.h"
+/*
+   Copyright 2021 @ AGEVE
+   ---------------------------------------------------------
+   Authors: Iñaki Lorente
+   Contact: support.idi@ageve.net
+*/
+
+#include "agl_wheelmotor/diff_odom.hpp"
 
 using std::placeholders::_1;
-using namespace roboteq;
 
 Odometry::Odometry(std::shared_ptr<rclcpp::Node> &nh) : nh_(nh) {
 	Initialize();

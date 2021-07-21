@@ -17,56 +17,48 @@ find_package(std_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
-find_package(ageve_interfaces REQUIRED)
-find_package(rclpy REQUIRED)
 find_package(tf2_ros REQUIRED)
-
+find_package(ageve_interfaces REQUIRED)
+find_package(ageve_utils REQUIRED)
 
 # Include files directory
 include_directories(
   include
 )
 
-# ODVA EtherNet/IP
-add_library(odva_eip_lib STATIC
-            src/odva_ethernetip/connection.cpp
-            src/odva_ethernetip/copy_serializable.cpp
-            src/odva_ethernetip/cpf_item.cpp
-            src/odva_ethernetip/cpf_packet.cpp
-            src/odva_ethernetip/encap_header.cpp
-            src/odva_ethernetip/encap_packet.cpp
-            src/odva_ethernetip/identity_item_data.cpp
-            src/odva_ethernetip/io_scanner.cpp
-            src/odva_ethernetip/message_router_response.cpp
-            src/odva_ethernetip/path.cpp
-            src/odva_ethernetip/rr_data.cpp
-            src/odva_ethernetip/session.cpp
-          )
-target_link_libraries(odva_eip_lib)
-ament_target_dependencies(odva_eip_lib
-                          rclcpp 
-                          std_msgs
-                          ageve_interfaces
-                        )
+add_library(${PROJECT_NAME}_lib
+  "src/diff_odom.cpp"
+  "src/wheelmotor.cpp"
+)
 
-# Main executable of project
-add_executable(${PROJECT_NAME} 
-              src/main.cpp
-              src/roboteq_motor_controller_driver_node.cpp
-              src/diff_odom.cpp
-              src/controller.cpp
-              src/controller_eip.cpp
-            )
-target_link_libraries(${PROJECT_NAME} odva_eip_lib)
-ament_target_dependencies(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME}_lib ${SERIAL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+ament_target_dependencies(${PROJECT_NAME}_lib 
                            rclcpp
                            std_msgs
                            sensor_msgs
                            geometry_msgs
                            nav_msgs
-                           rclpy 
+                           ageve_utils 
                            tf2_ros 
                            ageve_interfaces
+                          )
+
+# Main executable of project
+add_executable(${PROJECT_NAME} 
+              src/diff_odom.cpp
+              src/wheelmotor.cpp
+            )
+
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib)
+ament_target_dependencies(${PROJECT_NAME}
+                            rclcpp
+                            std_msgs
+                            sensor_msgs
+                            geometry_msgs
+                            nav_msgs
+                            ageve_utils 
+                            tf2_ros 
+                            ageve_interfaces
                           )
 
 # Install

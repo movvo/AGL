@@ -1,6 +1,6 @@
 # ME-00 BRINGUP
 
-Repositorio trabajo `BRINGUP` en `ROS2` para `ME-00`.
+Repositorio trabajo `BRINGUP` en `ROS2` para `AGL`.
 
 
 

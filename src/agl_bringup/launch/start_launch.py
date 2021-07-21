@@ -15,5 +15,6 @@ def generate_launch_description():
    packages_list = bringupParams(Package)
    namespace = getNamespace(Package)
    launcher = QuickClass(Package, namespace)
+   launcher.launch_packages(['agl_bringup'],'lidar_launch.py')
 
-   return launcher.launch_packages(packages_list)
+   return launcher.launch_packages(packages_list) 

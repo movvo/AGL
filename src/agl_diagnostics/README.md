@@ -1,6 +1,6 @@
 # ME-00 DIAGNOSTICS
 
-Repositorio trabajo `DIAGNOSTICS` en `ROS2` para `ME-00`.
+Repositorio trabajo `DIAGNOSTICS` en `ROS2` para `AGL`.
 
 ## Funcionalidad
 

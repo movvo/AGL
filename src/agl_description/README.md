@@ -1,8 +1,8 @@
 # ME-00 DESCRIPTION
 
-Repositorio trabajo `DESCRIPTION` en `ROS2` para `ME-00`.
+Repositorio trabajo `DESCRIPTION` en `ROS2` para `AGL`.
 
-Este repositorio contiene los modelos 3D del vehículo `ME-00`. Estos modelos se realizan mediante una variante del formato `XML` conocido cómo `URDF`. Concretamente utilizamos `XACRO` que no es más que `URDF` con macros para poder automatizar la parametrización de estos archivos.
+Este repositorio contiene los modelos 3D del vehículo `AGL`. Estos modelos se realizan mediante una variante del formato `XML` conocido cómo `URDF`. Concretamente utilizamos `XACRO` que no es más que `URDF` con macros para poder automatizar la parametrización de estos archivos.
 
 Estos archivos son necesarios únicamente para visualizar por pantalla una representación fiel del vehículo real. Esto es útil para simulaciones o visualizaciones en las que se representa por orenador lo que está haciendo el vehículo.
 

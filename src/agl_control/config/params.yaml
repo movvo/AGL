@@ -1,0 +1,22 @@
+# ===========================
+#  Namespace (/** es todo)
+# ===========================
+/**:
+  # ===================
+  #     START
+  # ===================
+  Start:
+    # ----- Topics a tener a publicar mediante start_launch.py -----
+    topic_list:
+      - status
+      - cmd_vel
+      - control
+
+  # ===================
+  #     NODO
+  # ===================
+  ros__parameters:
+    autorun: true
+    autorun: true
+    manual_pkg: "Joystick"
+    autonomous_pkg: "Navigation"

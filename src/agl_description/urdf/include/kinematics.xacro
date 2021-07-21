@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<!--**************************************************************-->
+<!--                KINEMATICS GLOBAL VARIABLES
+
+    - Medidas en [m] metros
+    - Pesos en [kg] kilogramos
+    - Velocidades en [m/s] metro por segundo
+-->
+<!--**************************************************************-->
+<robot  xmlns:xacro="http://www.ros.org/wiki/xacro" name="${namespace}">
+
+  <!-- ================================================== -->
+  <!-- |    UPDATE                                      | -->
+  <!-- ================================================== -->
+  <xacro:property name="update_rate" value="15.000"/>
+
+  <!-- ================================================== -->
+  <!-- |    BASE                                        | -->
+  <!-- ================================================== -->
+  <xacro:property name="base_mass" value="200.000"/> <!-- From marti speculations -->
+  <xacro:property name="base_width" value="0.880"/>  <!-- From marti calculations of mesh -->
+  <xacro:property name="base_len" value="1.400"/>    <!-- From marti calculations of mesh -->
+  <xacro:property name="base_height" value="0.358"/> <!-- From marti calculations of mesh -->
+  <xacro:property name="gap_from_floor" value="0.040"/>
+
+  <!-- ================================================== -->
+  <!-- |    WHEELS                                      | -->
+  <!-- ================================================== -->
+  <xacro:property name="wheel_mass" value="40.000"/>
+  <xacro:property name="wheel_radius" value="0.100"/>
+  <xacro:property name="wheel_height" value="0.040"/>
+  <xacro:property name="wheel_separation" value="0.600"/>
+  <xacro:property name="wheel_torque" value="30.000"/>
+  <xacro:property name="wheel_acc" value="0.000"/>
+
+  <!-- ================================================== -->
+  <!-- |    CASTER                                      | -->
+  <!-- ================================================== -->
+  <xacro:property name="caster_wheel_mass" value="5.000"/>
+  <xacro:property name="caster_base_mass" value="10.00"/>
+  <xacro:property name="caster_radius" value="0.050"/>
+  <xacro:property name="caster_height" value="0.010"/>
+  <xacro:property name="caster_pos_x" value="0.500"/>
+
+  <xacro:property name="caster_wheel_to_base_x" value="0.038" />
+  <xacro:property name="caster_wheel_to_base_z" value="-0.079" />
+
+  <!-- ================================================== -->
+  <!-- |    LASERS                                      | -->
+  <!-- ================================================== -->
+  <xacro:property name="laser_pos_x" value="0.640"/>
+  <xacro:property name="laser_pos_y" value="0.370"/>
+  <xacro:property name="laser_pos_z" value="-0.020"/>
+  <xacro:property name="deg_to_rad"  value="0.01745329"/>
+  <xacro:property name="laser_rotation" value="${45*deg_to_rad}"/> <!-- 45º -->
+
+  <!-- ================================================== -->
+  <!-- |    CAMERA                                      | -->
+  <!-- ================================================== -->
+  <xacro:property name="camera_pos_x" value="${base_len/2}"/>
+  <xacro:property name="camera_pos_y" value="0"/>
+  <xacro:property name="camera_pos_z" value="0.15"/>
+
+  <!-- ================================================== -->
+  <!-- |    NO TOCAR, AUTO CONFIG                       | -->
+  <!-- ================================================== -->
+  <!--RIGHT Y BACK NEGATIVO-->
+  <!--chassis (CENTRO EJE EN CENTRO chassis)-->
+  <xacro:property name="center_mass_x" value="${base_len/2}"/>
+  <xacro:property name="center_mass_y" value="${base_len/2}"/>
+  <xacro:property name="center_mass_z" value="${base_height/2}"/>
+  <!--wheel left (CENTRO EJE EN CENTRO RUEDA)-->
+  <xacro:property name="wheel_right_x" value="0.000"/>
+  <xacro:property name="wheel_right_y" value="-${wheel_separation/2}"/>
+  <xacro:property name="wheel_right_z" value="-${center_mass_z + gap_from_floor - wheel_radius}"/>
+  <!--wheel right (CENTRO EJE EN CENTRO RUEDA)-->
+  <xacro:property name="wheel_left_x" value="0.000"/>
+  <xacro:property name="wheel_left_y" value="${wheel_separation/2}"/>
+  <xacro:property name="wheel_left_z" value="-${center_mass_z + gap_from_floor - wheel_radius}"/>
+  <!--casters base front (CENTRO EJE EN ARANDELA INFERIOR BASE)-->
+  <xacro:property name="caster_base_front_x" value="${caster_pos_x}"/>
+  <xacro:property name="caster_base_front_y" value="0.000"/>
+  <xacro:property name="caster_base_front_z" value="-${center_mass_z + gap_from_floor + caster_wheel_to_base_z - caster_radius}"/>
+  <!--casters base back (CENTRO EJE EN ARANDELA INFERIOR BASE)-->
+  <xacro:property name="caster_base_back_x" value="-${caster_pos_x}"/>
+  <xacro:property name="caster_base_back_y" value="0.000"/>
+  <xacro:property name="caster_base_back_z" value="-${center_mass_z + gap_from_floor + caster_wheel_to_base_z - caster_radius}"/>
+  <!--laser frontal (CENTRO EJE EN PARTE FRONTAL)-->
+  <xacro:property name="laser_front_x" value="${laser_pos_x}"/>
+  <xacro:property name="laser_front_y" value="${laser_pos_y}"/>
+  <xacro:property name="laser_front_z" value="${laser_pos_z}"/>
+  <!--laser trasero (CENTRO EJE EN PARTE TRASERO)-->
+  <xacro:property name="laser_back_x" value="-${laser_pos_x}"/>
+  <xacro:property name="laser_back_y" value="-${laser_pos_y}"/>
+  <xacro:property name="laser_back_z" value=" ${laser_pos_z}"/>
+
+</robot>

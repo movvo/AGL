@@ -1,0 +1,22 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/iggy/ageve_ws/install/rviz_visual_testing_framework/include/**",
+        "/home/iggy/ageve_ws/install/rviz_default_plugins/include/**",
+        "/home/iggy/ageve_ws/install/rviz_common/include/**",
+        "/home/iggy/ageve_ws/install/rviz_rendering/include/**",
+        "/home/iggy/ageve_ws/install/ageve_utils/include/**",
+        "/home/iggy/ageve_ws/install/ageve_interfaces/include/**",
+        "/opt/ros/foxy/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ],
+  "version": 4
+}

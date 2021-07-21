@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>me00_joystick</name>
+  <version>0.0.0</version>
+  <description>ME00: Joystick control package</description>
+  <maintainer email="support.idi@ageve.net">
+        iggyrrieta, 
+        albertarla, 
+        MartiBolet
+  </maintainer>
+  <license>TODO</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>rclcpp</depend>
+  <depend>ageve_interfaces</depend>
+  <depend>ageve_utils</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

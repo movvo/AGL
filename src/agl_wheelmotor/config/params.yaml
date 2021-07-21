@@ -1,0 +1,71 @@
+# ===========================
+#  Namespace (/** es todo)
+# ===========================
+/**:
+  # ===================
+  #     START
+  # ===================
+  Start:
+    # ----- Topics a publicar mediante start_launch.py -----
+    topic_list:
+      - status
+      - odom
+      - motor_amps
+      - motor_command
+      - encoder_count
+      - encoder_speed
+      - volts
+      - feedback
+      - battery_amps
+      - power
+      - fault_flag
+      - read
+
+  # ===================
+  #     NODO
+  # ===================
+  ros__parameters:
+    # ----- ME00_wheelmotor PARAMS -----
+    frequencyH: 50   #higher frequency (value is in ms)
+    frequencyL: 100  #lower frequency
+    frequencyG: 100  #frequency for general queries
+
+    queryH: # These queries will publish with higher frequency and users can add other queries below encoder_speed.
+      motor_amps: "?A" 
+      motor_command: "?M"
+      encoder_count: "?C"
+      encoder_speed: "?S"
+
+    queryL: # These queries will publish with lower frequency and users can add other queries below power.
+      volts: "?V"
+      feedback: "?F" 
+      battery_amps: "?BA"
+      power: "?P"          
+    
+    queryG: # Users can add queries which do not require channel number under queryG tab.
+      fault_flag: "?FF"  
+      # status_flag : ?FS
+      # firmware_id : ?FID   
+
+    use_odom: true
+    odom:
+      wheel_separation: 0.2
+      wheel_radius: 0.1
+      frame_id: "odom"
+      child_frame_id: "base_link"
+      js_topic: ""
+      publish_tf: false
+      publish_odom: true
+    
+    controller:
+      ip: "127.0.0.1"
+      port: 44818
+      timeout: 3.0  # In seconds
+      listen_ip: "0.0.0.0"
+      listen_socket: 8080
+    
+    controller_eip:
+      ip: "127.0.0.1"
+      udp_port: 2222
+      host: "localhost"
+      timeout: 3.0

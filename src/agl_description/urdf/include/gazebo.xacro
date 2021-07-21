@@ -1,0 +1,248 @@
+<?xml version="1.0"?>
+<!--**************************************************************-->
+<!--                    GAZEBO                                    -->
+<!--**************************************************************-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="${namespace}">
+
+<gazebo reference="${base_link}">
+    <material>Gazebo/FlatBlack</material>
+</gazebo>
+
+<gazebo reference="${wheel_left_link}">
+    <material>Gazebo/FlatBlack</material>
+    <mu1>0.9</mu1>
+    <mu2>0.9</mu2>
+    <kp>10000000.0</kp>
+    <kd>1.0</kd>
+    <minDepth>0.01</minDepth>
+</gazebo>
+
+<gazebo reference="${wheel_right_link}">
+    <material>Gazebo/FlatBlack</material>
+    <mu1>0.9</mu1>
+    <mu2>0.9</mu2>
+    <kp>10000000.0</kp>
+    <kd>1.0</kd>
+    <minDepth>0.01</minDepth>
+</gazebo>
+
+<gazebo reference="front_caster_wheel_link">
+    <material>Gazebo/Blue</material>
+    <mu1>0.1</mu1>
+    <mu2>0.1</mu2>
+    <kp>10000000.0</kp>
+    <kd>1.0</kd>
+</gazebo>
+
+<gazebo reference="back_caster_wheel_link">
+    <material>Gazebo/Blue</material>
+    <mu1>0.1</mu1>
+    <mu2>0.1</mu2>
+    <kp>10000000.0</kp>
+    <kd>1.0</kd>
+</gazebo>
+
+
+<!-- <gazebo reference="back_caster_sphere_link">
+  <material>Gazebo/Blue</material>
+  <mu1>0.01</mu1>
+  <mu2>0.01</mu2>
+  <kp>1000000.0</kp>
+  <kd>0.01</kd>
+  <minDepth>0.01</minDepth>
+</gazebo>
+
+<gazebo reference="front_caster_sphere_link">
+  <material>Gazebo/Blue</material>
+  <mu1>0.01</mu1>
+  <mu2>0.01</mu2>
+  <kp>1000000.0</kp>
+  <kd>0.01</kd>
+  <minDepth>0.01</minDepth>
+</gazebo> -->
+
+<gazebo reference="front_caster_rotation_link">
+    <material>Gazebo/Gray</material>
+    <mu1>0.1</mu1>
+    <mu2>0.1</mu2>
+    <kp>10000000.0</kp>
+    <kd>1.0</kd>
+</gazebo>
+
+<gazebo reference="back_caster_rotation_link">
+    <material>Gazebo/Gray</material>
+    <mu1>0.1</mu1>
+    <mu2>0.1</mu2>
+    <kp>10000000.0</kp>
+    <kd>1.0</kd>
+</gazebo>
+
+<!--======= GAZEBO PLUGINS ===========-->
+
+<gazebo>
+
+  <!--JOINT_STATES-->
+  <plugin name="plugin_joint_state" filename="libgazebo_ros_joint_state_publisher.so">
+      <ros>
+          <namespace>${namespace}</namespace>
+          <argument>joint_states:=${joint_state_topic}</argument>
+      </ros>
+      <update_rate>${update_rate}</update_rate>
+      <joint_name>${wheel_left_joint}</joint_name>
+      <joint_name>${wheel_right_joint}</joint_name>
+      <joint_name>front_caster_wheel_joint</joint_name>
+      <joint_name>back_caster_wheel_joint</joint_name>
+      <joint_name>front_caster_rotation_joint</joint_name>
+      <joint_name>back_caster_rotation_joint</joint_name>
+  </plugin> 
+
+  <!--DIFFERENTIAL DRIVE-->
+  <plugin name='plugin_diff_drive' filename='libgazebo_ros_diff_drive.so'>
+      <ros>
+          <namespace>${namespace}</namespace>
+          <argument>cmd_vel:=${cmd_vel_topic}</argument>
+          <argument>odom:=${odom_topic}</argument>
+          <argument>/tf:=tf</argument>
+          <argument>/tf_static:=tf_static</argument>
+      </ros>
+      <update_rate>${update_rate}</update_rate>
+      <left_joint>${wheel_left_joint}</left_joint>
+      <right_joint>${wheel_right_joint}</right_joint>
+      <wheel_separation>${wheel_separation}</wheel_separation>
+      <wheel_diameter>${wheel_radius*2}</wheel_diameter>
+      <max_wheel_torque>${wheel_torque}</max_wheel_torque>
+      <max_wheel_acceleration>${wheel_acc}</max_wheel_acceleration>
+      <command_topic>cmd_vel</command_topic>
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <publish_wheel_tf>true</publish_wheel_tf>
+      <odometry_topic>odom</odometry_topic>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>${base_footprint}</robot_base_frame>
+  </plugin>
+
+</gazebo>
+
+<!--======= LASERS PLUGINS ===========-->
+<gazebo reference="${laser_front_link}">
+  <material value="Gazebo/Yellow" />
+
+  <sensor type="ray" name="${laser_front_link}">
+    <visualize>true</visualize>
+    <update_rate>12.5</update_rate>
+    <ray>
+      <scan>
+        <horizontal>
+          <samples>541</samples>
+          <resolution>1</resolution>
+          <min_angle>-2.35619449615</min_angle>
+          <max_angle>2.35619449615</max_angle>
+        </horizontal>
+      </scan>
+      <range>
+        <min>0.05</min>
+        <max>15.0</max>
+        <resolution>0.01</resolution>
+      </range>
+      <noise>
+        <type>gaussian</type>
+        <mean>0.0</mean>
+        <stddev>0.01</stddev>
+      </noise>
+    </ray>
+    <plugin name="gazebo_ros_${laser_front_link}_controller" filename="libgazebo_ros_ray_sensor.so">
+      <ros>
+        <namespace>${namespace}</namespace>
+        <argument>~/out:=Laser_Front/laser_scan</argument>
+      </ros>
+      <frame_name>${laser_front_link}</frame_name>
+      <output_type>sensor_msgs/LaserScan</output_type>
+    </plugin>
+  </sensor>
+</gazebo>
+
+<gazebo reference="${laser_back_link}">
+  <material value="Gazebo/Yellow" />
+  <sensor type="ray" name="${laser_back_link}">
+    <visualize>true</visualize>
+    <update_rate>12.5</update_rate>
+    <ray>
+      <scan>
+        <horizontal>
+          <samples>541</samples>
+          <resolution>1</resolution>
+          <min_angle>-2.35619449615</min_angle>
+          <max_angle>2.35619449615</max_angle>
+        </horizontal>
+      </scan>
+      <range>
+        <min>0.05</min>
+        <max>15.0</max>
+        <resolution>0.01</resolution>
+      </range>
+      <noise>
+        <type>gaussian</type>
+        <mean>0.0</mean>
+        <stddev>0.01</stddev>
+      </noise>
+    </ray>
+    <plugin name="gazebo_ros_${laser_back_link}_controller" filename="libgazebo_ros_ray_sensor.so">
+      <ros>
+        <namespace>${namespace}</namespace>
+        <argument>~/out:=Laser_Back/laser_scan</argument>
+      </ros>
+      <frame_name>${laser_back_link}</frame_name>
+      <output_type>sensor_msgs/LaserScan</output_type>
+    </plugin>
+  </sensor>
+</gazebo>
+
+<!--======= CAMERA PLUGIN ===========-->
+<gazebo reference="camera_link">
+        <material>Gazebo/FlatBlack</material>
+          <sensor type="depth" name="Camera">
+            <!-- Set always_on only sensor, not on plugin -->
+            <always_on>1</always_on>
+
+            <!-- Set update_rate only sensor, not on plugin -->
+            <update_rate>${update_rate}</update_rate>
+
+            <camera name="Camera">
+              <distortion>
+                <k1>0.0</k1>
+                <k2>0.0</k2>
+                <k3>0.0</k3>
+                <p1>0.0</p1>
+                <p2>0.0</p2>
+                <center>0.0 0.0</center>
+              </distortion>
+            </camera>
+
+            <plugin name="plugin_name" filename="libgazebo_ros_camera.so">
+              <!-- Change namespace, camera name and topics so:
+                  * Raw images are published to: /custom_ns/custom_camera/custom_image
+                  * Depth images are published to: /custom_ns/custom_camera/custom_image_depth
+                  * Raw image camera info is published to: /custom_ns/custom_camera/custom_info_raw
+                  * Depth image camera info is published to: /custom_ns/custom_camera/custom_info_depth
+                  * Point cloud is published to: /custom_ns/custom_camera/custom_points 
+              -->
+              <ros>
+                <namespace>${namespace}</namespace>
+                <argument>image_raw:=${camera_topic}</argument>
+              </ros>
+              <!-- Set camera name. If empty, defaults to sensor name (i.e. "sensor_name") -->
+              <camera_name>Camera</camera_name>
+
+              <!-- Set TF frame name. If empty, defaults to link name (i.e. "link_name") -->
+              <frame_name>camera_link</frame_name>
+
+              <hack_baseline>0.07</hack_baseline>
+
+              <!-- No need to repeat distortion parameters or to set autoDistortion -->
+
+              <min_depth>0.001</min_depth>
+            </plugin>
+          </sensor>
+    </gazebo>
+
+</robot>

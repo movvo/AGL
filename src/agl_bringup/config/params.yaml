@@ -1,0 +1,265 @@
+# ===========================
+#  Namespace (nombre robot)
+# ===========================
+me00_1:
+  # ===================
+  #     NODOS
+  # ===================
+  Diagnostics:
+    ros__parameters:
+      # ----- ME00_diagnostics PARAMS -----
+      start:
+        - status
+        - MergedStatus
+      autorun: true
+      timeout: 10    # Timeout to detect if a node is down. 
+
+  Laser_Front:
+    ros__parameters:
+      # ----- ME00_laser PARAMS -----
+      # ----- Topics a tener a publicar mediante start_launch.py -----
+      start:
+        - laser_scan
+        - laser_header
+        - status
+
+      autorun: true
+      host: "192.168.1.1"
+      local_ip: "192.168.1.169"
+      frame_id: "laser_front_link"
+      start_angle: 2.35
+      end_angle: -2.35
+      frequency: 12.856
+      expected_frequency: 12.856
+      frequency_tolerance: 0.1
+      timestamp_min_acceptable: -1.0
+      timestamp_max_acceptable: -1.0
+      reconnect_timeout: 2.0
+      publish_intensities: true
+      invert_scan: true
+      simulation: false
+      # ----- ----- ----- ----- -----
+
+  Laser_Back:
+    ros__parameters:
+      # ----- ME00_laser PARAMS -----
+      # ----- Topics a tener a publicar mediante start_launch.py -----
+      start:
+        - laser_scan
+        - laser_header
+        - status
+
+      autorun: true
+      host: "192.168.2.2"
+      local_ip: "192.168.2.169"
+      frame_id: "laser_back_link"
+      start_angle: 2.35
+      end_angle: -2.35
+      frequency: 12.856
+      expected_frequency: 12.856
+      frequency_tolerance: 0.1
+      timestamp_min_acceptable: -1.0
+      timestamp_max_acceptable: -1.0
+      reconnect_timeout: 2.0
+      publish_intensities: true
+      invert_scan: true
+      simulation: false
+      # ----- ----- ----- ----- -----
+
+  Wheelmotor:
+    ros__parameters:
+      # ----- ME00_wheelmotor PARAMS -----
+      start:
+        - status
+        - odom
+        - motor_amps
+        - motor_command
+        - encoder_count
+        - encoder_speed
+        - volts
+        - feedback
+        - battery_amps
+        - power
+        - fault_flag
+        - read
+        - joint_states
+      frequencyH: 50   #higher frequency (value is in ms)
+      frequencyL: 100  #lower frequency
+      frequencyG: 100  #frequency for general queries
+
+      queryH: # These queries will publish with higher frequency and users can add other queries below encoder_speed.
+        motor_amps: "?A" 
+        motor_command: "?M"
+        encoder_count: "?C"
+        encoder_speed: "?S"
+
+      queryL: # These queries will publish with lower frequency and users can add other queries below power.
+        volts: "?V"
+        feedback: "?F" 
+        battery_amps: "?BA"
+        power: "?P"      
+      
+      queryG: # Users can add queries which do not require channel number under queryG tab.
+        fault_flag: "?FF"  
+        # status_flag : ?FS
+        # firmware_id : ?FID   
+
+      use_odom: true
+      odom:
+        wheel_separation: 0.2
+        wheel_radius: 0.1
+        frame_id: "base_link"
+        child_frame_id: "odom"
+        js_topic: "joint_states"
+        publish_tf: false
+        publish_js: false
+        publish_odom: false
+      
+      controller:
+        ip: "127.0.0.1"
+        port: 44818
+        timeout: 3.0  # In seconds
+        listen_ip: "0.0.0.0"
+        listen_socket: 8080
+      
+      # ----- ----- ----- ----- -----
+
+  Camera:
+    # ----- ME00_camera PARAMS -----
+    ros__parameters:
+      start:
+        - image_raw
+        - camera_info
+        - status
+      autorun: false
+      # 0: Simulacion, cam local
+      # 6: Realsense color
+      # 4: Realsense no color
+      camera_id: 0
+      camera_name: "usb_cam"
+      frame_id: "base_link"
+      width : 640
+      height : 480
+      framerate : 30
+      flip_mode : 2 # 0=reverse, 2=normal
+      camera_calibration_file: "package://me00_camera/config/usb_calibration.yaml"
+
+  Joy:
+    ros__parameters:
+      autorepeat_rate: 20.0
+      coalesce_interval_ms: 1
+      deadzone: 0.12
+      device_id: 0
+      device_name: ''
+      sticky_buttons: false
+
+  Joystick:
+    ros__parameters:
+      # ----- ME00_joystick PARAMS -----
+      start:
+        - cmd_vel
+        - status
+
+      autorun: true
+
+      commands:
+        #ubuntu 18.04 
+        ###############
+        #        axes[0] = left arrow(-1.0)/ right arrow(1.0)
+        #        axes[1] = up arrow(1.0)/ down arrow(-1.0)
+        #        buttons[2] = A (1.0)
+        #        buttons[1] = B (1.0)
+        #        buttons[3] = X (1.0)
+        #        buttons[0] = Y (1.0)
+        axes_x: 1.0
+        axes_y: 0.0
+        button_a: 2.0
+        button_b: 1.0
+        button_x: 3.0
+        button_y: 0.0
+
+      speed:
+        linear_gain: 10.0
+        angular_gain: 5.0
+        velocity: 1.0
+  
+  Control:
+    ros__parameters:
+      # ----- ME00_control PARAMS -----
+      start:
+        - status
+        - cmd_vel
+        - control
+        - ADAM_Inputs
+        - ADAM_Outputs
+      autorun: true
+      manual_pkg: "Joystick"
+      autonomous_pkg: "Navigation"
+      initial_mode: AUTONOMOUS  # PAUSED, MANUAL or AUTONOMOUS
+      scan_front: Laser_Front/laser_scan
+      scan_back: Laser_Back/laser_scan
+
+  Navigation:
+    ros__parameters:
+      start:
+        - status
+      autorun: true
+      scan_topic: Laser_Merged/laser_scan
+      odom_topic: Wheelmotor/odom
+      scan_front: Laser_Front/laser_scan
+      scan_back: Laser_Back/laser_scan
+      map_topic: map
+      map: ageve_map.yaml
+      autorun_nav2: 'true'
+      use_sim_time: True
+      active_timeout: 5 # ns to detect if the service is active
+      server_timeout: 10 # ns to wait for the response
+      autostart_navigation: true   # to autostart the navigation when Navigation goes to RUN state
+      autostart_localization: true # to autostart the localization when Navigation goes to RUN state      
+      autostart_slam: false 
+
+  Filter:
+    ros__parameters:
+      # ----- ME00_filters PARAMS -----
+      # ----- Topics a tener a publicar mediante start_launch.py -----
+      start:
+        - topic1
+      laser_topic1: "Laser_Front/laser_scan"
+      laser_topic2: "Laser_Back/laser_scan"
+      frequency: 1.0
+      angle_min: -3.14
+      angle_max: 3.14
+
+  Database:
+    ros__parameters:
+      start:
+        - status        # Fake status
+      db: 'me00'        # db name = robot model
+      user: 'postgres'
+      token_pass: 'dbpass'
+      pw: 'abrera2021'
+      host: 'localhost'
+      port: '5432'
+
+  Webapi:
+    ros__parameters:
+      start:
+        - status        # Fake status
+      template_folder: '../templates'
+      static_folder: '../static'
+      title: 'AGEVE'
+      device_name: 'ME-00'
+        
+  Adam_Driver:
+    ros__parameters:
+      # ----- ME00_laser PARAMS -----
+      # ----- Topics a tener a publicar mediante start_launch.py -----
+      start:
+        - status
+        - ADAM_Outputs
+
+      autorun: true
+      host: "192.168.3.1"
+      local_ip: "192.168.3.169"
+      port: 502
+      # ----- ----- ----- ----- -----

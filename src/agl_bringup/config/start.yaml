@@ -1,0 +1,39 @@
+# ===================
+#     START
+# ===================
+Start:
+  # ----- NODOS A EJECTUAR, Solo estos se arrancaran mediante start_launch.py -----
+  # Tener en cuenta que los nodos son del tipo --> <modelo>_<nombrePackage> (i.e me00_laser)
+  # Por lo tanto en esta lista deberia aparecer unicamente lo siguiente:
+  # 
+  # - nombrePackage
+  
+  black_list: 
+    - Description   # NO Status
+    - Diagnostics   # NO Status
+    - Database      # NO Status
+    - Webapi        # NO Status
+    - Filter        # NO Status
+    # TODO: esto queda feo ponerlo aqui si tiene Status...
+    # - Navigation   
+    - Camera
+    - Wheelmotor
+    - Laser_Front
+    - Laser_Back
+    - Joy
+    # - Control
+    - Adam_Driver
+
+  nodes_list:
+    # - Camera
+    - Laser
+    # - Wheelmotor 
+    - Joystick
+    - Description
+    - Diagnostics
+    - Database
+    - Webapi
+    - Control
+    - Filters
+    #- Navigation
+    # - Adam

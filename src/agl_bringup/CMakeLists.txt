@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(me00_bringup)
+project(agl_bringup)
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)

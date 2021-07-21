@@ -191,17 +191,6 @@ bool ControlManager::Initialize()
     // Create publisher of 'control'
     control_publisher = this->create_publisher<ageve_interfaces::msg::Control>("control", 10);
 
-    // Create Laser subscriptions
-    std::string robot = this->get_namespace();
-    fornt_laser_info = this->create_subscription<ageve_interfaces::msg::LaserDriverHeader>(robot+"/"+parameters.scan_front.as_string(),
-                                                                                           10, std::bind(&ControlManager::LaserInfoCallback, this, _1));
-    back_laser_info = this->create_subscription<ageve_interfaces::msg::LaserDriverHeader>(robot+"/"+parameters.scan_back.as_string(),
-                                                                                           10, std::bind(&ControlManager::LaserInfoCallback, this, _1));
-    
-    // ADAM Pub and subs
-    dig_out_pub = this->create_publisher<ageve_interfaces::msg::DigitalOutputs>("ADAM_Outputs",10);
-    dig_in_subs = this->create_subscription<ageve_interfaces::msg::DigitalInputs>(robot+"/ADAM_Driver/ADAM_Inputs", 
-                                                                                    10, std::bind(&ControlManager::ADAM_Inputs_Callback, this,_1));
     // Dynamic reconfiguration
     this->set_on_parameters_set_callback(std::bind(&ControlManager::dyn_reconf_callback, this,_1));
 
@@ -223,16 +212,14 @@ bool ControlManager::Initialize()
 
 // Callbacks de las dos subscripciones
 void ControlManager::manual_callback(const geometry_msgs::msg::Twist::SharedPtr msg) {
-    geometry_msgs::msg::Twist::SharedPtr new_msg = AdjustVelocity(msg);
     if (navigation_mode == MANUAL_NAVIGATION) {
-        cmd_vel_pub->publish(*new_msg);
+        cmd_vel_pub->publish(*msg);
     }
 }
 
 void ControlManager::autonomous_callback(const geometry_msgs::msg::Twist::SharedPtr msg) {
-    geometry_msgs::msg::Twist::SharedPtr new_msg = AdjustVelocity(msg);
     if (navigation_mode == AUTONOMOUS_NAVIGATION) {
-        cmd_vel_pub->publish(*new_msg);
+        cmd_vel_pub->publish(*msg);
     }
 }
 
@@ -277,84 +264,7 @@ bool ControlManager::checkIfJoystick() {
     return false;
 }
 
-//================================================
-geometry_msgs::msg::Twist::SharedPtr ControlManager::AdjustVelocity(geometry_msgs::msg::Twist::SharedPtr msg)
-//================================================
-{
-    geometry_msgs::msg::Twist::SharedPtr new_msg = msg;
-    if (warn_zone1_front || warn_zone1_back){
-        new_msg->linear.x = msg->linear.x/2;
-        new_msg->linear.y = msg->linear.y/2;
-        new_msg->linear.z = msg->linear.z/2;
-        new_msg->angular.x = msg->angular.x/2;
-        new_msg->angular.y = msg->angular.y/2;
-        new_msg->angular.z = msg->angular.z/2;
-    }
-    if (warn_zone2_front || warn_zone2_back){
-        new_msg->linear.x = msg->linear.x/4;
-        new_msg->linear.y = msg->linear.y/4;
-        new_msg->linear.z = msg->linear.z/4;
-        new_msg->angular.x = msg->angular.x/4;
-        new_msg->angular.y = msg->angular.y/4;
-        new_msg->angular.z = msg->angular.z/4;
-    }
-    // If in protected zone adjust cmd_vel
-    if (protected_zone_front || protected_zone_back){
-        if (this->parameters.initial_mode.as_string() == "AUTONOMOUS"){
-            new_msg->linear.x = 0;
-            new_msg->linear.y = 0;
-            new_msg->linear.z = 0;
-            new_msg->angular.x = 0;
-            new_msg->angular.y = 0;
-            new_msg->angular.z = 0;
-        }
-        else if (this->parameters.initial_mode.as_string() == "MANUAL"){
-            new_msg->linear.x = msg->linear.x/6;
-            new_msg->linear.y = msg->linear.y/6;
-            new_msg->linear.z = msg->linear.z/6;
-            new_msg->angular.x = msg->angular.x/6;
-            new_msg->angular.y = msg->angular.y/6;
-            new_msg->angular.z = msg->angular.z/6;
-        }
-    }
-    return new_msg;
-}
 
-//================================================
-void ControlManager::LaserInfoCallback(const ageve_interfaces::msg::LaserDriverHeader::SharedPtr msg)
-//================================================
-{
-    // Check zones
-    if (msg->header.frame_id == "laser_front_link"){
-            warn_zone1_front = (msg->detection_zone_status & 4 >> 2);
-            warn_zone2_front = (msg->detection_zone_status & 2 >> 1);
-            protected_zone_front = (msg->detection_zone_status & 1);
-            // Check laser zone configuration
-            active_zone_set_laser_front = msg->active_protection_zone_set;
-    }
-    else if (msg->header.frame_id == "laser_back_linki"){
-            warn_zone1_back = (msg->detection_zone_status & 4 >> 2);
-            warn_zone2_back = (msg->detection_zone_status & 2 >> 1);
-            protected_zone_back = (msg->detection_zone_status & 1);
-            // Check laser zone configuration
-            active_zone_set_laser_back = msg->active_protection_zone_set;
-    }
-}
-
-//================================================
-void ControlManager::ADAM_Inputs_Callback(const ageve_interfaces::msg::DigitalInputs::SharedPtr msg)
-//================================================
-{
-    if (msg->modo_auto) {
-        switchMode(MANUAL_NAVIGATION);
-    }
-    else if (msg->modo_joystick) {
-        switchMode(AUTONOMOUS_NAVIGATION);
-    }
-    else if (msg->modo_standby) {
-        switchMode(PAUSE_NAVIGATION);
-    }
-}
 
 //================================================
 rcl_interfaces::msg::SetParametersResult ControlManager::dyn_reconf_callback(const std::vector<rclcpp::Parameter> & parameters_)

@@ -1,7 +1,7 @@
 # ===========================
 #  Namespace (nombre robot)
 # ===========================
-me00_1:
+agl_1:
   # ===================
   #     NODOS
   # ===================
@@ -13,58 +13,6 @@ me00_1:
         - MergedStatus
       autorun: true
       timeout: 10    # Timeout to detect if a node is down. 
-
-  Laser_Front:
-    ros__parameters:
-      # ----- ME00_laser PARAMS -----
-      # ----- Topics a tener a publicar mediante start_launch.py -----
-      start:
-        - laser_scan
-        - laser_header
-        - status
-
-      autorun: true
-      host: "192.168.1.1"
-      local_ip: "192.168.1.169"
-      frame_id: "laser_front_link"
-      start_angle: 2.35
-      end_angle: -2.35
-      frequency: 12.856
-      expected_frequency: 12.856
-      frequency_tolerance: 0.1
-      timestamp_min_acceptable: -1.0
-      timestamp_max_acceptable: -1.0
-      reconnect_timeout: 2.0
-      publish_intensities: true
-      invert_scan: true
-      simulation: false
-      # ----- ----- ----- ----- -----
-
-  Laser_Back:
-    ros__parameters:
-      # ----- ME00_laser PARAMS -----
-      # ----- Topics a tener a publicar mediante start_launch.py -----
-      start:
-        - laser_scan
-        - laser_header
-        - status
-
-      autorun: true
-      host: "192.168.2.2"
-      local_ip: "192.168.2.169"
-      frame_id: "laser_back_link"
-      start_angle: 2.35
-      end_angle: -2.35
-      frequency: 12.856
-      expected_frequency: 12.856
-      frequency_tolerance: 0.1
-      timestamp_min_acceptable: -1.0
-      timestamp_max_acceptable: -1.0
-      reconnect_timeout: 2.0
-      publish_intensities: true
-      invert_scan: true
-      simulation: false
-      # ----- ----- ----- ----- -----
 
   Wheelmotor:
     ros__parameters:
@@ -124,25 +72,25 @@ me00_1:
       
       # ----- ----- ----- ----- -----
 
-  Camera:
-    # ----- ME00_camera PARAMS -----
-    ros__parameters:
-      start:
-        - image_raw
-        - camera_info
-        - status
-      autorun: false
-      # 0: Simulacion, cam local
-      # 6: Realsense color
-      # 4: Realsense no color
-      camera_id: 0
-      camera_name: "usb_cam"
-      frame_id: "base_link"
-      width : 640
-      height : 480
-      framerate : 30
-      flip_mode : 2 # 0=reverse, 2=normal
-      camera_calibration_file: "package://me00_camera/config/usb_calibration.yaml"
+  # Camera:
+  #   # ----- ME00_camera PARAMS -----
+  #   ros__parameters:
+  #     start:
+  #       - image_raw
+  #       - camera_info
+  #       - status
+  #     autorun: false
+  #     # 0: Simulacion, cam local
+  #     # 6: Realsense color
+  #     # 4: Realsense no color
+  #     camera_id: 0
+  #     camera_name: "usb_cam"
+  #     frame_id: "base_link"
+  #     width : 640
+  #     height : 480
+  #     framerate : 30
+  #     flip_mode : 2 # 0=reverse, 2=normal
+  #     camera_calibration_file: "package://me00_camera/config/usb_calibration.yaml"
 
   Joy:
     ros__parameters:
@@ -195,71 +143,25 @@ me00_1:
       autorun: true
       manual_pkg: "Joystick"
       autonomous_pkg: "Navigation"
-      initial_mode: AUTONOMOUS  # PAUSED, MANUAL or AUTONOMOUS
+      initial_mode: MANUAL  # PAUSED, MANUAL or AUTONOMOUS
       scan_front: Laser_Front/laser_scan
       scan_back: Laser_Back/laser_scan
 
-  Navigation:
-    ros__parameters:
-      start:
-        - status
-      autorun: true
-      scan_topic: Laser_Merged/laser_scan
-      odom_topic: Wheelmotor/odom
-      scan_front: Laser_Front/laser_scan
-      scan_back: Laser_Back/laser_scan
-      map_topic: map
-      map: ageve_map.yaml
-      autorun_nav2: 'true'
-      use_sim_time: True
-      active_timeout: 5 # ns to detect if the service is active
-      server_timeout: 10 # ns to wait for the response
-      autostart_navigation: true   # to autostart the navigation when Navigation goes to RUN state
-      autostart_localization: true # to autostart the localization when Navigation goes to RUN state      
-      autostart_slam: false 
-
-  Filter:
-    ros__parameters:
-      # ----- ME00_filters PARAMS -----
-      # ----- Topics a tener a publicar mediante start_launch.py -----
-      start:
-        - topic1
-      laser_topic1: "Laser_Front/laser_scan"
-      laser_topic2: "Laser_Back/laser_scan"
-      frequency: 1.0
-      angle_min: -3.14
-      angle_max: 3.14
-
-  Database:
-    ros__parameters:
-      start:
-        - status        # Fake status
-      db: 'me00'        # db name = robot model
-      user: 'postgres'
-      token_pass: 'dbpass'
-      pw: 'abrera2021'
-      host: 'localhost'
-      port: '5432'
-
-  Webapi:
-    ros__parameters:
-      start:
-        - status        # Fake status
-      template_folder: '../templates'
-      static_folder: '../static'
-      title: 'AGEVE'
-      device_name: 'ME-00'
-        
-  Adam_Driver:
-    ros__parameters:
-      # ----- ME00_laser PARAMS -----
-      # ----- Topics a tener a publicar mediante start_launch.py -----
-      start:
-        - status
-        - ADAM_Outputs
-
-      autorun: true
-      host: "192.168.3.1"
-      local_ip: "192.168.3.169"
-      port: 502
-      # ----- ----- ----- ----- -----
+  # Navigation:
+  #   ros__parameters:
+  #     start:
+  #       - status
+  #     autorun: true
+  #     scan_topic: Laser_Merged/laser_scan
+  #     odom_topic: Wheelmotor/odom
+  #     scan_front: Laser_Front/laser_scan
+  #     scan_back: Laser_Back/laser_scan
+  #     map_topic: map
+  #     map: ageve_map.yaml
+  #     autorun_nav2: 'true'
+  #     use_sim_time: True
+  #     active_timeout: 5 # ns to detect if the service is active
+  #     server_timeout: 10 # ns to wait for the response
+  #     autostart_navigation: true   # to autostart the navigation when Navigation goes to RUN state
+  #     autostart_localization: true # to autostart the localization when Navigation goes to RUN state      
+  #     autostart_slam: false 

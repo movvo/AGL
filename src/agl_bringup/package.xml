@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>me00_bringup</name>
+  <name>agl_bringup</name>
   <version>0.0.0</version>
   <description>Package to launch all the me00 system</description>
   <maintainer email="support.idi@ageve.net">

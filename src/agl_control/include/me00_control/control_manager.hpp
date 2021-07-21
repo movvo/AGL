@@ -87,30 +87,6 @@ class ControlManager : public rclcpp::Node, public ageve_utils::sm::StateMachine
         // Esta función sirve para comprobar si hay un joystick conectado.
         bool checkIfJoystick();
 
-        // Laser info subscriptions
-        rclcpp::Subscription<ageve_interfaces::msg::LaserDriverHeader>::SharedPtr fornt_laser_info;
-        rclcpp::Subscription<ageve_interfaces::msg::LaserDriverHeader>::SharedPtr back_laser_info;
-        void LaserInfoCallback(const ageve_interfaces::msg::LaserDriverHeader::SharedPtr msg);
-
-        // ADAM Module Subs and Pub
-        rclcpp::Publisher<ageve_interfaces::msg::DigitalOutputs>::SharedPtr dig_out_pub;
-        ageve_interfaces::msg::DigitalInputs dig_out_msg;
-
-        rclcpp::Subscription<ageve_interfaces::msg::DigitalInputs>::SharedPtr dig_in_subs;
-        void ADAM_Inputs_Callback(const ageve_interfaces::msg::DigitalInputs::SharedPtr msg);
-
-
-        geometry_msgs::msg::Twist::SharedPtr AdjustVelocity(geometry_msgs::msg::Twist::SharedPtr msg);
-
-        // Varibales warning zone laser
-        bool warn_zone1_front = false;
-        bool warn_zone2_front = false;
-        bool protected_zone_front = false;
-        bool warn_zone1_back = false;
-        bool warn_zone2_back = false;
-        bool protected_zone_back = false;
-        uint16_t active_zone_set_laser_front;
-        uint16_t active_zone_set_laser_back;
 
     /*****************************
      *  RECONFIGURACIÓN DINÁMICA

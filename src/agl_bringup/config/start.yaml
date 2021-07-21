@@ -11,29 +11,12 @@ Start:
   black_list: 
     - Description   # NO Status
     - Diagnostics   # NO Status
-    - Database      # NO Status
-    - Webapi        # NO Status
-    - Filter        # NO Status
+    - Joy           # NO Status
     # TODO: esto queda feo ponerlo aqui si tiene Status...
-    # - Navigation   
-    - Camera
-    - Wheelmotor
-    - Laser_Front
-    - Laser_Back
-    - Joy
-    # - Control
-    - Adam_Driver
 
   nodes_list:
-    # - Camera
-    - Laser
-    # - Wheelmotor 
+    - Wheelmotor 
     - Joystick
     - Description
     - Diagnostics
-    - Database
-    - Webapi
     - Control
-    - Filters
-    #- Navigation
-    # - Adam

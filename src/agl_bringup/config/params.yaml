@@ -146,6 +146,21 @@ agl_1:
       initial_mode: MANUAL  # PAUSED, MANUAL or AUTONOMOUS
       scan_front: Laser_Front/laser_scan
       scan_back: Laser_Back/laser_scan
+  Lidar:
+    ros__parameters:
+      topic_name: 'Lidar/laser_scan'
+      channel_type: 'serial'
+      tcp_ip: 192.168.0.7
+      tcp_port: 20108
+      serial_port: '/dev/ttyUSB0' #ttyUSBx
+      serial_baudrate: 256000  # A3
+      frame_id: 'lidar_link'
+      inverted: False
+      angle_compensate: False # Esto deberia estar a true, pero a true peta
+      scan_mode: 'Sensitivity'
+      angle_min: 0, #Por defecto 0º
+      angle_max: 360 #Por defecto 360º
+
 
   # Navigation:
   #   ros__parameters:

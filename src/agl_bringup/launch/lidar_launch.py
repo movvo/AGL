@@ -18,27 +18,38 @@
 import os
 from launch import LaunchDescription
 from launch_ros.actions import Node
+from ageve_utils.general.yaml import getNamespace
+from ageve_utils.general.yaml import getConfig
+import yaml
 
 #=====================================
 #        LAUNCH CODE: lidar
 #=====================================
 def generate_launch_description():
-
+    name_space = getNamespace('agl_bringup')
+    config = getConfig('agl_bringup')
+    cfg = open(config, 'r')
+    data = yaml.safe_load(cfg)
     return LaunchDescription([
         # RPLIDAR
          Node(
             name='rplidar_composition',
+            namespace=name_space,
             package='rplidar_ros',
             executable='rplidar_composition',
             output='screen',
             parameters=[{
-                'serial_port': '/dev/ttyUSB1', #ttyUSBx
-                'serial_baudrate': 256000,  # A3
-                'frame_id': 'lidar_link',
-                'inverted': False,
-                'angle_compensate': False, # Esto deberia estar a true, pero a true peta
-                'scan_mode': 'Sensitivity'
-                #'angle_min': 0, #Por defecto 0º
-                #'angle_max': 360 #Por defecto 360º
+                'topic_name': data[name_space]['Lidar']['ros__parameters']['topic_name'],
+                'channel_type': data[name_space]['Lidar']['ros__parameters']['channel_type'],
+                'tcp_ip': data[name_space]['Lidar']['ros__parameters']['tcp_ip'],
+                'tcp_port': data[name_space]['Lidar']['ros__parameters']['tcp_port'],
+                'serial_port': data[name_space]['Lidar']['ros__parameters']['serial_port'], #ttyUSBx
+                'serial_baudrate': data[name_space]['Lidar']['ros__parameters']['serial_baudrate'],  # A3
+                'frame_id': data[name_space]['Lidar']['ros__parameters']['frame_id'],
+                'inverted': data[name_space]['Lidar']['ros__parameters']['inverted'],
+                'angle_compensate': data[name_space]['Lidar']['ros__parameters']['angle_compensate'], # Esto deberia estar a true, pero a true peta
+                'scan_mode': data[name_space]['Lidar']['ros__parameters']['scan_mode']
+                #'angle_min': data[name_space]['Lidar']['ros__parameters']['angle_min'], #Por defecto 0º
+                #'angle_max': data[name_space]['Lidar']['ros__parameters']['angle_max'] #Por defecto 360º
             }]),
     ])

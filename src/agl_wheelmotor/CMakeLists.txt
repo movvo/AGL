@@ -21,6 +21,9 @@ find_package(tf2_ros REQUIRED)
 find_package(ageve_interfaces REQUIRED)
 find_package(ageve_utils REQUIRED)
 
+
+
+
 # Include files directory
 include_directories(
   include
@@ -31,7 +34,10 @@ add_library(${PROJECT_NAME}_lib
   "src/wheelmotor.cpp"
 )
 
-target_link_libraries(${PROJECT_NAME}_lib ${SERIAL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+# libserial
+pkg_check_modules(SERIAL libserial)
+target_include_directories(${PROJECT_NAME}_lib PRIVATE ${SERIAL_INCLUDE_DIRS})
+
 ament_target_dependencies(${PROJECT_NAME}_lib 
                            rclcpp
                            std_msgs
@@ -49,7 +55,11 @@ add_executable(${PROJECT_NAME}
               src/wheelmotor.cpp
             )
 
-target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib)
+target_link_libraries(${PROJECT_NAME} 
+                      ${PROJECT_NAME}_lib
+                      ${SERIAL_LIBRARIES} 
+                      ${CMAKE_THREAD_LIBS_INIT}
+                     )
 ament_target_dependencies(${PROJECT_NAME}
                             rclcpp
                             std_msgs

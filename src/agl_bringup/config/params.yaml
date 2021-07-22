@@ -18,28 +18,25 @@ agl_1:
     ros__parameters:
       # ----- ME00_wheelmotor PARAMS -----
       # ----- Topics a publicar mediante start_launch.py -----
-    topic_list:
-      - status
+      start:
+        - status
 
-  # ===================
-  #     NODO
-  # ===================
-  ros__parameters:
-    # ----- ME00_wheelmotor PARAMS -----
-    motor:
-        usb_port: "/dev/ttyUSB0"
-        id_right: 1
-        id_left: 2
+      # ----- ME00_wheelmotor PARAMS -----
+      motor:
+          usb_port: "/dev/ttyUSB0"
+          max_vel: 50
+          min_vel: -50
 
-    odom:
-      wheel_separation: 0.2
-      wheel_radius: 0.1
-      frame_id: "odom"
-      child_frame_id: "base_link"
-      js_topic: "joint_states"
-      publish_tf: false   # False en simulacion
-      publish_js: false   # False en simulacion
-      publish_odom: false # False en simulacion
+
+      odom:
+        wheel_separation: 0.2
+        wheel_radius: 0.1
+        frame_id: "odom"
+        child_frame_id: "base_link"
+        js_topic: "joint_states"
+        publish_tf: false   # False en simulacion
+        publish_js: false   # False en simulacion
+        publish_odom: false # False en simulacion
       
       # ----- ----- ----- ----- -----
 

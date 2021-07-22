@@ -20,6 +20,9 @@
 #include "geometry_msgs/msg/twist.hpp"
 #include "agl_wheelmotor/diff_odom.hpp"
 
+using LibSerial::SerialPort;
+using LibSerial::SerialStream;
+using LibSerial::BaudRate;
 
 class Wheelmotor : public rclcpp::Node
 {
@@ -29,8 +32,8 @@ class Wheelmotor : public rclcpp::Node
   typedef struct
   {
     std::string usb_port;
-    uint8_t id_right;
-    uint8_t id_left;
+    uint8_t max_vel;
+    uint8_t min_vel;
     uint32_t pwm;
   } Motors;
 
@@ -58,6 +61,16 @@ class Wheelmotor : public rclcpp::Node
   std::shared_ptr<rclcpp::Node> nh_;
   std::unique_ptr<Odometry> wheel_odom_;
   rclcpp::TimerBase::SharedPtr publish_timer_;
+
+  // Serial comm.
+  SerialPort serial_port;
+  SerialStream serial_stream;
+
+  // Velocidades y PMW
+  int sp_vel_right; 
+  int sp_vel_left;
+  int pmw_right; 
+  int pmw_left;
 
 };
 #endif // AGL_WHEELMOTOR_HPP_

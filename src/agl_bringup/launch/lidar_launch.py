@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Authors: Iñaki Lorente
+# Authors: Iñaki Lorente Albert Arlà
 
 import os
 from launch import LaunchDescription

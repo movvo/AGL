@@ -6,7 +6,7 @@
 */
 
 #include "rclcpp/rclcpp.hpp"
-#include "me00_control/control_manager.hpp"
+#include "agl_control/control_manager.hpp"
 
 int main(int argc, char * argv[]) {
 	rclcpp::init(argc, argv);

@@ -5,8 +5,8 @@
    Contact: support.idi@ageve.net
 */
 
-#ifndef ME00_JOYSTICK_JOYSTICK_HPP_
-#define ME00_JOYSTICK_JOYSTICK_HPP_
+#ifndef AGL_JOYSTICK_JOYSTICK_HPP_
+#define AGL_JOYSTICK_JOYSTICK_HPP_
 
 #include <chrono>
 #include <memory>
@@ -52,12 +52,22 @@ class Joystick : public rclcpp::Node, public ageve_utils::sm::StateMachine
   typedef struct
   {
     rclcpp::Parameter  autorun;
-    rclcpp::Parameter  axes_x;
-    rclcpp::Parameter  axes_y;
+    rclcpp::Parameter  axes_pad_left_right;
+    rclcpp::Parameter  axes_pad_up_down;
+    rclcpp::Parameter  axes_r2;
+    rclcpp::Parameter  axes_l2;
+    rclcpp::Parameter  axes_arrow_left_right;
+    rclcpp::Parameter  axes_arrow_up_down;
     rclcpp::Parameter  button_a;
     rclcpp::Parameter  button_b;
     rclcpp::Parameter  button_x;
     rclcpp::Parameter  button_y;
+    rclcpp::Parameter  button_l1;
+    rclcpp::Parameter  button_r1;
+    rclcpp::Parameter  button_select;
+    rclcpp::Parameter  button_start;
+    rclcpp::Parameter  button_pad_left;
+    rclcpp::Parameter  button_pad_right;
     rclcpp::Parameter  linear_gain;
     rclcpp::Parameter  angular_gain;
     rclcpp::Parameter  velocity;
@@ -80,6 +90,7 @@ class Joystick : public rclcpp::Node, public ageve_utils::sm::StateMachine
     Variables
   ====================*/
   double velocity = 1.0;
+  bool joy_analog = false;
 
   /*==================== 
     Functions
@@ -88,4 +99,4 @@ class Joystick : public rclcpp::Node, public ageve_utils::sm::StateMachine
 
 
 };
-#endif // ME00_JOYSTICK_JOYSTICK_HPP_
+#endif // AGL_JOYSTICK_JOYSTICK_HPP_

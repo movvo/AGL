@@ -5,8 +5,8 @@
    Contact: support.idi@ageve.net
 */
 
-#include "me00_control/control_manager.hpp"
-#include "me00_control/errors.hpp"
+#include "agl_control/control_manager.hpp"
+#include "agl_control/errors.hpp"
 
 // SM
 using namespace ageve_utils::sm;

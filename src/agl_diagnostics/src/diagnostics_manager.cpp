@@ -6,7 +6,7 @@
 */
 
 
-#include "me00_diagnostics/diagnostics_manager.hpp"
+#include "agl_diagnostics/diagnostics_manager.hpp"
 #include <fstream>
 #include <filesystem>
 #include <cstdlib>
@@ -389,7 +389,7 @@ std::string DiagnosticManager::get_params_yaml()
 	boost::replace_all(directory,"\n","");
 	std::string exec_directory = executeCommand(std::string("cd ")+directory+std::string(" && echo $(pwd)"));
 	boost::replace_all(exec_directory,"\n","");
-	YAML::Node config = YAML::LoadFile(exec_directory+"/../../../me00_bringup/share/me00_bringup/config/params.yaml");
+	YAML::Node config = YAML::LoadFile(exec_directory+"/../../../agl_bringup/share/agl_bringup/config/params.yaml");
 	std::string yaml2str = YAML::Dump(config);
 	return yaml2str;
 }

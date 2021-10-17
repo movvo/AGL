@@ -8,5 +8,5 @@ y enviar la señal PWM correspondiente.
 
 ## Dependencias
 
-Este paquete tiene dependecias del paquete de `ageve_interfaces`.
+- `sudo apt install libserial-dev`
 

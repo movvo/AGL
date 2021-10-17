@@ -1,8 +1,7 @@
-
-# ===========================
-#  Namespace (/** es todo)
-# ===========================
-/**:
+  # ===========================
+  #  Namespace (/** es todo)
+  # ===========================
+  /**:
   ros__parameters:
     # ----- AGL_joystick PARAMS -----
     start:
@@ -10,7 +9,7 @@
       - status
 
     autorun: False
-    
+
     commands:
       #ubuntu 18.04 GAMEPAD BLUETOOTH
       ##################################

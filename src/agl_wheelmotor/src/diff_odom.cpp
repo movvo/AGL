@@ -1,7 +1,13 @@
-#include "me00_wheelmotor/diff_odom.h"
+/*
+   Copyright 2021 @ AGEVE
+   ---------------------------------------------------------
+   Authors: Iñaki Lorente
+   Contact: support.idi@ageve.net
+*/
+
+#include "agl_wheelmotor/diff_odom.hpp"
 
 using std::placeholders::_1;
-using namespace roboteq;
 
 Odometry::Odometry(std::shared_ptr<rclcpp::Node> &nh) : nh_(nh) {
 	Initialize();
@@ -9,8 +15,8 @@ Odometry::Odometry(std::shared_ptr<rclcpp::Node> &nh) : nh_(nh) {
 
 void Odometry::Initialize() {
 	//Retrieving parameters of nh_ node
-	nh_->declare_parameter<double>("odom.wheel_separation", 0.2);
-    nh_->declare_parameter<double>("odom.wheel_radius", 0.1);
+	nh_->declare_parameter<double>("odom.wheel_separation", 0.4);
+    nh_->declare_parameter<double>("odom.wheel_radius", 0.6);
     nh_->declare_parameter<std::string>("odom.frame_id", "odom");
     nh_->declare_parameter<std::string>("odom.child_frame_id", "base_link");
 	nh_->declare_parameter<bool>("odom.publish_tf", false);

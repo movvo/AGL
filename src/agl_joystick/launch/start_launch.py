@@ -17,7 +17,6 @@ def generate_launch_description():
     nodes_dic = launcher.set_dictionary(package=Package, ros_name='Joystick')
     nodes_dic = launcher.set_dictionary(package='joy', 
                                         ros_name='Joy',
-                                        executable='joy_node',
-                                        topics='')
+                                        executable='joy_node')
                                         
     return launcher.launch_nodes(nodes_dic)

@@ -25,8 +25,8 @@ agl_1:
       motor:
           usb_port: "/dev/ttyACM0"
           cmd_vel_pkg: "Control"
-          max_vel: 100
-          min_vel: -100
+          max_vel: 200
+          min_vel: -200
 
       odom:
         wheel_separation: 0.400

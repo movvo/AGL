@@ -66,24 +66,45 @@ void Wheelmotor::add_odom()
 void Wheelmotor::cmd_vel_callback(const geometry_msgs::msg::Twist::SharedPtr msg)
 {
   // Conversion linear/angular a PMW
-  // if (((static_cast<int>(msg->linear.x) >= config_.min_vel) && (static_cast<int>(msg->linear.x) <= config_.max_vel)) &&
-  //    ((static_cast<int>(msg->angular.z) >= config_.min_vel) && (static_cast<int>(msg->angular.z) <= config_.max_vel))) 
-  // {
-  // Set velocidades
-  sp_vel_right = msg->linear.x + msg->angular.z;
-  sp_vel_left = msg->linear.x - msg->angular.z;
+  // --------------------------------
+
+  // LINEAR VEL
+  if (static_cast<int>(msg->linear.x) > config_.max_vel){
+    mapped_vel_linear = config_.max_vel;
+    RCLCPP_INFO(this->get_logger(),"[ERROR] linear velocity out of range, set to max vel");
+  }else if (static_cast<int>(msg->linear.x) < config_.min_vel){
+    mapped_vel_linear = config_.min_vel;
+    RCLCPP_INFO(this->get_logger(),"[ERROR] linear velocity out of range, set to min vel");
+  }else{
+    mapped_vel_linear = msg->linear.x;
+  }
+
+  // ANGULAR VEL
+  if (static_cast<int>(msg->angular.z) > config_.max_vel){
+    mapped_vel_angular = config_.max_vel;
+    RCLCPP_INFO(this->get_logger(),"[ERROR] angular velocity out of range, set to max vel");
+  }else if (static_cast<int>(msg->angular.z) < config_.min_vel){
+    mapped_vel_angular = config_.min_vel;
+    RCLCPP_INFO(this->get_logger(),"[ERROR] angular velocity out of range, set to min vel");
+  }else{
+    mapped_vel_angular = msg->angular.z;
+  }
+
+  // Left and right motor VEL
+  sp_vel_right = mapped_vel_linear + mapped_vel_angular;
+  sp_vel_left = mapped_vel_linear - mapped_vel_angular;
 
   // Set porcentaje velocidad
-  pmw_right = (sp_vel_right * 100)/config_.max_vel;
-  pmw_left = (sp_vel_left * 100)/config_.max_vel;
+  pmw_right = (sp_vel_right / config_.max_vel)*100;
+  pmw_left = (sp_vel_left / config_.max_vel)*100;
 
   // Send pmw to arduino
   serial_port.WriteByte(static_cast<unsigned char>(pmw_left));
   serial_port.WriteByte(static_cast<unsigned char>(pmw_right));
 
-  // std::cout << "\tLeft:\t" << std::to_string(pmw_left) << std::endl
-  //             << "\tRight:\t" << std::to_string(pmw_right) << std::endl
-  //             << std::endl ;
+  std::cout << "\tLeft:\t" << std::to_string(pmw_left) << std::endl
+              << "\tRight:\t" << std::to_string(pmw_right) << std::endl
+              << std::endl ;
   // }
   // else
   // {

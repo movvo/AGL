@@ -69,6 +69,8 @@ class Wheelmotor : public rclcpp::Node
   int sp_vel_left;
   int pmw_right; 
   int pmw_left;
+  int mapped_vel_linear;
+  int mapped_vel_angular;
 
 };
 #endif // AGL_WHEELMOTOR_HPP_

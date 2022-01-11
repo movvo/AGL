@@ -14,7 +14,7 @@ Start:
     - Joy           # NO Status
     - Lidar         # NO Status
     # TODO: esto queda feo ponerlo aqui si tiene Status...
-    - Wheelmotor
+    # - Wheelmotor
 
   nodes_list:
     - Wheelmotor 

@@ -4,8 +4,7 @@
   <name>agl_wheelmotor</name>
   <version>0.0.0</version>
   <description>This packages includes the drivers of roboteq motorwheel</description>
-  <maintainer email="support.idi@ageve.net">
-        iggyrrieta, 
+  <maintainer email="support.idi@movvo.eu">
         albertarla, 
         MartiBolet
   </maintainer>

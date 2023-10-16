@@ -18,6 +18,8 @@
 # Ignore all local history of files
 **/.history
 
+**/params.yaml
+
 # Jupyter
 # Notebooks/.ipynb_checkpoints
 # src/me00_bringup/launch/__pycache__/launch_class.cpython-38.pyc

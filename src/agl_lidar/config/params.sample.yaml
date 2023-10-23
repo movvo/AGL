@@ -1,5 +1,5 @@
 # /**:
-agl_bringup:
+agl:
     Lidar:
       ros__parameters:
         topic_name: 'scan'

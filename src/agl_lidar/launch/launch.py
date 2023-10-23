@@ -30,7 +30,7 @@ def generate_launch_description():
     # Node to launch
     node = Node(
             package='rplidar_ros',
-            namespace='agl_bringup',
+            namespace='agl',
             name='Lidar',
             executable='rplidar_node',
             arguments=['--ros-args','--log-level','info'],

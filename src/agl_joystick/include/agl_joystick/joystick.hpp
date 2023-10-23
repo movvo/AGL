@@ -82,7 +82,7 @@ class Joystick  {
             Functions
         ====================*/
 
-        /// @brief 
+        /// @brief Sets to 0 all angular and linear velocities.
         void ResetVelocities();
         
         /*!

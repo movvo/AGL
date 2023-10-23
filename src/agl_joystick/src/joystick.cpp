@@ -19,7 +19,7 @@ Joystick::Joystick(rclcpp::Node::SharedPtr nh) :
     nh_(nh)
 {
     // Declare parameters
-    nh_->declare_parameter("cmd_vel_topic", "cmd_vel");
+    nh_->declare_parameter("cmd_vel_topic", "/cmd_vel");
     nh_->declare_parameter("commands.axes_left_pad_left_right", 0);
     nh_->declare_parameter("commands.axes_left_pad_up_down", 1);
     nh_->declare_parameter("commands.axes_right_pad_left_right", 2);
@@ -89,7 +89,7 @@ bool Joystick::Initialize()
     }
 
     // Initialize publishers
-    std::string cmd_vel_topic  = "/"+parameters_.cmd_vel_topic.as_string();
+    std::string cmd_vel_topic  = parameters_.cmd_vel_topic.as_string();
 	cmd_vel_pub_ = nh_->create_publisher<geometry_msgs::msg::Twist>(cmd_vel_topic, rclcpp::QoS(rclcpp::KeepLast(10)));
 
     // Initialize subscribers

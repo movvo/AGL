@@ -4,7 +4,7 @@ from launch import LaunchDescription
 from launch_ros.actions import Node
 from socket import gethostname
 
-NAMESPACE = gethostname().replace("-", "_")
+NAMESPACE = 'agl'
 PACKAGE_NAME = 'agl_joystick'
 
 def generate_launch_description():

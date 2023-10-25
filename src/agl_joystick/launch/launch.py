@@ -10,7 +10,7 @@ PACKAGE_NAME = 'agl_joystick'
 def generate_launch_description():
     # Get config file
     joy_config_file = os.path.join(get_package_share_directory(PACKAGE_NAME), "config", "joy_params.yaml")
-    joystick_config_file = os.path.join(get_package_share_directory(PACKAGE_NAME), "config", "joystick_params.yaml")
+    joystick_config_file = os.path.join(get_package_share_directory(PACKAGE_NAME), "config", "params.yaml")
 
     # Nodes to launch
     return LaunchDescription([

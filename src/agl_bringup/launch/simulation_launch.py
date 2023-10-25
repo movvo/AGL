@@ -41,6 +41,7 @@ from typing import Tuple, Dict
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node, SetParameter, PushRosNamespace
 from launch import LaunchDescription
+from launch.actions.execute_process import ExecuteProcess
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, GroupAction, SetEnvironmentVariable
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration, PythonExpression
@@ -64,16 +65,20 @@ def BringupParams(config_file):
             for node in x[package]:
                nodes_list.append(node)
 
-        # Filter By Black List
-        nodes_list = [node for node in nodes_list if node not in data['Start']['black_list']]
-
     except Exception as e:
-        logger.error(f"Parametross de {pkg} incorrectos. ¿Existe Start?")
+        logger.error(f"Parametross de {config_file} incorrectos. ¿Existe Start?")
         print(f"DESCRIPCIÓN ERROR --> {e} on BringupParams, line {sys.exc_info()[-1].tb_lineno}")
     
     return packages_list, nodes_list
 
 def generate_launch_description():
+
+    world = os.path.join(get_package_share_directory('agl_description'), 
+                        'world', 
+                        'agl_world')
+
+    namespace = os.getenv('ATLAS_NAMESPACE') if 'ATLAS_NAMESPACE' in os.environ.keys() else ""
+    ns_instruction = f'__ns:=/{namespace}'
     # Configs files
     start = os.path.join(get_package_share_directory(PACKAGE_NAME), "config", "start_simulation.yaml")
 
@@ -87,7 +92,7 @@ def generate_launch_description():
         
       packages_actions.append(
       IncludeLaunchDescription(
-      PythonLaunchDescriptionSource(os.path.join(launch_dir, 'launch', 'start_launch.py')),
+      PythonLaunchDescriptionSource(os.path.join(launch_dir, 'launch', 'launch.py')),
       launch_arguments={
       'use_sim_time': 'True'
       }.items()
@@ -95,5 +100,17 @@ def generate_launch_description():
       )
     
     return LaunchDescription([
-        GroupAction(packages_actions)
+        GroupAction(packages_actions),
+
+        ExecuteProcess(
+            cmd=[
+                f'gazebo', 
+                '--verbose',
+                world,
+                '-s',
+                f'libgazebo_ros_init.so',
+                '--ros-args --remap',
+                f'{ns_instruction if namespace else ""}'
+            ],
+            output='screen')
     ])

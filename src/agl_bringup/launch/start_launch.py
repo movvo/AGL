@@ -59,7 +59,7 @@ def BringupParams(config_file: str):
                nodes_list.append(node)
 
       #   Filter By Black List
-        nodes_list = [node for node in nodes_list if node not in data['Start']['black_list']]
+      #   nodes_list = [node for node in nodes_list if node not in data['Start']['black_list']]
 
     except Exception as e:
         logger.error(f"Parametros {config_file} incorrectos. ¿Existe Start?")

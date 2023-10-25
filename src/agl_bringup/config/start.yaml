@@ -1,0 +1,20 @@
+
+# ===================
+#     START
+# ===================
+Start:
+  # ----- NODOS A EJECTUAR, Solo estos se arrancaran mediante start_launch.py -----
+  # Tener en cuenta que los nodos son del tipo --> <modelo>_<nombrePackage> (i.e me00_laser)
+  # Por lo tanto en esta lista deberia aparecer unicamente lo siguiente:
+  black_list: # De nodos
+  #   - Description             # NO Status
+    - Joy                     # NO Status
+
+  packages_list:
+    - agl_lidar:       
+      - Lidar
+    - agl_description:
+      # - Description por revisar, estructura diferente a me00
+    - agl_joystick:
+      - Joystick
+      - Joy

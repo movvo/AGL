@@ -1,22 +1,22 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>agl_bringup</name>
+  <name>agl_description</name>
   <version>0.0.0</version>
-  <description>Package to launch all the me00 system</description>
-  <maintainer email="support.idi@ageve.net">
-        iggyrrieta, 
-        albertarla, 
+  <description>AGL description</description>
+  <maintainer email="support.idi@movvo.eu">
+        AlbertArla, 
         MartiBolet,
+        BernatGaston,
+        MariaMercade, 
         DavidValencia
   </maintainer> 
-  <license>TODO: License declaration</license>
+
+  <license>Movvo Robotics 2023. All rights reserved</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   
-  <depend>xacro</depend>
-  <depend>rplidar_ros</depend>
-
+  <depend>realsense2_description</depend>
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 

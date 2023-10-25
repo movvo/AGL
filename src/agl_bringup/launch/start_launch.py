@@ -76,12 +76,12 @@ def generate_launch_description():
 
     packages_actions = []
     for package in packages_to_execute:
-        launch_dir = get_package_share_directory(package)
+      launch_dir = get_package_share_directory(package)
 
-            packages_actions.append(
-                IncludeLaunchDescription(
-                    PythonLaunchDescriptionSource(os.path.join(launch_dir, 'launch', 'start_launch.py'))
-                )
-            )
+      packages_actions.append(
+      IncludeLaunchDescription(
+      PythonLaunchDescriptionSource(os.path.join(launch_dir, 'launch', 'launch.py'))
+      )
+      )
     
     return LaunchDescription(packages_actions)

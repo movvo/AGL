@@ -75,7 +75,7 @@ def generate_launch_description():
 
     world = os.path.join(get_package_share_directory('agl_description'), 
                         'world', 
-                        'agl_world')
+                        'agl_world.sdf')
 
     namespace = os.getenv('ATLAS_NAMESPACE') if 'ATLAS_NAMESPACE' in os.environ.keys() else ""
     ns_instruction = f'__ns:=/{namespace}'

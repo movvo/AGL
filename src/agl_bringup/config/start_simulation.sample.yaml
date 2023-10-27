@@ -10,8 +10,8 @@ Start:
   packages_list:
     - agl_lidar:       
       - Lidar
-    # - agl_description:
-      # - Description por revisar, estructura diferente a me00
+    - agl_description:
+      - Description
     - agl_joystick:
       - Joystick
       - Joy

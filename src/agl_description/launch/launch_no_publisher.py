@@ -21,8 +21,6 @@ def generate_launch_description():
                                     description='Flag to enable joint_state_publisher_gui')
     model_arg = DeclareLaunchArgument(name='model', default_value=str(default_model_path),
                                       description='Absolute path to robot urdf file')
-    rviz_arg = DeclareLaunchArgument(name='rvizconfig', default_value=str(default_rviz_config_path),
-                                     description='Absolute path to rviz config file')
 
     robot_description = ParameterValue(Command(['xacro ', LaunchConfiguration('model')]),
                                        value_type=str)
@@ -73,37 +71,10 @@ def generate_launch_description():
         emulate_tty=True
     )
 
-    # Depending on gui parameter, either launch joint_state_publisher or joint_state_publisher_gui
-    joint_state_publisher_node = Node(
-        namespace="agl",
-        package='joint_state_publisher',
-        executable='joint_state_publisher',
-        condition=UnlessCondition(LaunchConfiguration('gui'))
-    )
-
-    joint_state_publisher_gui_node = Node(
-        namespace="agl",
-        package='joint_state_publisher_gui',
-        executable='joint_state_publisher_gui',
-        condition=IfCondition(LaunchConfiguration('gui'))
-    )
-
-    rviz_node = Node(
-        package='rviz2',
-        executable='rviz2',
-        name='rviz2',
-        output='screen',
-        arguments=['-d', LaunchConfiguration('rvizconfig')],
-    )
-
     return LaunchDescription([
         gui_arg,
         sim_time_arg,
         model_arg,
-        rviz_arg,
-        joint_state_publisher_node,
-        joint_state_publisher_gui_node,
         andresito,
         turtle_burg,
-        rviz_node
     ])

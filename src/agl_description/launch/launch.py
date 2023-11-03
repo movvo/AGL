@@ -78,14 +78,22 @@ def generate_launch_description():
         namespace="agl",
         package='joint_state_publisher',
         executable='joint_state_publisher',
-        condition=UnlessCondition(LaunchConfiguration('gui'))
+        condition=UnlessCondition(LaunchConfiguration('gui')),
+        remappings=[
+            *remaps,
+            ("robot_description", "Description/robot_description")
+        ],
     )
 
     joint_state_publisher_gui_node = Node(
-        namespace="agl",
+        # namespace="agl",
         package='joint_state_publisher_gui',
         executable='joint_state_publisher_gui',
-        condition=IfCondition(LaunchConfiguration('gui'))
+        condition=IfCondition(LaunchConfiguration('gui')), 
+        remappings=[
+            *remaps,
+            ("robot_description", "Description/robot_description")
+        ],
     )
 
     rviz_node = Node(

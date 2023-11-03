@@ -1,0 +1,30 @@
+/**:
+  ros__parameters:
+    cmd_vel_topic: '/cmd_vel'
+    commands:
+      axes_left_pad_left_right: 0
+      axes_left_pad_up_down: 1
+      axes_right_pad_left_right: 2
+      axes_right_pad_up_down: 3
+      axes_r2: 4
+      axes_l2: 5
+      axes_arrow_left_right: 6
+      axes_arrow_up_down: 7
+      
+      button_a: 0
+      button_b: 1
+      button_x: 3
+      button_y: 4
+      button_l1: 6
+      button_r1: 7
+      button_l2: 8
+      button_select: 10
+      button_start: 11
+      button_pad_left: 13
+      button_pad_right: 14
+
+    speed:
+      linear_gain: 1.0
+      max_linear_vel: 0.5
+      angular_gain: 1.0
+      max_angular_vel: 0.2

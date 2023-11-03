@@ -1,0 +1,8 @@
+/**:
+  ros__parameters:
+    autorepeat_rate: 5.0
+    coalesce_interval_ms: 1
+    deadzone: 0.12
+    device_id: 0
+    device_name: ''
+    sticky_buttons: false

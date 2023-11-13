@@ -1,30 +1,3 @@
-# """
-#    Copyright 2021 @ AGEVE
-#    ---------------------------------------------------------
-#    Authors: Iñaki Lorente, Albert Arlà Romero
-#    Contact: support.idi@ageve.net
-# """
-
-# import os
-# from ament_index_python.packages import get_package_share_directory
-# from ageve_utils.launch.gazebo import QuickGazebo
-# from ageve_utils.launch.start import QuickClass
-# from ageve_utils.general.yaml import bringupParams, getNamespace
-# from ageve_utils.general.system import getPkgName
-
-# # World file
-# world = os.path.join(get_package_share_directory('me00_description'), 
-#                      'world/ageve_me00', 
-#                      'ageve_me00')
-                    
-# # Launch
-# def generate_launch_description():
-#    Package = getPkgName(__file__)
-#    packages_list = bringupParams(Package)
-#    namespace = getNamespace(Package)
-#    launcher = QuickClass(Package, namespace)
-#    return launcher.launch_simulation(packages_list,  world_name=world)  
-
 """
    Copyright 2023 @ MOVVO ROBOTICS
    ---------------------------------------------------------
@@ -54,22 +27,17 @@ def BringupParams(config_file):
     cfg = open(config_file, 'r')
     data = yaml.safe_load(cfg)
     packages_list = []
-    nodes_list = list()
     try:
         # Get all packages to execute
         for x in data['Start']['packages_list']:
             package = list(x.keys())[0]
             packages_list.append(package)
-            
-            # Get all nodes of each package
-            for node in x[package]:
-               nodes_list.append(node)
 
     except Exception as e:
         logger.error(f"Parametross de {config_file} incorrectos. ¿Existe Start?")
         print(f"DESCRIPCIÓN ERROR --> {e} on BringupParams, line {sys.exc_info()[-1].tb_lineno}")
     
-    return packages_list, nodes_list
+    return packages_list
 
 def generate_launch_description():
 
@@ -77,13 +45,11 @@ def generate_launch_description():
                         'world', 
                         'agl_world.sdf')
 
-    namespace = os.getenv('ATLAS_NAMESPACE') if 'ATLAS_NAMESPACE' in os.environ.keys() else ""
-    ns_instruction = f'__ns:=/{namespace}'
     # Configs files
     start = os.path.join(get_package_share_directory(PACKAGE_NAME), "config", "start_simulation.yaml")
 
     # Launch files to launch
-    packages_to_execute, nodes_list = BringupParams(start)
+    packages_to_execute = BringupParams(start)
 
     packages_actions = []
     for package in packages_to_execute:
@@ -110,7 +76,6 @@ def generate_launch_description():
                 '-s',
                 f'libgazebo_ros_init.so',
                 '--ros-args --remap',
-                f'{ns_instruction if namespace else ""}'
             ],
             output='screen')
     ])

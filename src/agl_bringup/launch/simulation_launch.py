@@ -46,7 +46,7 @@ def generate_launch_description():
                         'agl_world.sdf')
 
     # Configs files
-    start = os.path.join(get_package_share_directory(PACKAGE_NAME), "config", "start_simulation.yaml")
+    start = os.path.join(get_package_share_directory(PACKAGE_NAME), "config", "start_simulation.sample.yaml")
 
     # Launch files to launch
     packages_to_execute = BringupParams(start)
@@ -75,7 +75,6 @@ def generate_launch_description():
                 world,
                 '-s',
                 f'libgazebo_ros_init.so',
-                '--ros-args --remap',
             ],
             output='screen')
     ])

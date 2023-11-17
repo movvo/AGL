@@ -43,7 +43,7 @@ def BringupParams(config_file: str):
 
 def generate_launch_description():
     # Configs files
-    start = os.path.join(get_package_share_directory(PACKAGE_NAME), "config", "start.yaml")
+    start = os.path.join(get_package_share_directory(PACKAGE_NAME), "config", "start.sample.yaml")
 
     # Launch files to launch
     packages_to_execute = BringupParams(start)

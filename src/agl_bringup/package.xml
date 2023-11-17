@@ -3,7 +3,7 @@
 <package format="3">
   <name>agl_bringup</name>
   <version>0.0.0</version>
-  <description>Package to launch all the me00 system</description>
+  <description>Package to launch all the agl system</description>
   <maintainer email="support.idi@ageve.net">
         iggyrrieta, 
         albertarla, 
@@ -15,7 +15,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
   
   <depend>xacro</depend>
-  <!-- <depend>rplidar_ros</depend> -->
+  <depend>rplidar_ros</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

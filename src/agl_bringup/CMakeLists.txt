@@ -12,7 +12,6 @@ endif()
 
 find_package(xacro REQUIRED)
 find_package(ament_cmake REQUIRED)
-find_package(rplidar_ros REQUIRED)
 
 install(DIRECTORY
   launch
@@ -22,6 +21,5 @@ install(DIRECTORY
   config
   DESTINATION share/${PROJECT_NAME}
 )
-
 
 ament_package()

@@ -1,75 +1,89 @@
-// ===================
-// Define names to pins
-// ===================
-int m1_enA = 2;       // MOTOR RIGHT ENA
-int m1_in1 = 6;       // MOTOR RIGHT IN1
-int m1_in2 = 7;       // MOTOR RIGHT IN2
+// Interruption times and speed calculation variables for right servo.
+volatile double currentInterruptionTimeR = 0; 
+volatile double pastInterruptionTimeR = 0;
+volatile double deltaInterruptionTimeR = 0;
+volatile double currentTime = 0;
 
-int m2_enB = 3;       // MOTOR LEFT ENB
-int m2_in3 = 4;       // MOTOR LEFT IN3
-int m2_in4 = 5;       // MOTOR LEFT IN4
+int IN3_MR = 5;
+int IN4_MR = 4;
 
-int m1_enc_1 = A0;    // MOTOR LEFT ENCODER
-int m1_enc_2 = A1;    // MOTOR LEFT ENCODER
-int m2_enc_1 = A2;    // MOTOR LEFT ENCODER
-int m2_enc_2 = A3;    // MOTOR LEFT ENCODER
+int encoderR = 19; // Right encoder pin.
+int rWheel = 11;   // PWM pin for right servo, right wheel.
 
-//int rotDirection = 0;
-//int count = 0;
+double rFrequency = 0; // Interruption frequency for right wheel.
+double Wr = 0;         // Angular Velocity Right.
+double Vr = 0;         // Linear Velocity Right.
 
-// ===================
+double N = 24.0;                                  // Reads encoder.
+double gear = 74.83;                              // Gear ratio 74.83:1.
+float diameter = 10;                              // Wheel diamenter in cm.
+float length = 35;                                // Lenght between to wheels, necessary for two wheels speed control.
+int tickCounter = 3;                              // Times per tick in encoder for which we'll calculate speed in order to reduce signal noise.
+int CR = 0;                                       // Counter < tickCounter. If equal calculate speed.
+int vecSize = 10;                                 // Vector size for rVector.
+float rVector[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // Mean time frequency calculation vector for reducing signal noise.
+
 void setup()
-// ===================
 {
-  // Pins
-  pinMode(m1_enA, OUTPUT);
-  pinMode(m1_in1, OUTPUT);
-  pinMode(m1_in2, OUTPUT);
-  pinMode(m2_enB, OUTPUT);
-  pinMode(m2_in3, OUTPUT);
-  pinMode(m2_in4, OUTPUT);
 
-  // Led
-  pinMode(LED_BUILTIN, OUTPUT);
+  // Keep an eye on the wiring as it can produce unexpected behavior. Poorly adjusted wires and so on.
+  pinMode(encoderR, INPUT);
+  pinMode(rWheel, OUTPUT);
 
-  //Init Serial Readings
-  Serial.begin(9600);
-  Serial.setTimeout(50);
+  digitalWrite(encoderR, HIGH);
+  digitalWrite(IN3_MR, HIGH);
+  digitalWrite(IN4_MR, LOW);
+
+  attachInterrupt(digitalPinToInterrupt(encoderR), REncoder, FALLING); // PIN Interruption set to detect a falling flank in encoderR pin, it'll activate REncoder function.
+  Serial.begin(9600);                                                  // Start of Serial communication.
 }
 
-// ===================
-void loop()
-// ===================
+void REncoder() // Interruption function for right wheel encoder.
 {
-  if (Serial.available())
+
+  CR++;
+  currentInterruptionTimeR = millis();
+
+  if (CR == tickCounter)
   {
-    int potValue = Serial.parseInt();
-    /* Map an analog value to 8 bits (0 to 255) */
-    int pwmOutput = map(potValue, 0, 1023, 0 , 255);
-    Serial.print(potValue);
-    analogWrite(m1_enA, pwmOutput);   // Send PWM signal to L298N Enable pin
-    analogWrite(m2_enB, pwmOutput);    // Send PWM signal to L298N Enable pin
-    if (potValue > 0){
-      // Forward
-      digitalWrite(m1_in1, LOW);
-      digitalWrite(m1_in2, HIGH);
-      digitalWrite(m2_in3, HIGH);
-      digitalWrite(m2_in4, LOW);
-      digitalWrite(LED_BUILTIN, HIGH);  // Led ON
-    }else{
-      // Backwards
-      digitalWrite(m1_in1, HIGH);
-      digitalWrite(m1_in2, LOW);
-      digitalWrite(m2_in3, LOW);
-      digitalWrite(m2_in4, HIGH);
-      digitalWrite(LED_BUILTIN, HIGH);  // Led ON
-    } 
+    float mean = 0;
+    deltaInterruptionTimeR = currentInterruptionTimeR - pastInterruptionTimeR; // Time difference between encoder reads/ticks.
+
+    for (int i = 0; i < vecSize - 1; i++)
+    {
+      rVector[i] = rVector[i + 1]; // Vector filling for later mean calculation.
+    }
+    rVector[vecSize - 1] = deltaInterruptionTimeR; // Vector last value.
+
+    for (int i = 0; i < vecSize; i++)
+    {
+      mean = rVector[i] + mean; // Vector's mean calculation.
+    }
+    mean = mean / vecSize;
+    deltaInterruptionTimeR = mean; // Delta becomes the calculated mean in order to reduce noise.
+
+    rFrequency = (1000) / deltaInterruptionTimeR; // Right wheel frequency.
+
+    pastInterruptionTimeR = currentInterruptionTimeR; // Past interruption time actualization.
+    CR = 0;                                           // Counter for tickCounter reset.
   }
-  else {
-    int potValue = 0; // Read serial potenciometer value
-    analogWrite(m1_enA, 0); // Send PWM signal to L298N Enable pin
-    analogWrite(m2_enB, 0); // Send PWM signal to L298N Enable pin
+}
+
+void loop()
+{
+
+  currentTime = millis();
+
+  double realDelta = (currentTime - pastInterruptionTimeR);
+
+  if (realDelta >= 8 * tickCounter) // Si el motor esta parado nuestra frecuencia de lectura deberá ser 0. At 0 velocity our frequency should be 0.
+  {
+    rFrequency = 0; // The longest elapsed time between reads is no more than 20ms, we put 24ms.
   }
-    
-  delay(10);
+
+  Wr = (tickCounter * ((2 * 3.141516) / N) * rFrequency) / gear; // Angular speed Rad/s.
+  Vr = Wr * (diameter / 2);                                      // Linear speed cm/s.
+
+  Serial.println(Vr);     // Linear speed print.
+  analogWrite(rWheel, 0); // PWM applied to right servo.
 }

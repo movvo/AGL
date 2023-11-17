@@ -76,7 +76,7 @@ void loop()
 
   double realDelta = (currentTime - pastInterruptionTimeR);
 
-  if (realDelta >= 8 * tickCounter) // Si el motor esta parado nuestra frecuencia de lectura deberá ser 0. At 0 velocity our frequency should be 0.
+  if (realDelta >= 8 * tickCounter) // At 0 velocity our frequency should be 0.
   {
     rFrequency = 0; // The longest elapsed time between reads is no more than 20ms, we put 24ms.
   }

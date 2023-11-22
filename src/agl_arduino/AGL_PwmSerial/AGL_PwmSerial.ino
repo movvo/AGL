@@ -40,13 +40,12 @@ void setup()
 
 void REncoder() // Interruption function for right wheel encoder.
 {
-
   CR++;
-  currentInterruptionTimeR = millis();
 
-  if (CR == tickCounter)
+  if (CR == tickCounter && firstEncoderRead == false)
   {
     float mean = 0;
+    currentInterruptionTimeR = millis();
     deltaInterruptionTimeR = currentInterruptionTimeR - pastInterruptionTimeR; // Time difference between encoder reads/ticks.
 
     for (int i = 0; i < vecSize - 1; i++)
@@ -55,17 +54,34 @@ void REncoder() // Interruption function for right wheel encoder.
     }
     rVector[vecSize - 1] = deltaInterruptionTimeR; // Vector last value.
 
-    for (int i = 0; i < vecSize; i++)
+    if (encoderCounterFilter < vecSize)
     {
-      mean = rVector[i] + mean; // Vector's mean calculation.
+      encoderCounterFilter++;
+      rFrequency = (1000) / deltaInterruptionTimeR; // Right wheel frequency.
     }
-    mean = mean / vecSize;
-    deltaInterruptionTimeR = mean; // Delta becomes the calculated mean in order to reduce noise.
+    else
+    {
+      for (int i = 0; i < vecSize; i++)
+      {
+        mean = rVector[i] + mean; // Vector's mean calculation.
+      }
+      mean = mean / vecSize;
+      deltaInterruptionTimeR = mean; // Delta becomes the calculated mean in order to reduce noise.
 
-    rFrequency = (1000) / deltaInterruptionTimeR; // Right wheel frequency.
+      rFrequency = (1000) / deltaInterruptionTimeR; // Right wheel frequency.
+    }
 
     pastInterruptionTimeR = currentInterruptionTimeR; // Past interruption time actualization.
-    CR = 0;                                           // Counter for tickCounter reset.
+  }
+
+  if (CR == tickCounter && firstEncoderRead == true)
+  {
+    firstEncoderRead = false;
+  }
+
+  if (CR == tickCounter)
+  {
+    CR = 0; // Counter for tickCounter reset.
   }
 }
 

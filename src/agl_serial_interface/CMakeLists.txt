@@ -11,6 +11,11 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(serial REQUIRED)
+
+# ament_target_dependencies(${PROJECT_NAME}_lib 
+#                           serial 
+#                         )
 
 install(DIRECTORY
   launch

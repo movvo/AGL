@@ -1,7 +1,7 @@
 # Serial server node
 import rclpy
 from rclpy.node import Node
-import serial
+import serial   #sudo apt install python3-serial
 
 # Handle Twist messages, linear and angular velocity
 from geometry_msgs.msg import Twist
@@ -98,10 +98,10 @@ class SerialServer(Node):
 			
 
 def main(args=None):
-	rclpy.init(args=args)
-	serial_server = SerialServer()
+    rclpy.init(args=args)
+    serial_server = SerialServer()
     serial_server.recieve_cmd()
-	rclpy.spin(serial_server)
+    rclpy.spin(serial_server)
 
 if __name__ == '__main__':
 	main()

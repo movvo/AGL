@@ -111,6 +111,7 @@ void loop()
   {
     // Angular velocity to PWM transformation via polinomial regression.
     double kp = 0.05;
+
     double ki = 1;
     double e = wt - Wr;
     double eintegral = eintegral + e * deltaInterruptionTimeR;
@@ -169,5 +170,6 @@ void loop()
 ////////////////////////////////////////////////////////////////////
 
 
-  analogWrite(rWheel, 0); // PWM applied to right servo.
+  analogWrite(rWheel, pwr); // PWM applied to right servo.
+
 }

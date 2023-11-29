@@ -18,7 +18,6 @@ install(DIRECTORY
   urdf
   model
   world
-  mesh
   DESTINATION share/${PROJECT_NAME}
 )
 

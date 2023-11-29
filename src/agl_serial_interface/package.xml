@@ -4,26 +4,10 @@
   <name>agl_serial_interface</name>
   <version>0.0.0</version>
   <description>AGL Serial Interface</description>
-  <maintainer email="support.idi@ageve.net">
-        albertarla, 
-        MartiBolet,
-        DavidValencia
-  </maintainer> 
-  <license>TODO: License declaration</license>
-
-  <buildtool_depend>ament_cmake</buildtool_depend>
-  
-  <depend>rclpy</depend>
-  <depend>pynput</depend>
-  <depend>pyserial</depend>
-  <!--Don't know for sure if these exec_depends are necessary but I'm including them in case they are needed-->
-  <exec_depend>std_msgs</exec_depend>
-  <exec_depend>serial</exec_depend>
-
-  <test_depend>ament_lint_auto</test_depend>
-  <test_depend>ament_lint_common</test_depend>
+  <maintainer email="davidvalenciac01@gmail.com">marti</maintainer>
+  <license>Movvo Robotics 2023. All rights reserved</license>
 
   <export>
-    <build_type>ament_cmake</build_type>
+    <build_type>ament_python</build_type>
   </export>
 </package>

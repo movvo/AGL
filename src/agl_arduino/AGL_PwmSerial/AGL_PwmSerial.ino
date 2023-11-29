@@ -116,7 +116,7 @@ void loop()
     double e = wt - Wr;
     double eintegral = eintegral + e * deltaInterruptionTimeR;
     double u = kp * e + ki * eintegral;
-    
+
     if (u > 0)
     {
       pwr = (int)(11.5142749480926 * pow(u, 2) - 29.7178828449269 * u + 2.95629260770791); // Set the motor speed
@@ -150,26 +150,22 @@ void loop()
   Serial.print(" ");
 
   Serial.print(Wr);
- 
+
   Serial.println();
 
-/////////////////// Getting the information sent by ros2 node. ///////
+  /////////////////// Getting the information sent by ros2 node. ///////
 
   // send data only when you receive data:
-//  if (Serial.available() > 0) {
-//    // read the incoming byte:
-//    float incomingByte = Serial.parseFloat();
-//
-//    // say what you got:
-//    //Serial.print("I received: ");
-//    Serial.println(incomingByte, 2);
-//  }
+  //  if (Serial.available() > 0) {
+  //    // read the incoming byte:
+  //    float incomingByte = Serial.parseFloat();
+  //
+  //    // say what you got:
+  //    //Serial.print("I received: ");
+  //    Serial.println(incomingByte, 2);
+  //  }
 
- 
-
-////////////////////////////////////////////////////////////////////
-
+  ////////////////////////////////////////////////////////////////////
 
   analogWrite(rWheel, pwr); // PWM applied to right servo.
-
 }

@@ -38,8 +38,8 @@ class SerialServer(Node):
     # self.turn_right_cmd = self.get_param_str('turn_right_cmd')
     # self.stop_cmd = self.get_param_str('stop_cmd')
     self.ser = serial.Serial(self.device_name,
-                           9600, #Note: Baud Rate must be the same in the arduino program, otherwise signal is not recieved!
-                           timeout=.1)
+                           115200, #Note: Baud Rate must be the same in the arduino program, otherwise signal is not recieved!
+                           timeout=0.1)
     
     # self.subscriber = self.create_subscription(Twist, 
         #                                       self.wheel_topic_name, 
@@ -58,7 +58,7 @@ class SerialServer(Node):
     except:
       pass
   def send_cmd(self, cmd):
-    print(self.ser.write(bytes(cmd, 'utf-8')))
+    self.ser.write(bytes(cmd, 'utf-8'))
   def recieve_cmd(self):
     try:
       #try normal way of recieving data
@@ -95,17 +95,39 @@ class SerialServer(Node):
     if msg == Twist():
       self.send_cmd(self.stop_cmd)
       self.recieve_cmd()
-      
+
+  def write_read(self, x):
+    print(f"Valor que estamos enviando a nuestro arduino: {x}")
+    dataBytesRead = self.ser.write(bytes(x, 'utf-8'))
+    data = self.ser.read(dataBytesRead)
+    return data
+
+
+  
 
 def main(args=None):
     rclpy.init(args=args)
     serial_server = SerialServer()
     # serial_server.recieve_cmd()
+    sleep(1)
+    num = 0.0
+    strValue = 0
     while True:
-        # For sleep 1 second arduino can't keep up with the float values reading.
-        sleep(2)  # Necessary for controlling rate at which serial buffer will be filling up. Rate too high reading with errors.
-        serial_server.send_cmd("4.32")
-        # rclpy.spin(serial_server)
+      # num = input("Enter a number: ") # Taking input from user
+      num += 1.2
+      strValue = (int)(num * 100)
+      value = serial_server.write_read(str(strValue))
+      if num >8:
+        num=0
+      print(f"RECEIVED DATA: {value}") # printing the value
+      decoded = value.decode("ascii")
+      decodedFloatingNumber = float(decoded)/100.0
+      print("Decoded String:", decodedFloatingNumber)
+      print(" ")
+      sleep(0.05)
+
+
+
     
     
 

@@ -65,7 +65,7 @@ void setup()
   pinMode(encoderL, INPUT);
   pinMode(lWheel, OUTPUT);
 
-  digitalWrite(encoderR, HIGH);
+  digitalWrite(encoderL, HIGH);
   digitalWrite(IN1_ML, LOW);  // Different order as the servo is rotated.
   digitalWrite(IN2_ML, HIGH);
 
@@ -122,7 +122,7 @@ void LEncoder()
 {
   CRl++;
 
-  if (CRl == tickCounter && firstEncoderReadR == false)
+  if (CRl == tickCounter && firstEncoderReadL == false)
   {
     float mean = 0;
     currentInterruptionTimeL = millis();
@@ -230,9 +230,11 @@ void loop()
       pwrL = 255;
   }
   else
+  {
     pwrR = 0;
     pwrL = 0;
-
+  }
+    
   ////////////// Print angular velocities for plotting. //////////////
 
   //    for(int i = 0; i <= 255; i += 5){

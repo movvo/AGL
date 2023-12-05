@@ -99,7 +99,7 @@ class SerialServer(Node):
   def write_read(self, x):
     print(f"Valor que estamos enviando a nuestro arduino: {x}")
     dataBytesRead = self.ser.write(bytes(x, 'utf-8'))
-    data = self.ser.read(dataBytesRead)
+    data = self.ser.read(4)   # For reading floating values.
     return data
 
 
@@ -109,22 +109,33 @@ def main(args=None):
     rclpy.init(args=args)
     serial_server = SerialServer()
     # serial_server.recieve_cmd()
-    sleep(1)
+    sleep(3)
     num = 0.0
     strValue = 0
     while True:
       # num = input("Enter a number: ") # Taking input from user
-      num += 1.2
+      num = 6.2
       strValue = (int)(num * 100)
+      
       value = serial_server.write_read(str(strValue))
+      # value = serial_server.recieve_cmd()
       if num >8:
         num=0
       print(f"RECEIVED DATA: {value}") # printing the value
       decoded = value.decode("ascii")
-      decodedFloatingNumber = float(decoded)/100.0
-      print("Decoded String:", decodedFloatingNumber)
-      print(" ")
-      sleep(0.05)
+
+      try:
+        decodedFloatingNumber = float(value)/100.0
+        print("Decoded String:", decodedFloatingNumber)
+        print(" ")
+      except:
+        pass
+
+      sleep(0.150)
+
+      #####
+      # TODO: See what we can do with wrong readings, while implementing not enough time.
+      #####
 
 
 

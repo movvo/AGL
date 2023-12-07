@@ -11,6 +11,7 @@ volatile float pastInterruptionTimeR = 0;
 volatile float deltaInterruptionTimeR = 0;
 volatile float currentTime = 0;
 float wt = 0.0;   //With this declaration we should be able to keep previous target speed running in our arduino code.
+bool ros2DataRead = false;    // Control of wt speed setting.
 
 int IN3_MR = 5;
 int IN4_MR = 4;
@@ -175,6 +176,7 @@ void loop()
   while (Serial.available() > 0){
     // Transform recieved serial with division by 100.0 .
     ros2Data = Serial.readString();
+    ros2DataRead = true;
   }
   currentTime = millis();
 
@@ -207,11 +209,6 @@ void loop()
   int intWl = (int)rounded_downWl;                               
   int intVl = (int)rounded_downVl;
 
-  intWr = 457;                               
-  intVr = 232;
-  intWl = 457;                               
-  intVl = 232;
-
   // Objective velocity in rad/s with 0-6.17 range where ~4.2 is the value in which the servo is functional.
   // If velocity is set between [0;4.2] hardcode 0 pwm as the polinomic regression applied to predict pwm values from angular velocities cannot deal with servo behavior for low PWMs (no speed until 100 PWM).
   const char * ros2DataChar = ros2Data.c_str();   // Must transform string to const char * in order to use atof function.
@@ -230,7 +227,15 @@ void loop()
   Serial.println(buffer);
    
   delay(150);    // Necessary for ros program to be able to write. Otherwise we'll lock the buffer while reading.
-  wt = ros2DataFloat/100.0;                 // Using our floating value recieved form ros to set the desired angular speed.
+  
+  if(ros2DataRead){
+    wt = ros2DataFloat/100.0;                 // Using our floating value recieved form ros to set the desired angular speed.
+    ros2DataRead = false;
+  }
+  else{
+    wt = 0;
+  }
+  
   
   if (wt >= 4.2)
   {
@@ -292,6 +297,6 @@ void loop()
 
   //analogWrite(rWheel, pwrR-L);
 
-  analogWrite(rWheel, 0); // PWM applied to right servo.
-  analogWrite(lWheel, 0); // PWM applied to left servo.
+  analogWrite(rWheel, pwrR); // PWM applied to right servo.
+  analogWrite(lWheel, pwrL); // PWM applied to left servo.
 }

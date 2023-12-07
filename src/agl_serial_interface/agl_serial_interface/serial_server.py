@@ -121,7 +121,7 @@ def main(args=None):
     strValue = 0
     while True:
       # num = input("Enter a number: ") # Taking input from user
-      num += 1.2
+      num = 6.2
       strValue = (int)(num * 100)
       
       # Print angular speed for arduino via serial.

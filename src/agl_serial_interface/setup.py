@@ -24,6 +24,7 @@ setup(
     entry_points={
         'console_scripts': [
             'serial_server = agl_serial_interface.serial_server:main'
+            'serial_client = agl_serial_interface.serial_client:main'
         ],
     },
 )

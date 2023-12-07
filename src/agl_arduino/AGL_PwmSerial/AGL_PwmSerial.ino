@@ -194,11 +194,17 @@ void loop()
   Vr = Wr * (diameter / 2);                                      // Linear speed cm/s.
 
   Wl = (tickCounter * ((2 * 3.141516) / N) * lFrequency) / gear; 
-  Vl = Wl * (diameter / 2);                                      
+  Vl = Wl * (diameter / 2);    
+
   float rounded_downWr = floorf(Wr * 100);                       // Rounding to two decimals our speeds
   float rounded_downVr = floorf(Vr * 100);
   int intWr = (int)rounded_downWr;                               // Getting the integers from our speeds, should divide by 100 in ros code.
   int intVr = (int)rounded_downVr;
+
+  float rounded_downWl = floorf(Wl * 100);                       
+  float rounded_downVl = floorf(Vl * 100);
+  int intWl = (int)rounded_downWl;                               
+  int intVl = (int)rounded_downVl;
 
   // Objective velocity in rad/s with 0-6.17 range where ~4.2 is the value in which the servo is functional.
   // If velocity is set between [0;4.2] hardcode 0 pwm as the polinomic regression applied to predict pwm values from angular velocities cannot deal with servo behavior for low PWMs (no speed until 100 PWM).
@@ -206,6 +212,9 @@ void loop()
   float ros2DataFloat = atof(ros2DataChar);       // Usage of atof necessary for getting the float value of the data recieved via serial from ros.
   
   sprintf(buffer, "%d", intWr);                   // Transforming the integer speed to char buffer in order to print it via serial to ros2.
+  Serial.println(buffer);
+
+  sprintf(buffer, "%d", intWl);                   
   Serial.println(buffer);
    
   delay(150);    // Necessary for ros program to be able to write. Otherwise we'll lock the buffer while reading.

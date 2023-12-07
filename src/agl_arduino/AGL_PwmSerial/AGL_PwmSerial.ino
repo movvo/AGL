@@ -10,6 +10,7 @@ volatile float currentInterruptionTimeR = 0;
 volatile float pastInterruptionTimeR = 0;
 volatile float deltaInterruptionTimeR = 0;
 volatile float currentTime = 0;
+float wt = 0.0;   //With this declaration we should be able to keep previous target speed running in our arduino code.
 
 int IN3_MR = 5;
 int IN4_MR = 4;
@@ -17,9 +18,9 @@ int IN4_MR = 4;
 int encoderR = 19; // Right encoder pin.
 int rWheel = 11;   // PWM pin for right servo, right wheel.
 
-double rFrequency = 0; // Interruption frequency for right wheel.
-double Wr = 0;         // Angular Velocity Right.
-double Vr = 0;         // Linear Velocity Right.
+float rFrequency = 0; // Interruption frequency for right wheel.
+float Wr = 0;         // Angular Velocity Right.
+float Vr = 0;         // Linear Velocity Right.
 int CRr = 0;                                       // Counter < tickCounter. If equal calculate speed.
 int pwrR = 0;                                      // Variable for predicted PWM value for servo.
 bool firstEncoderReadR = true;                     // Boolean for first encoder read control.
@@ -28,9 +29,9 @@ float rVector[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // Mean time frequency calcula
 
 // Interruption times and speed calculation variables for left servo.
 
-volatile double currentInterruptionTimeL = 0;
-volatile double pastInterruptionTimeL = 0;
-volatile double deltaInterruptionTimeL = 0;
+volatile float currentInterruptionTimeL = 0;
+volatile float pastInterruptionTimeL = 0;
+volatile float deltaInterruptionTimeL = 0;
 
 int IN1_ML = 7;
 int IN2_ML = 6;
@@ -38,16 +39,16 @@ int IN2_ML = 6;
 int encoderL = 3; 
 int lWheel = 10;   
 
-double lFrequency = 0; 
-double Wl = 0;         
-double Vl = 0;         
+float lFrequency = 0; 
+float Wl = 0;         
+float Vl = 0;         
 int CRl = 0;                                       
 int pwrL = 0;                                      
 bool firstEncoderReadL = true;                     
 int encoderCounterFilterL = 0;                     
 float lVector[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-double N = 24.0;                                  
-double gear = 74.83;                              
+float N = 24.0;                                  
+float gear = 74.83;                              
 float diameter = 10;                              
 float length = 35;                                
 int tickCounter = 3;                              
@@ -177,8 +178,8 @@ void loop()
   }
   currentTime = millis();
 
-  double realDeltaR = (currentTime - pastInterruptionTimeR);
-  double realDeltaL = (currentTime - pastInterruptionTimeL);
+  float realDeltaR = (currentTime - pastInterruptionTimeR);
+  float realDeltaL = (currentTime - pastInterruptionTimeL);
 
   if (realDeltaR >= 8 * tickCounter) // At 0 velocity our frequency should be 0.
   {
@@ -206,34 +207,45 @@ void loop()
   int intWl = (int)rounded_downWl;                               
   int intVl = (int)rounded_downVl;
 
+  intWr = 457;                               
+  intVr = 232;
+  intWl = 457;                               
+  intVl = 232;
+
   // Objective velocity in rad/s with 0-6.17 range where ~4.2 is the value in which the servo is functional.
   // If velocity is set between [0;4.2] hardcode 0 pwm as the polinomic regression applied to predict pwm values from angular velocities cannot deal with servo behavior for low PWMs (no speed until 100 PWM).
   const char * ros2DataChar = ros2Data.c_str();   // Must transform string to const char * in order to use atof function.
   float ros2DataFloat = atof(ros2DataChar);       // Usage of atof necessary for getting the float value of the data recieved via serial from ros.
   
-  sprintf(buffer, "%d", intWr);                   // Transforming the integer speed to char buffer in order to print it via serial to ros2.
-  Serial.println(buffer);
+  sprintf(buffer, "%d ", intWr);                   // Transforming the integer speed to char buffer in order to print it via serial to ros2.
+  Serial.print(buffer);
 
-  sprintf(buffer, "%d", intWl);                   
+  sprintf(buffer, "%d ", intVr);                   // Transforming the integer speed to char buffer in order to print it via serial to ros2.
+  Serial.print(buffer);
+
+  sprintf(buffer, "%d ", intWl);                   
+  Serial.print(buffer);
+
+  sprintf(buffer, "%d", intVl);                   
   Serial.println(buffer);
    
   delay(150);    // Necessary for ros program to be able to write. Otherwise we'll lock the buffer while reading.
-  float wt = ros2DataFloat/100.0;                 // Using our floating value recieved form ros to set the desired angular speed.
+  wt = ros2DataFloat/100.0;                 // Using our floating value recieved form ros to set the desired angular speed.
   
   if (wt >= 4.2)
   {
     // Angular velocity to PWM transformation via polinomial regression.
-    double kpR = 0.05;
-    double kiR = 1;
-    double eR = wt - Wr;
-    double eintegralR = eintegralR + eR * deltaInterruptionTimeR;
-    double uR = kpR * eR + kiR * eintegralR;
+    float kpR = 0.05;
+    float kiR = 1;
+    float eR = wt - Wr;
+    float eintegralR = eintegralR + eR * deltaInterruptionTimeR;
+    float uR = kpR * eR + kiR * eintegralR;
 
-    double kpL = 0.05;
-    double kiL = 1;
-    double eL = wt - Wl;
-    double eintegralL = eintegralL + eL * deltaInterruptionTimeL;
-    double uL = kpL * eL + kiL * eintegralL;
+    float kpL = 0.05;
+    float kiL = 1;
+    float eL = wt - Wl;
+    float eintegralL = eintegralL + eL * deltaInterruptionTimeL;
+    float uL = kpL * eL + kiL * eintegralL;
 
     if (uR > 0)
     {
@@ -278,6 +290,8 @@ void loop()
 
 //  ////////////////////////////////////////////////////////////////////
 
-  analogWrite(rWheel, pwrR); // PWM applied to right servo.
-  analogWrite(lWheel, pwrL); // PWM applied to left servo.
+  //analogWrite(rWheel, pwrR-L);
+
+  analogWrite(rWheel, 0); // PWM applied to right servo.
+  analogWrite(lWheel, 0); // PWM applied to left servo.
 }

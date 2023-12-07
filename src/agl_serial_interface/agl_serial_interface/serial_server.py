@@ -68,6 +68,12 @@ class SerialServer(Node):
       #if normal way doesn't work, try getting binary representation to see what went wrong
       line = str(self.ser.readline())
     print("Recieved: " + line)
+    
+  def recv(self):
+    dataBytesRead = self.ser.inWaiting()
+    data = self.ser.read(dataBytesRead)   # For reading floating values.
+    return data
+  
   def serial_listener_callback(self, msg):
     #NOTE: 
     # For some reason, arduino sends back null byte (0b'' or Oxff) back after the first call to ser.write
@@ -98,9 +104,10 @@ class SerialServer(Node):
 
   def write_read(self, x):
     print(f"Valor que estamos enviando a nuestro arduino: {x}")
-    dataBytesRead = self.ser.write(bytes(x, 'utf-8'))
-    data = self.ser.read(4)   # For reading floating values.
-    return data
+    self.ser.write(bytes(x, 'utf-8'))
+    # dataBytesRead = self.ser.inWaiting()
+    # data = self.ser.read(dataBytesRead)   # For reading floating values.
+    # return data
 
 
   
@@ -114,23 +121,28 @@ def main(args=None):
     strValue = 0
     while True:
       # num = input("Enter a number: ") # Taking input from user
-      num = 6.2
+      num += 1.2
       strValue = (int)(num * 100)
       
-      value = serial_server.write_read(str(strValue))
-      # value = serial_server.recieve_cmd()
-      if num >8:
-        num=0
+      # Print angular speed for arduino via serial.
+      serial_server.write_read(str(strValue))
+
+      # Read Wr, Vr, Wl, Vl, in that order, via serial from arduino.
+      value = serial_server.recv()
       print(f"RECEIVED DATA: {value}") # printing the value
       decoded = value.decode("ascii")
+      cmd_vel_array = decoded.split()
+      for iterator in cmd_vel_array:      
+        try:
+          decodedFloatingNumber = float(iterator)/100.0
+          print("Decoded String:", decodedFloatingNumber)
+          print("\n")
+        except:
+          pass
 
-      try:
-        decodedFloatingNumber = float(value)/100.0
-        print("Decoded String:", decodedFloatingNumber)
-        print(" ")
-      except:
-        pass
-
+      if num >8:
+        num=0
+      
       sleep(0.150)
 
       #####

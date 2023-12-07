@@ -17,21 +17,41 @@ int IN4_MR = 4;
 int encoderR = 19; // Right encoder pin.
 int rWheel = 11;   // PWM pin for right servo, right wheel.
 
-float rFrequency = 0; // Interruption frequency for right wheel.
-float Vr = 0;         // Linear Velocity Right.
-float Wr = 0;
-
-float N = 24.0;                                  // Reads encoder.
-float gear = 74.83;                              // Gear ratio 74.83:1.
-float diameter = 10;                              // Wheel diamenter in cm.
-float length = 35;                                // Lenght between to wheels, necessary for two wheels speed control.
-int tickCounter = 3;                              // Times per tick in encoder for which we'll calculate speed in order to reduce signal noise.
-int CR = 0;                                       // Counter < tickCounter. If equal calculate speed.
-int vecSize = 10;                                 // Vector size for rVector.
+double rFrequency = 0; // Interruption frequency for right wheel.
+double Wr = 0;         // Angular Velocity Right.
+double Vr = 0;         // Linear Velocity Right.
+int CRr = 0;                                       // Counter < tickCounter. If equal calculate speed.
+int pwrR = 0;                                      // Variable for predicted PWM value for servo.
+bool firstEncoderReadR = true;                     // Boolean for first encoder read control.
+int encoderCounterFilterR = 0;                     // Variable for filtering in vector size vecSize.
 float rVector[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // Mean time frequency calculation vector for reducing signal noise.
-int pwr = 0;                                      // Variable for predicted PWM value for servo.
-int encoderCounterFilter = 0;                     // Variable for filtering in vector size vecSize.
-bool firstEncoderRead = true;                     // Boolean for first encoder read control.
+
+// Interruption times and speed calculation variables for left servo.
+
+volatile double currentInterruptionTimeL = 0;
+volatile double pastInterruptionTimeL = 0;
+volatile double deltaInterruptionTimeL = 0;
+
+int IN1_ML = 7;
+int IN2_ML = 6;
+
+int encoderL = 3; 
+int lWheel = 10;   
+
+double lFrequency = 0; 
+double Wl = 0;         
+double Vl = 0;         
+int CRl = 0;                                       
+int pwrL = 0;                                      
+bool firstEncoderReadL = true;                     
+int encoderCounterFilterL = 0;                     
+float lVector[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
+double N = 24.0;                                  
+double gear = 74.83;                              
+float diameter = 10;                              
+float length = 35;                                
+int tickCounter = 3;                              
+int vecSize = 10;                                 
 int x = 0;
 String ros2Data = "";
 char buffer[MAX_SIZE_BUFFER];
@@ -46,7 +66,15 @@ void setup()
   digitalWrite(IN3_MR, HIGH);
   digitalWrite(IN4_MR, LOW);
 
+  pinMode(encoderL, INPUT);
+  pinMode(lWheel, OUTPUT);
+
+  digitalWrite(encoderL, HIGH);
+  digitalWrite(IN1_ML, LOW);  // Different order as the servo is rotated.
+  digitalWrite(IN2_ML, HIGH);
+
   attachInterrupt(digitalPinToInterrupt(encoderR), REncoder, FALLING); // PIN Interruption set to detect a falling flank in encoderR pin, it'll activate REncoder function.
+  attachInterrupt(digitalPinToInterrupt(encoderL), LEncoder, FALLING); 
   Serial.begin(115200);  // Start of Serial communication.
   Serial.setTimeout(1);
                                                
@@ -54,9 +82,9 @@ void setup()
 
 void REncoder() // Interruption function for right wheel encoder.
 {
-  CR++;
+  CRr++;
 
-  if (CR == tickCounter && firstEncoderRead == false)
+  if (CRr == tickCounter && firstEncoderReadR == false)
   {
     float mean = 0;
     currentInterruptionTimeR = millis();
@@ -68,9 +96,9 @@ void REncoder() // Interruption function for right wheel encoder.
     }
     rVector[vecSize - 1] = deltaInterruptionTimeR; // Vector last value.
 
-    if (encoderCounterFilter < vecSize)
+    if (encoderCounterFilterR < vecSize)
     {
-      encoderCounterFilter++;
+      encoderCounterFilterR++;
       rFrequency = (1000) / deltaInterruptionTimeR; // Right wheel frequency.
     }
     else
@@ -86,13 +114,57 @@ void REncoder() // Interruption function for right wheel encoder.
     }
 
     pastInterruptionTimeR = currentInterruptionTimeR; // Past interruption time actualization.
-    CR = 0;                                           // Counter for tickCounter reset.
+    CRr = 0;                                           // Counter for tickCounter reset.
   }
 
-  if (CR == tickCounter && firstEncoderRead == true)
+  if (CRr == tickCounter && firstEncoderReadR == true)
   {
-    firstEncoderRead = false;
-    CR = 0; // Counter for tickCounter reset.
+    firstEncoderReadR = false;
+    CRr = 0; // Counter for tickCounter reset.
+  }
+}
+
+void LEncoder() 
+{
+  CRl++;
+
+  if (CRl == tickCounter && firstEncoderReadL == false)
+  {
+    float mean = 0;
+    currentInterruptionTimeL = millis();
+    deltaInterruptionTimeL = currentInterruptionTimeL - pastInterruptionTimeL; 
+
+    for (int i = 0; i < vecSize - 1; i++)
+    {
+      lVector[i] = lVector[i + 1]; 
+    }
+    lVector[vecSize - 1] = deltaInterruptionTimeL; 
+
+    if (encoderCounterFilterL < vecSize)
+    {
+      encoderCounterFilterL++;
+      lFrequency = (1000) / deltaInterruptionTimeL;
+    }
+    else
+    {
+      for (int i = 0; i < vecSize; i++)
+      {
+        mean = lVector[i] + mean; 
+      }
+      mean = mean / vecSize;
+      deltaInterruptionTimeL = mean; 
+
+      lFrequency = (1000) / deltaInterruptionTimeL; 
+    }
+
+    pastInterruptionTimeL = currentInterruptionTimeL; 
+    CRl = 0;                                           
+  }
+
+  if (CRl == tickCounter && firstEncoderReadL == true)
+  {
+    firstEncoderReadL = false;
+    CRl = 0; 
   }
 }
 
@@ -105,15 +177,24 @@ void loop()
   }
   currentTime = millis();
 
-  float realDelta = (currentTime - pastInterruptionTimeR);
+  double realDeltaR = (currentTime - pastInterruptionTimeR);
+  double realDeltaL = (currentTime - pastInterruptionTimeL);
 
-  if (realDelta >= 8 * tickCounter) // At 0 velocity our frequency should be 0.
+  if (realDeltaR >= 8 * tickCounter) // At 0 velocity our frequency should be 0.
   {
     rFrequency = 0; // The longest elapsed time between reads is no more than 20ms, we put 24ms.
   }
 
+  if (realDeltaL >= 8 * tickCounter) 
+  {
+    lFrequency = 0; 
+  }
+
   Wr = (tickCounter * ((2 * 3.141516) / N) * rFrequency) / gear; // Angular speed Rad/s.
   Vr = Wr * (diameter / 2);                                      // Linear speed cm/s.
+
+  Wl = (tickCounter * ((2 * 3.141516) / N) * lFrequency) / gear; 
+  Vl = Wl * (diameter / 2);                                      
   float rounded_downWr = floorf(Wr * 100);                       // Rounding to two decimals our speeds
   float rounded_downVr = floorf(Vr * 100);
   int intWr = (int)rounded_downWr;                               // Getting the integers from our speeds, should divide by 100 in ros code.
@@ -133,33 +214,54 @@ void loop()
   if (wt >= 4.2)
   {
     // Angular velocity to PWM transformation via polinomial regression.
-    float kp = 0.05;
-    float ki = 1;
-    float e = wt - Wr;
-    float eintegral = eintegral + e * deltaInterruptionTimeR;
-    float u = kp * e + ki * eintegral;
-    
-    if (u > 0)
+    double kpR = 0.05;
+    double kiR = 1;
+    double eR = wt - Wr;
+    double eintegralR = eintegralR + eR * deltaInterruptionTimeR;
+    double uR = kpR * eR + kiR * eintegralR;
+
+    double kpL = 0.05;
+    double kiL = 1;
+    double eL = wt - Wl;
+    double eintegralL = eintegralL + eL * deltaInterruptionTimeL;
+    double uL = kpL * eL + kiL * eintegralL;
+
+    if (uR > 0)
     {
-      pwr = (int)(11.5142749480926 * pow(u, 2) - 29.7178828449269 * u + 2.95629260770791); // Set the motor speed
+      pwrR = (int)(11.5142749480926 * pow(uR, 2) - 29.7178828449269 * uR + 2.95629260770791); // Set the motor speed
     }
     else
     {
-      pwr = 0;
+      pwrR = 0;
     }
 
-    if (pwr > 255)
-      pwr = 255;
+    if (pwrR > 255)
+      pwrR = 255;
+
+    if (uL > 0)
+    {
+      pwrL = (int)(11.5142749480926 * pow(uL, 2) - 29.7178828449269 * uL + 2.95629260770791); // Inspect possibility of modeling servo behavior as it could be different than the other.
+    }
+    else
+    {
+      pwrL = 0;
+    }
+
+    if (pwrL > 255)
+      pwrL = 255;
   }
   else
-    pwr = 0;
-
+  {
+    pwrR = 0;
+    pwrL = 0;
+  }
+    
   ////////////// Print angular velocities for plotting. //////////////
 
   //    for(int i = 0; i <= 255; i += 5){
   //      analogWrite(ruedaR,0);
   //      Wr = (contadorTicks*((2*3.141516)/N)*frecuenciaR)/gear;
-  //      Serial.println(Wr);
+  //      Serial.println(Wr);   // Cambiar el Wr por el Wl cuando sea necesario.
   //      Serial.print(",");
   //      Serial.println(i);
   //      delay(1000);
@@ -167,5 +269,6 @@ void loop()
 
 //  ////////////////////////////////////////////////////////////////////
 
-  analogWrite(rWheel, pwr); // PWM applied to right servo.
+  analogWrite(rWheel, pwrR); // PWM applied to right servo.
+  analogWrite(lWheel, pwrL); // PWM applied to left servo.
 }

@@ -10,8 +10,10 @@ volatile float currentInterruptionTimeR = 0;
 volatile float pastInterruptionTimeR = 0;
 volatile float deltaInterruptionTimeR = 0;
 volatile float currentTime = 0;
-float wt = 0.0;   //With this declaration we should be able to keep previous target speed running in our arduino code.
-bool ros2DataRead = false;    // Control of wt speed setting.
+float wtRightWheel = 0.0;   //With this declaration we should be able to keep previous target speed running in our arduino code.
+float wtLeftWheel = 0.0;
+bool ros2DataRightWheelRead = false;    // Control of wt speed setting.
+bool ros2DataLeftWheelRead = false;
 
 int IN3_MR = 5;
 int IN4_MR = 4;
@@ -55,7 +57,8 @@ float length = 35;
 int tickCounter = 3;                              
 int vecSize = 10;                                 
 int x = 0;
-String ros2Data = "";
+String ros2DataRightWheel = "";
+String ros2DataLeftWheel = "";
 char buffer[MAX_SIZE_BUFFER];
 void setup()
 {
@@ -175,9 +178,22 @@ void loop()
 
   while (Serial.available() > 0){
     // Transform recieved serial with division by 100.0 .
-    ros2Data = Serial.readString();
-    ros2DataRead = true;
+    ros2DataRightWheel = Serial.readString();
+    ros2DataRightWheelRead = true;
   }
+
+  while (Serial.available() > 0){
+    // Transform recieved serial with division by 100.0 .
+    ros2DataLeftWheel = Serial.readString();
+    ros2DataLeftWheelRead = true;
+  }
+
+  const char * ros2DataRightWheelChar = ros2DataRightWheel.c_str();   // Must transform string to const char * in order to use atof function.
+  float ros2DataRightWheelFloat = atof(ros2DataRightWheelChar);       // Usage of atof necessary for getting the float value of the data recieved via serial from ros.
+
+  const char * ros2DataLeftWheelChar = ros2DataLeftWheel.c_str();   
+  float ros2DataLeftWheelFloat = atof(ros2DataLeftWheelChar);       
+
   currentTime = millis();
 
   float realDeltaR = (currentTime - pastInterruptionTimeR);
@@ -200,57 +216,47 @@ void loop()
   Vl = Wl * (diameter / 2);    
 
   float rounded_downWr = floorf(Wr * 100);                       // Rounding to two decimals our speeds
-  float rounded_downVr = floorf(Vr * 100);
   int intWr = (int)rounded_downWr;                               // Getting the integers from our speeds, should divide by 100 in ros code.
-  int intVr = (int)rounded_downVr;
 
   float rounded_downWl = floorf(Wl * 100);                       
-  float rounded_downVl = floorf(Vl * 100);
   int intWl = (int)rounded_downWl;                               
-  int intVl = (int)rounded_downVl;
-
-  // Objective velocity in rad/s with 0-6.17 range where ~4.2 is the value in which the servo is functional.
-  // If velocity is set between [0;4.2] hardcode 0 pwm as the polinomic regression applied to predict pwm values from angular velocities cannot deal with servo behavior for low PWMs (no speed until 100 PWM).
-  const char * ros2DataChar = ros2Data.c_str();   // Must transform string to const char * in order to use atof function.
-  float ros2DataFloat = atof(ros2DataChar);       // Usage of atof necessary for getting the float value of the data recieved via serial from ros.
   
   sprintf(buffer, "%d ", intWr);                   // Transforming the integer speed to char buffer in order to print it via serial to ros2.
   Serial.print(buffer);
 
-  sprintf(buffer, "%d ", intVr);                   // Transforming the integer speed to char buffer in order to print it via serial to ros2.
-  Serial.print(buffer);
 
   sprintf(buffer, "%d ", intWl);                   
   Serial.print(buffer);
 
-  sprintf(buffer, "%d", intVl);                   
-  Serial.println(buffer);
    
   delay(150);    // Necessary for ros program to be able to write. Otherwise we'll lock the buffer while reading.
-  
-  if(ros2DataRead){
-    wt = ros2DataFloat/100.0;                 // Using our floating value recieved form ros to set the desired angular speed.
-    ros2DataRead = false;
+
+  if(ros2DataRightWheelRead){
+    wtRightWheel = ros2DataRightWheelFloat/100.0;                 // Using our floating value recieved form ros to set the desired angular speed.
+    ros2DataRightWheelRead = false;
   }
   else{
-    wt = 0;
+    wtRightWheel = 0;
+  }
+
+  if(ros2DataLeftWheelRead){
+    wtLeftWheel = ros2DataLeftWheelFloat/100.0;                 // Using our floating value recieved form ros to set the desired angular speed.
+    ros2DataLeftWheelRead = false;
+  }
+  else{
+    wtLeftWheel = 0;
   }
   
-  
-  if (wt >= 4.2)
+  // Objective velocity in rad/s with 0-6.17 range where ~4.2 is the value in which the servo is functional.
+  // If velocity is set between [0;4.2] hardcode 0 pwm as the polinomic regression applied to predict pwm values from angular velocities cannot deal with servo behavior for low PWMs (no speed until 100 PWM).
+  if (wtRightWheel >= 4.2)
   {
     // Angular velocity to PWM transformation via polinomial regression.
     float kpR = 0.05;
     float kiR = 1;
-    float eR = wt - Wr;
+    float eR = wtRightWheel - Wr;
     float eintegralR = eintegralR + eR * deltaInterruptionTimeR;
     float uR = kpR * eR + kiR * eintegralR;
-
-    float kpL = 0.05;
-    float kiL = 1;
-    float eL = wt - Wl;
-    float eintegralL = eintegralL + eL * deltaInterruptionTimeL;
-    float uL = kpL * eL + kiL * eintegralL;
 
     if (uR > 0)
     {
@@ -263,6 +269,21 @@ void loop()
 
     if (pwrR > 255)
       pwrR = 255;
+
+  }
+  else
+  {
+    pwrR = 0;
+  }
+
+  if (wtLeftWheel >= 4.2)
+  {
+    // Angular velocity to PWM transformation via polinomial regression.
+    float kpL = 0.05;
+    float kiL = 1;
+    float eL = wtLeftWheel - Wl;
+    float eintegralL = eintegralL + eL * deltaInterruptionTimeL;
+    float uL = kpL * eL + kiL * eintegralL;
 
     if (uL > 0)
     {
@@ -278,7 +299,6 @@ void loop()
   }
   else
   {
-    pwrR = 0;
     pwrL = 0;
   }
     

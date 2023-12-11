@@ -17,11 +17,4 @@ def generate_launch_description():
                 {'topic': 'cmd_vel'}
             ]
         ),
-        Node(
-            package='agl_serial_interface',
-            executable='serial_client',
-            name='serial_client_node',
-            output='screen',
-            emulate_tty=True,
-        ),
     ])

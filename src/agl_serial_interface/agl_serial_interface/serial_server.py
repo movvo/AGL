@@ -88,10 +88,10 @@ import serial
 from time import sleep
 from geometry_msgs.msg import Twist
 
-class CmdVelPublisher(Node):
+class CmdVelPublisherSubscriber(Node):
 
   def __init__(self):
-      super().__init__('cmd_vel_publisher')
+      super().__init__('cmd_vel_publisher_subscriber')
 
       self.declare_parameters(
       namespace='',
@@ -112,21 +112,22 @@ class CmdVelPublisher(Node):
       timer_period = 0.5  # In seconds
       self.timer_leftWheel = self.create_timer(timer_period, self.timer_callback)
 
+      # Two publishers for odometry readings. Could also make a custom interface message.
+
       self.publisher_rightWheel = self.create_publisher(Twist, self.topic, 10)
       self.timerRightWheel = self.create_timer(timer_period, self.timer_callback)
 
+      self.subscription = self.create_subscription(Twist,self.topic,self.listener_callback,10)
+      self.subscription 
+
+  def listener_callback(self, msg):
+        # Tendríamos que recibir dos mensajes para poder enviar las dos velocidades de las ruedas. Ver como hacerlo, dos subscriptions? Analizar como llega la info de joystick.
+        self.get_logger().info('He escuchado: "%s"' % msg)
+        self.valueToSendRightWheel = (int)(msg.angular.z * 100)
+        self.write(str(valueToSendRightWheel))
+
   def timer_callback(self):
-
-    sleep(3)
-    num = 0.0
-    strValue = 0
-    num = 6.2
-    strValue = (int)(num * 100)
-    
-    # Print angular speed for arduino via serial.
-    self.write(str(strValue))
-
-    # Read Wr, Vr, Wl, Vl, in that order, via serial from arduino.
+    # Read Wr, Wl, in that order, via serial from arduino.
     value = self.recv()
 
     print(f"RECEIVED DATA: {value}") 
@@ -151,13 +152,27 @@ class CmdVelPublisher(Node):
 
     sleep(0.150)
 
+  def recv(self):
+    dataBytesRead = self.ser.inWaiting()
+    data = self.ser.read(dataBytesRead)   # For reading floating values.
+    return data
+
+  def write(self, x):
+    print(f"Valor que estamos enviando a nuestro arduino: {x}")
+    self.ser.write(bytes(x, 'utf-8'))
+
 
 def main(args=None):
     rclpy.init(args=args)
-    cmd_vel_publisher = CmdVelPublisher()
-    rclpy.spin(cmd_vel_publisher)
-    cmd_vel_publisher.destroy_node()
+    cmd_vel_publisher_subscriber = CmdVelPublisherSubscriber()
+    rclpy.spin(cmd_vel_publisher_subscriber)
+    cmd_vel_publisher_subscriber.destroy_node()
     rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
+
+# El subscriber tendrá un timer mediante el cual haremos la escritura de las velocidades a nuestro arduino.
+# El publisher tendrá que leer el puerto serie constantemente para asegurarse de que haya llegado información.
+
+# La manera en la que está implementado actualmente es cada vez que enviemos datos a arduino leeremos del puerto serie pero sería incorrecto cuando no enviásemos info desde ros.

@@ -88,6 +88,8 @@ import serial
 from time import sleep
 from geometry_msgs.msg import Twist
 
+radius = 5.0
+
 class CmdVelPublisherSubscriber(Node):
 
   def __init__(self):
@@ -109,7 +111,7 @@ class CmdVelPublisherSubscriber(Node):
       self.ser.reset_input_buffer()
 
       self.publisher_leftWheel = self.create_publisher(Twist, self.topic, 10)
-      timer_period = 0.5  # In seconds
+      timer_period = 0.150  # In seconds
       self.timer_leftWheel = self.create_timer(timer_period, self.timer_callback)
 
       # Two publishers for odometry readings. Could also make a custom interface message.
@@ -117,14 +119,25 @@ class CmdVelPublisherSubscriber(Node):
       self.publisher_rightWheel = self.create_publisher(Twist, self.topic, 10)
       self.timerRightWheel = self.create_timer(timer_period, self.timer_callback)
 
-      self.subscription = self.create_subscription(Twist,self.topic,self.listener_callback,10)
-      self.subscription 
+      # self.subscription = self.create_subscription(Twist,self.topic,self.listener_callback,10)
+      # self.subscription 
+
+  def get_param_float(self, name):
+    try:
+      return float(self.get_parameter(name).get_parameter_value().double_value)
+    except:
+      pass
+  def get_param_str(self, name):
+    try:
+      return self.get_parameter(name).get_parameter_value().string_value
+    except:
+      pass
 
   def listener_callback(self, msg):
         # Tendríamos que recibir dos mensajes para poder enviar las dos velocidades de las ruedas. Ver como hacerlo, dos subscriptions? Analizar como llega la info de joystick.
         self.get_logger().info('He escuchado: "%s"' % msg)
         self.valueToSendRightWheel = (int)(msg.angular.z * 100)
-        self.write(str(valueToSendRightWheel))
+        self.write(str(self.valueToSendRightWheel))
 
   def timer_callback(self):
     # Read Wr, Wl, in that order, via serial from arduino.
@@ -133,24 +146,28 @@ class CmdVelPublisherSubscriber(Node):
     print(f"RECEIVED DATA: {value}") 
     decoded = value.decode("ascii")
     cmd_vel_array = decoded.split()
-    
-    msgRightWheel = Twist()
-    msgRightWheel.angular.z = float(cmd_vel_array[0])/100.0   # Arduino's speeds are in 100 order, divide by 100 to get real speeds.
-    msgRightWheel.linear.x = float(cmd_vel_array[1])/100.0
-    self.publisher_rightWheel.publish(msgRightWheel)
-    self.get_logger().info('Publicando: "%s"' % msgRightWheel)
 
-    msgLeftWheel = Twist()
-    msgLeftWheel.angular.z = float(cmd_vel_array[2])/100.0
-    msgLeftWheel.linear.x = float(cmd_vel_array[3])/100.0 
-    self.publisher_leftWheel.publish(msgLeftWheel)
-    self.get_logger().info('Publicando: "%s"' % msgLeftWheel)
+    try:
+      msgRightWheel = Twist()
+      # Accessing arduino's cmd_vel_array based on its length allow us to gather the last two values from the serial buffer (Could be reading slower than we write in buffer).
+      msgRightWheel.angular.z = float(cmd_vel_array[len(cmd_vel_array) - 2])/100.0   # Arduino's speeds are in 100 order, divide by 100 to get real speeds.
+      msgRightWheel.linear.x = msgRightWheel.angular.z * radius
+      self.publisher_rightWheel.publish(msgRightWheel)
+      self.get_logger().info('Publishing: "%s"' % msgRightWheel)
+
+      msgLeftWheel = Twist()
+      msgLeftWheel.angular.z = float(cmd_vel_array[len(cmd_vel_array) - 1])/100.0
+      msgLeftWheel.linear.x = msgLeftWheel.angular.z * radius 
+      self.publisher_leftWheel.publish(msgLeftWheel)
+      self.get_logger().info('Publishing: "%s"' % msgLeftWheel)
+    except:
+      self.get_logger().warn('Fallo buffer')
     
     ########### TODO: Differential velocities
-    wheel_1_angular_velocity = (msgRightWheel->linear.x + msgRightWheel->angular.z * parameters_.wheel_separation.as_double() / 2) / parameters_.wheel_radius.as_double();
-    wheel_2_angular_velocity = (msgLeftWheel->linear.x - msgLeftWheel->angular.z * parameters_.wheel_separation.as_double() / 2) / parameters_.wheel_radius.as_double();
+    # wheel_1_angular_velocity = (msgRightWheel->linear.x + msgRightWheel->angular.z * parameters_.wheel_separation.as_double() / 2) / parameters_.wheel_radius.as_double();
+    # wheel_2_angular_velocity = (msgLeftWheel->linear.x - msgLeftWheel->angular.z * parameters_.wheel_separation.as_double() / 2) / parameters_.wheel_radius.as_double();
 
-    sleep(0.150)
+    # sleep(0.150)
 
   def recv(self):
     dataBytesRead = self.ser.inWaiting()

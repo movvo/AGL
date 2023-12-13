@@ -1,87 +1,3 @@
-# # Serial server node
-# import rclpy
-# from rclpy.node import Node
-# import serial   #sudo apt install python3-serial
-# from time import sleep
-
-# # Handle Twist messages, linear and angular velocity
-# from geometry_msgs.msg import Twist
-# class SerialServer(Node):
-
-#   def __init__(self):
-#     super().__init__('serial_server')
-#     #Default Value declarations of ros2 params:
-#     self.declare_parameters(
-#     namespace='',
-#     parameters=[
-#       ('device', '/dev/ttyACM0'), #device we are trasmitting to & recieving messages from
-#         ('wheel_instructions_topic', 'wheel_instructions_topic'),
-#     ]
-#     )
-#     self.device_name = self.get_param_str('device')
-#     self.wheel_topic_name = self.get_param_str('wheel_instructions_topic')
-#     self.ser = serial.Serial(self.device_name,
-#                            115200, #Note: Baud Rate must be the same in the arduino program, otherwise signal is not recieved!
-#                            timeout=0.1)
-#     self.ser.reset_input_buffer()
-
-#   def get_param_str(self, name):
-#     try:
-#       return self.get_parameter(name).get_parameter_value().string_value
-#     except:
-#       pass
-    
-#   def recv(self):
-#     dataBytesRead = self.ser.inWaiting()
-#     data = self.ser.read(dataBytesRead)   # For reading floating values.
-#     return data
-
-#   def write(self, x):
-#     print(f"Valor que estamos enviando a nuestro arduino: {x}")
-#     self.ser.write(bytes(x, 'utf-8'))
-#     # dataBytesRead = self.ser.inWaiting()
-#     # data = self.ser.read(dataBytesRead)   # For reading floating values.
-#     # return data
-
-
-  
-
-# def main(args=None):
-#     rclpy.init(args=args)
-#     serial_server = SerialServer()
-#     # serial_server.recieve_cmd()
-#     sleep(3)
-#     num = 0.0
-#     strValue = 0
-#     while True:
-#       # num = input("Enter a number: ") # Taking input from user
-#       num = 6.2
-#       strValue = (int)(num * 100)
-      
-#       # Print angular speed for arduino via serial.
-#       serial_server.write(str(strValue))
-
-#       # Read Wr, Vr, Wl, Vl, in that order, via serial from arduino.
-#       value = serial_server.recv()
-#       print(f"RECEIVED DATA: {value}") # printing the value
-#       decoded = value.decode("ascii")
-#       cmd_vel_array = decoded.split()
-#       for iterator in cmd_vel_array:      
-#         try:
-#           decodedFloatingNumber = float(iterator)/100.0
-#           print("Decoded String:", decodedFloatingNumber)
-#           print("\n")
-#         except:
-#           pass
-
-#       if num >8:
-#         num=0
-      
-#       sleep(0.150)
-
-# if __name__ == '__main__':
-#   main()
-
 import rclpy
 from rclpy.node import Node
 import serial
@@ -100,6 +16,8 @@ class CmdVelPublisherSubscriber(Node):
       parameters=[
         ('device', '/dev/ttyACM0'), #device we are trasmitting to & recieving messages from
           ('topic', 'cmd_vel'),
+          ('radius', 5.0),
+          ('wheel_separation', 32.0)
       ]
       )
 
@@ -110,17 +28,19 @@ class CmdVelPublisherSubscriber(Node):
                             timeout=0.1)
       self.ser.reset_input_buffer()
 
-      self.publisher_leftWheel = self.create_publisher(Twist, self.topic, 10)
-      timer_period = 0.150  # In seconds
-      self.timer_leftWheel = self.create_timer(timer_period, self.timer_callback)
+      self.radius = self.get_param_float('radius')
+      self.wheel_separation = self.get_param_float('wheel_separation')
+      self.timer_period = 0.9  # In seconds
+      # self.publisher_leftWheel = self.create_publisher(Twist, self.topic, 10)
+      # self.timer_leftWheel = self.create_timer(self.timer_period, self.timer_callback)
 
       # Two publishers for odometry readings. Could also make a custom interface message.
 
       self.publisher_rightWheel = self.create_publisher(Twist, self.topic, 10)
-      self.timerRightWheel = self.create_timer(timer_period, self.timer_callback)
+      self.timerRightWheel = self.create_timer(self.timer_period, self.timer_callback)
 
-      # self.subscription = self.create_subscription(Twist,self.topic,self.listener_callback,10)
-      # self.subscription 
+      self.subscription = self.create_subscription(Twist,self.topic,self.listener_callback,10)
+      self.subscription 
 
   def get_param_float(self, name):
     try:
@@ -136,8 +56,16 @@ class CmdVelPublisherSubscriber(Node):
   def listener_callback(self, msg):
         # Tendríamos que recibir dos mensajes para poder enviar las dos velocidades de las ruedas. Ver como hacerlo, dos subscriptions? Analizar como llega la info de joystick.
         self.get_logger().info('He escuchado: "%s"' % msg)
-        self.valueToSendRightWheel = (int)(msg.angular.z * 100)
-        self.write(str(self.valueToSendRightWheel))
+
+        # self.valueToSendRightWheel = (int)(msg.angular.z * 100)
+        # self.rightWheelAngularSpeed = (msg.linear.x + msg.angular.z * self.wheel_separation / 2) / self.radius;
+        # self.lefttWheelAngularSpeed = (msg.linear.x - msg.angular.z * self.wheel_separation / 2) / self.radius;
+        # self.write(str(self.rightWheelAngularSpeed) + "\n")
+        # self.write(str(self.lefttWheelAngularSpeed )+ "\n")
+
+        self.valueToSendRightWheel = 500
+        self.write(str(self.valueToSendRightWheel) + "\n")
+        self.write(str(self.valueToSendRightWheel) + "\n")
 
   def timer_callback(self):
     # Read Wr, Wl, in that order, via serial from arduino.

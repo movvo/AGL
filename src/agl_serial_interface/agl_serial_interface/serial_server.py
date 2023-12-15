@@ -72,10 +72,10 @@ class CmdVelPublisherSubscriber(Node):
     value = self.recv()
 
     print(f"RECEIVED DATA: {value}") 
-    decoded = value.decode("ascii")
-    cmd_vel_array = decoded.split()
-
+    
     try:
+      decoded = value.decode("ascii")
+      cmd_vel_array = decoded.split()
       msgRightWheel = Twist()
       # Accessing arduino's cmd_vel_array based on its length allow us to gather the last two values from the serial buffer (Could be reading slower than we write in buffer).
       msgRightWheel.angular.z = float(cmd_vel_array[len(cmd_vel_array) - 2])/100.0   # Arduino's speeds are in 100 order, divide by 100 to get real speeds.

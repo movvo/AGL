@@ -6,16 +6,21 @@
 #define MAX_SIZE_BUFFER 10
 
 // Variables for recieving Serial data.
+float lastSerialWrite = 0.0;
+bool firstSerialWrite = true;
 int noDataSerialReadCounter = 0;      // Counter for consecutive no data readings from serial, when equals 5 set servos to 0 pwm.
 const char * ros2DataRightWheelChar;  // Variables for transforming recieved data from serial to float.
 const char * ros2DataLeftWheelChar;
 float ros2DataRightWheelFloat;        // Variables that store floating value for recieved angular speeds from ros via serial port.
 float ros2DataLeftWheelFloat;
 
+float eIntegralLimit = 50.0;
+
 // Interruption times and speed calculation variables for right servo.
 volatile float currentInterruptionTimeR = 0;
 volatile float pastInterruptionTimeR = 0;
 volatile float deltaInterruptionTimeR = 0;
+float eintegralR = 0.0;
 volatile float currentTime = 0;
 float wtRightWheel = 0.0;   //With this declaration we should be able to keep previous target speed running in our arduino code.
 float wtLeftWheel = 0.0;
@@ -41,7 +46,7 @@ float rVector[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // Mean time frequency calcula
 volatile float currentInterruptionTimeL = 0;
 volatile float pastInterruptionTimeL = 0;
 volatile float deltaInterruptionTimeL = 0;
-
+float eintegralL = 0.0;
 int IN1_ML = 7;
 int IN2_ML = 6;
 
@@ -178,37 +183,38 @@ void LEncoder()
   }
 }
 
-void loop()
+void SerialReading()
 {
-
   if(Serial.available() <= 0)
   {
     noDataSerialReadCounter++;
   }
   else{
-
     noDataSerialReadCounter = 0;
 
-    while (Serial.available() > 0){
-      ros2DataRightWheel = Serial.readString();
+      ros2DataRightWheel = Serial.readStringUntil('\n');
+      Serial.println("AQUI: "+ros2DataRightWheel);
       ros2DataRightWheelRead = true;
-    }
 
-    while (Serial.available() > 0){
-      ros2DataLeftWheel = Serial.readString();
+    if (Serial.available() > 0){
+      ros2DataLeftWheel = Serial.readStringUntil('\n');
       ros2DataLeftWheelRead = true;
     }
   }
+}
 
-  if(noDataSerialReadCounter < 5){
+void SerialReadingTimeout(){
+  if(noDataSerialReadCounter < 10){
 
     // When data from servos have been read update the values of desired angular speeds, otherwhise keep previous value.  
 
     if(ros2DataRightWheelRead){
+      Serial.println("ENTRAMOS Right");
       ros2DataRightWheelChar = ros2DataRightWheel.c_str();   // Must transform string to const char * in order to use atof function.
       ros2DataRightWheelFloat = atof(ros2DataRightWheelChar);       // Usage of atof necessary for getting the float value of the data recieved via serial from ros.
       wtRightWheel = ros2DataRightWheelFloat/100.0;                 // Using our floating value recieved form ros to set the desired angular speed.
       ros2DataRightWheelRead = false;
+      Serial.println(wtRightWheel);
     }
 
     if(ros2DataLeftWheelRead){
@@ -222,55 +228,50 @@ void loop()
     wtRightWheel = 0.0;
     wtLeftWheel = 0.0;
   }
+}
 
-  currentTime = millis();
+void checkIfShouldWriteSerial(int intWr, int intWl){
+  if(firstSerialWrite || (currentTime - lastSerialWrite) >= 150){
+    firstSerialWrite = false;
 
-  float realDeltaR = (currentTime - pastInterruptionTimeR);
-  float realDeltaL = (currentTime - pastInterruptionTimeL);
-
-  if (realDeltaR >= 8 * tickCounter) // At 0 velocity our frequency should be 0.
-  {
-    rFrequency = 0; // The longest elapsed time between reads is no more than 20ms, we put 24ms.
-  }
-
-  if (realDeltaL >= 8 * tickCounter) 
-  {
-    lFrequency = 0; 
-  }
-
-  Wr = (tickCounter * ((2 * 3.141516) / N) * rFrequency) / gear; // Angular speed Rad/s.
-
-  Wl = (tickCounter * ((2 * 3.141516) / N) * lFrequency) / gear; 
-
-  float rounded_downWr = floorf(Wr * 100);                       // Rounding to two decimals our speeds
-  int intWr = (int)rounded_downWr;                               // Getting the integers from our speeds, should divide by 100 in ros code.
-
-  float rounded_downWl = floorf(Wl * 100);                       
-  int intWl = (int)rounded_downWl;      
+    lastSerialWrite = currentTime;
+    
+    sprintf(buffer, "%d ", intWr);                   // Transforming the integer speed to char buffer in order to print it via serial to ros2.
+    Serial.print(buffer);
   
-  intWr = 240;
-  intWl = 250;                         
-  
-  sprintf(buffer, "%d ", intWr);                   // Transforming the integer speed to char buffer in order to print it via serial to ros2.
-  Serial.print(buffer);
+    sprintf(buffer, "%d ", intWl);                   
+    Serial.println(buffer);
+  }
+}
 
+void checkIntegralLimitsWindup(float eIntegral){
+  if (eIntegral > eIntegralLimit)
+  {
+    eIntegral = eIntegralLimit;
+  }
+  else if (eIntegral < -eIntegralLimit)
+  {
+    eIntegral = -eIntegralLimit;
+  }
+}
 
-  sprintf(buffer, "%d ", intWl);                   
-  Serial.println(buffer);
-
-   
-  delay(150);    // Necessary for ros program to be able to write. Otherwise we'll lock the buffer while reading.
-
-  // Objective velocity in rad/s with 0-6.17 range where ~4.2 is the value in which the servo is functional.
-  // If velocity is set between [0;4.2] hardcode 0 pwm as the polinomic regression applied to predict pwm values from angular velocities cannot deal with servo behavior for low PWMs (no speed until 100 PWM).
+void RightServoControllerPI(){
   if (wtRightWheel >= 4.2)
   {
+    Serial.println("ENTRAMOS PI");
     // Angular velocity to PWM transformation via polinomial regression.
     float kpR = 0.05;
     float kiR = 1;
     float eR = wtRightWheel - Wr;
-    float eintegralR = eintegralR + eR * deltaInterruptionTimeR;
+    eintegralR = eintegralR + eR * deltaInterruptionTimeR;
+
+    // El error que pareceríamos tener es que no conseguimos escribir la velocidad deseada en el servo, esto hace que la delta de interrupción sea enorme y como las ruedas no se mueven 
+    // la velocidad angular de la rueda será cero y el error máximo. Esto hace que la eintegral nunca decrezca. 
+
+    checkIntegralLimitsWindup(eintegralR);
+
     float uR = kpR * eR + kiR * eintegralR;
+    Serial.println(uR);
 
     if (uR > 0)
     {
@@ -278,25 +279,33 @@ void loop()
     }
     else
     {
+      Serial.println("en else valor 0");
       pwrR = 0;
     }
 
     if (pwrR > 255)
       pwrR = 255;
 
+    Serial.println("PREVIO A PWM");
+    Serial.println(pwrR);
   }
   else
   {
     pwrR = 0;
   }
+}
 
+void LeftServoControllerPI(){
   if (wtLeftWheel >= 4.2)
   {
     // Angular velocity to PWM transformation via polinomial regression.
     float kpL = 0.05;
     float kiL = 1;
     float eL = wtLeftWheel - Wl;
-    float eintegralL = eintegralL + eL * deltaInterruptionTimeL;
+    eintegralL = eintegralL + eL * deltaInterruptionTimeL;
+
+    checkIntegralLimitsWindup(eintegralL);
+
     float uL = kpL * eL + kiL * eintegralL;
 
     if (uL > 0)
@@ -315,6 +324,49 @@ void loop()
   {
     pwrL = 0;
   }
+}
+
+void loop()
+{
+  SerialReading();
+
+  SerialReadingTimeout();
+  
+  currentTime = millis();
+
+  float realDeltaR = (currentTime - pastInterruptionTimeR);
+  float realDeltaL = (currentTime - pastInterruptionTimeL);
+
+  if (realDeltaR >= 8 * tickCounter) // At 0 velocity our frequency should be 0.
+  {
+    rFrequency = 0; // The longest elapsed time between reads is no more than 20ms, we put 24ms.
+  }
+
+  if (realDeltaL >= 8 * tickCounter) 
+  {
+    lFrequency = 0; 
+  }
+
+  Wr = (tickCounter * ((2 * 3.141516) / N) * rFrequency) / gear; // Angular speed Rad/s.
+  Wl = (tickCounter * ((2 * 3.141516) / N) * lFrequency) / gear; 
+
+  float rounded_downWr = floorf(Wr * 100);                       // Rounding to two decimals our speeds
+  int intWr = (int)rounded_downWr;                               // Getting the integers from our speeds, should divide by 100 in ros code.
+
+  float rounded_downWl = floorf(Wl * 100);                       
+  int intWl = (int)rounded_downWl;                  
+
+  checkIfShouldWriteSerial(intWr, intWl);
+  
+  //delay(150);    // Necessary for ros program to be able to write. Otherwise we'll lock the buffer while reading.
+
+  wtRightWheel = 5.0;
+  wtLeftWheel = 5.0;
+  
+  // Objective velocity in rad/s with 0-6.17 range where ~4.2 is the value in which the servo is functional.
+  // If velocity is set between [0;4.2] hardcode 0 pwm as the polinomic regression applied to predict pwm values from angular velocities cannot deal with servo behavior for low PWMs (no speed until 100 PWM).
+  RightServoControllerPI();
+  LeftServoControllerPI();
     
   ////////////// Print angular velocities for plotting. //////////////
 
@@ -327,10 +379,9 @@ void loop()
   //      delay(1000);
   //    }
 
-//  ////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
   //analogWrite(rWheel, pwrR-L);
-
   analogWrite(rWheel, 0); // PWM applied to right servo.
   analogWrite(lWheel, 0); // PWM applied to left servo.
 }

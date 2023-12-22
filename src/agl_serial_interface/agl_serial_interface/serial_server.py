@@ -30,7 +30,7 @@ class CmdVelPublisherSubscriber(Node):
 
       self.radius = self.get_param_float('radius')
       self.wheel_separation = self.get_param_float('wheel_separation')
-      self.timer_period = 0.9  # In seconds
+      self.timer_period = 0.4  # In seconds
       # self.publisher_leftWheel = self.create_publisher(Twist, self.topic, 10)
       # self.timer_leftWheel = self.create_timer(self.timer_period, self.timer_callback)
 
@@ -83,10 +83,12 @@ class CmdVelPublisherSubscriber(Node):
       self.publisher_rightWheel.publish(msgRightWheel)
       self.get_logger().info('Publishing: "%s"' % msgRightWheel)
 
+      # Parecería que no llegamos a esta sección de código, solo se ejecuta el primer publicador.
+      # Una vez se solucione la parte de arduino seguiremos implementando un mensaje personalizado para enviar solo uno con las dos velocidades. Problema pasa de ser crítico a irrelevante.
       msgLeftWheel = Twist()
       msgLeftWheel.angular.z = float(cmd_vel_array[len(cmd_vel_array) - 1])/100.0
       msgLeftWheel.linear.x = msgLeftWheel.angular.z * radius 
-      self.publisher_leftWheel.publish(msgLeftWheel)
+      self.publisher_rightWheel.publish(msgLeftWheel)
       self.get_logger().info('Publishing: "%s"' % msgLeftWheel)
     except:
       self.get_logger().warn('Fallo buffer')
@@ -119,5 +121,3 @@ if __name__ == '__main__':
 
 # El subscriber tendrá un timer mediante el cual haremos la escritura de las velocidades a nuestro arduino.
 # El publisher tendrá que leer el puerto serie constantemente para asegurarse de que haya llegado información.
-
-# La manera en la que está implementado actualmente es cada vez que enviemos datos a arduino leeremos del puerto serie pero sería incorrecto cuando no enviásemos info desde ros.

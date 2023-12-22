@@ -1,7 +1,0 @@
-float64 RADIUS = 5.0
-float64 WHEEL_SEPARATION = 32.0
-float64 rightWheelAngularSpeed
-float64 leftWheelAngularSpeed
----
-float64 rightWheelDifferentialAngularSpeed
-float64 leftWheelDifferentialAngularSpeed

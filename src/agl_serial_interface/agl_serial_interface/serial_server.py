@@ -3,8 +3,7 @@ from rclpy.node import Node
 import serial
 from time import sleep
 from geometry_msgs.msg import Twist
-
-radius = 5.0
+from agl_interfaces.msg import TwoAngularSpeeds
 
 class CmdVelPublisherSubscriber(Node):
 
@@ -15,7 +14,7 @@ class CmdVelPublisherSubscriber(Node):
       namespace='',
       parameters=[
         ('device', '/dev/ttyACM0'), #device we are trasmitting to & recieving messages from
-          ('topic', 'cmd_vel'),
+          ('topic', 'TwoAngularSpeeds'),
           ('radius', 5.0),
           ('wheel_separation', 32.0)
       ]
@@ -23,24 +22,21 @@ class CmdVelPublisherSubscriber(Node):
 
       self.device_name = self.get_param_str('device')
       self.topic = self.get_param_str('topic')
+      self.radius = self.get_param_float('radius')
+      self.wheel_separation = self.get_param_float('wheel_separation')
       self.ser = serial.Serial(self.device_name,
                             115200, #Note: Baud Rate must be the same in the arduino program, otherwise signal is not recieved!
                             timeout=0.1)
+      
       self.ser.reset_input_buffer()
 
-      self.radius = self.get_param_float('radius')
-      self.wheel_separation = self.get_param_float('wheel_separation')
       self.timer_period = 0.4  # In seconds
-      # self.publisher_leftWheel = self.create_publisher(Twist, self.topic, 10)
-      # self.timer_leftWheel = self.create_timer(self.timer_period, self.timer_callback)
 
-      # Two publishers for odometry readings. Could also make a custom interface message.
+      self.publisher = self.create_publisher(TwoAngularSpeeds, self.topic, 10)
+      self.timer = self.create_timer(self.timer_period, self.timer_callback)
 
-      self.publisher_rightWheel = self.create_publisher(Twist, self.topic, 10)
-      self.timerRightWheel = self.create_timer(self.timer_period, self.timer_callback)
-
-      self.subscription = self.create_subscription(Twist,self.topic,self.listener_callback,10)
-      self.subscription 
+      self.subscriber = self.create_subscription(TwoAngularSpeeds, self.topic, self.listener_callback,10)
+      self.subscriber # See if necessary
 
   def get_param_float(self, name):
     try:
@@ -54,8 +50,19 @@ class CmdVelPublisherSubscriber(Node):
       pass
 
   def listener_callback(self, msg):
-        # Tendríamos que recibir dos mensajes para poder enviar las dos velocidades de las ruedas. Ver como hacerlo, dos subscriptions? Analizar como llega la info de joystick.
-        self.get_logger().info('He escuchado: "%s"' % msg)
+        # self.get_logger().info('He escuchado: "%s"' % msg)
+        
+        self.rightLinearSpeed = msg.right_wheel_angular_speed * (self.radius)
+        self.leftLinearSpeed = msg.left_wheel_angular_speed * (self.radius)
+
+        self.rightWheelAngularSpeed = (self.rightLinearSpeed + msg.right_wheel_angular_speed * self.wheel_separation / 2) / self.radius
+        self.leftWheelAngularSpeed = (self.leftLinearSpeed - msg.left_wheel_angular_speed * self.wheel_separation / 2) / self.radius
+
+        self.valueToSendRightWheel = (int)(self.rightWheelAngularSpeed * 100)
+        self.valueToSendLeftWheel = (int)(self.leftWheelAngularSpeed * 100)
+
+        self.write(str(self.valueToSendRightWheel) + "\n")
+        self.write(str(self.valueToSendLeftWheel )+ "\n")
 
         # self.valueToSendRightWheel = (int)(msg.angular.z * 100)
         # self.rightWheelAngularSpeed = (msg.linear.x + msg.angular.z * self.wheel_separation / 2) / self.radius;
@@ -63,9 +70,9 @@ class CmdVelPublisherSubscriber(Node):
         # self.write(str(self.rightWheelAngularSpeed) + "\n")
         # self.write(str(self.leftWheelAngularSpeed )+ "\n")
 
-        self.valueToSendRightWheel = 500
-        self.write(str(self.valueToSendRightWheel) + "\n")
-        self.write(str(self.valueToSendRightWheel) + "\n")
+        # self.valueToSendRightWheel = 500
+        # self.write(str(self.valueToSendRightWheel) + "\n")
+        # self.write(str(self.valueToSendRightWheel) + "\n")
 
   def timer_callback(self):
     # Read Wr, Wl, in that order, via serial from arduino.
@@ -76,28 +83,14 @@ class CmdVelPublisherSubscriber(Node):
     try:
       decoded = value.decode("ascii")
       cmd_vel_array = decoded.split()
-      msgRightWheel = Twist()
+      msgAngularSpeedsOfWheels = TwoAngularSpeeds()
       # Accessing arduino's cmd_vel_array based on its length allow us to gather the last two values from the serial buffer (Could be reading slower than we write in buffer).
-      msgRightWheel.angular.z = float(cmd_vel_array[len(cmd_vel_array) - 2])/100.0   # Arduino's speeds are in 100 order, divide by 100 to get real speeds.
-      msgRightWheel.linear.x = msgRightWheel.angular.z * radius
-      self.publisher_rightWheel.publish(msgRightWheel)
-      self.get_logger().info('Publishing: "%s"' % msgRightWheel)
-
-      # Parecería que no llegamos a esta sección de código, solo se ejecuta el primer publicador.
-      # Una vez se solucione la parte de arduino seguiremos implementando un mensaje personalizado para enviar solo uno con las dos velocidades. Problema pasa de ser crítico a irrelevante.
-      msgLeftWheel = Twist()
-      msgLeftWheel.angular.z = float(cmd_vel_array[len(cmd_vel_array) - 1])/100.0
-      msgLeftWheel.linear.x = msgLeftWheel.angular.z * radius 
-      self.publisher_rightWheel.publish(msgLeftWheel)
-      self.get_logger().info('Publishing: "%s"' % msgLeftWheel)
+      msgAngularSpeedsOfWheels.right_wheel_angular_speed = float(cmd_vel_array[len(cmd_vel_array) - 2])/100.0   # Arduino's speeds are in 100 order, divide by 100 to get real speeds.
+      msgLeftWheel.left_wheel_angular_speed = float(cmd_vel_array[len(cmd_vel_array) - 1])/100.0
+      self.publisher.publish(msgAngularSpeedsOfWheels)
+      self.get_logger().info('Publishing: "%s"' % msgAngularSpeedsOfWheels)
     except:
       self.get_logger().warn('Fallo buffer')
-    
-    ########### TODO: Differential velocities
-    # wheel_1_angular_velocity = (msgRightWheel->linear.x + msgRightWheel->angular.z * parameters_.wheel_separation.as_double() / 2) / parameters_.wheel_radius.as_double();
-    # wheel_2_angular_velocity = (msgLeftWheel->linear.x - msgLeftWheel->angular.z * parameters_.wheel_separation.as_double() / 2) / parameters_.wheel_radius.as_double();
-
-    # sleep(0.150)
 
   def recv(self):
     dataBytesRead = self.ser.inWaiting()
@@ -107,7 +100,6 @@ class CmdVelPublisherSubscriber(Node):
   def write(self, x):
     print(f"Valor que estamos enviando a nuestro arduino: {x}")
     self.ser.write(bytes(x, 'utf-8'))
-
 
 def main(args=None):
     rclpy.init(args=args)
@@ -119,5 +111,4 @@ def main(args=None):
 if __name__ == '__main__':
     main()
 
-# El subscriber tendrá un timer mediante el cual haremos la escritura de las velocidades a nuestro arduino.
 # El publisher tendrá que leer el puerto serie constantemente para asegurarse de que haya llegado información.

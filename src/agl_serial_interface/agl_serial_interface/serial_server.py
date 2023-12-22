@@ -59,9 +59,9 @@ class CmdVelPublisherSubscriber(Node):
 
         # self.valueToSendRightWheel = (int)(msg.angular.z * 100)
         # self.rightWheelAngularSpeed = (msg.linear.x + msg.angular.z * self.wheel_separation / 2) / self.radius;
-        # self.lefttWheelAngularSpeed = (msg.linear.x - msg.angular.z * self.wheel_separation / 2) / self.radius;
+        # self.leftWheelAngularSpeed = (msg.linear.x - msg.angular.z * self.wheel_separation / 2) / self.radius;
         # self.write(str(self.rightWheelAngularSpeed) + "\n")
-        # self.write(str(self.lefttWheelAngularSpeed )+ "\n")
+        # self.write(str(self.leftWheelAngularSpeed )+ "\n")
 
         self.valueToSendRightWheel = 500
         self.write(str(self.valueToSendRightWheel) + "\n")

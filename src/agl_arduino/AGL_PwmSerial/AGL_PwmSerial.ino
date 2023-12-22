@@ -350,42 +350,6 @@
 //   Wr = (tickCounter * ((2 * 3.141516) / N) * rFrequency) / gear; // Angular speed Rad/s.
 //   Wl = (tickCounter * ((2 * 3.141516) / N) * lFrequency) / gear; 
 
-//   float rounded_downWr = floorf(Wr * 100);                       // Rounding to two decimals our speeds
-//   int intWr = (int)rounded_downWr;                               // Getting the integers from our speeds, should divide by 100 in ros code.
-
-//   float rounded_downWl = floorf(Wl * 100);                       
-//   int intWl = (int)rounded_downWl;                  
-
-//   checkIfShouldWriteSerial(intWr, intWl);
-  
-//   //delay(150);    // Necessary for ros program to be able to write. Otherwise we'll lock the buffer while reading.
-
-//   wtRightWheel = 5.0;
-//   wtLeftWheel = 5.0;
-  
-//   // Objective velocity in rad/s with 0-6.17 range where ~4.2 is the value in which the servo is functional.
-//   // If velocity is set between [0;4.2] hardcode 0 pwm as the polinomic regression applied to predict pwm values from angular velocities cannot deal with servo behavior for low PWMs (no speed until 100 PWM).
-//   RightServoControllerPI();
-//   LeftServoControllerPI();
-    
-//   ////////////// Print angular velocities for plotting. //////////////
-
-//   //    for(int i = 0; i <= 255; i += 5){
-//   //      analogWrite(ruedaR,0);
-//   //      Wr = (contadorTicks*((2*3.141516)/N)*frecuenciaR)/gear;
-//   //      Serial.println(Wr);   // Cambiar el Wr por el Wl cuando sea necesario.
-//   //      Serial.print(",");
-//   //      Serial.println(i);
-//   //      delay(1000);
-//   //    }
-
-// //////////////////////////////////////////////////////////////////////
-
-//   //analogWrite(rWheel, pwrR-L);
-//   analogWrite(rWheel, 0); // PWM applied to right servo.
-//   analogWrite(lWheel, 0); // PWM applied to left servo.
-// }
-
 // Library includes
 #include <math.h>
 #include <stdlib.h>

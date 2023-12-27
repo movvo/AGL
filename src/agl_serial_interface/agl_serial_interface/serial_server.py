@@ -35,13 +35,13 @@ class CmdVelPublisherSubscriber(Node):
       self.timer_period = 0.4  # In seconds
 
       # We should subscribe to cmd_vel and publish via custom message.
+      self.subscription = self.create_subscription(Twist,'/cmd_velocity',self.listener_callback,10)
+      self.subscription 
 
       self.publisher = self.create_publisher(TwoAngularSpeeds, self.topic, 10)
       self.timer = self.create_timer(self.timer_period, self.timer_callback)
 
-      self.subscriber = self.create_subscription(Twist, self.subs_topic, self.listener_callback, 10)
-      self.subscriber # See if necessary
-
+      
   def get_param_float(self, name):
     try:
       return float(self.get_parameter(name).get_parameter_value().double_value)
@@ -54,20 +54,20 @@ class CmdVelPublisherSubscriber(Node):
       pass
 
   def listener_callback(self, msg):
-        # This function will recieve data from joystick so it's necessary to process cmd_vel information not from the custom message we just created.
+    # This function will recieve data from joystick so it's necessary to process cmd_vel information not from the custom message we just created.
 
-        # self.get_logger().info('He escuchado: "%s"' % msg)
+    # self.get_logger().info('He escuchado: "%s"' % msg)
 
-        self.rightWheelAngularSpeed = (msg.linear.x + msg.angular.z * self.wheel_separation / 2) / self.radius
-        self.leftWheelAngularSpeed = (msg.linear.x - msg.angular.z * self.wheel_separation / 2) / self.radius
+    self.rightWheelAngularSpeed = (msg.linear.x + msg.angular.z * self.wheel_separation / 2) / self.radius
+    self.leftWheelAngularSpeed = (msg.linear.x - msg.angular.z * self.wheel_separation / 2) / self.radius
 
-        self.valueToSendRightWheel = (int)(msg.angular.z * 100)
-        self.valueToSendLeftWheel = (int)(msg.angular.z * 100)
+    self.valueToSendRightWheel = (int)(msg.angular.z * 100)
+    self.valueToSendLeftWheel = (int)(msg.angular.z * 100)
 
-        # self.valueToSendRightWheel = 500
+    # self.valueToSendRightWheel = 500
 
-        self.write(str(self.valueToSendRightWheel) + "\n")
-        self.write(str(self.valueToSendLeftWheel )+ "\n")
+    self.write(str(self.valueToSendRightWheel) + "\n")
+    self.write(str(self.valueToSendLeftWheel )+ "\n")
 
   def timer_callback(self):
     # Once we've published the feedback from arduino we should listen to this information in the odom package. (Subscriber to TwoAngularSpeeds)

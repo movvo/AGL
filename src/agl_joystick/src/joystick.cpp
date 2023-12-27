@@ -19,7 +19,7 @@ Joystick::Joystick(rclcpp::Node::SharedPtr nh) :
     nh_(nh)
 {
     // Declare parameters
-    nh_->declare_parameter("cmd_vel_topic", "/cmd_vel");
+    nh_->declare_parameter("cmd_vel_topic", "/cmd_velocity");
     nh_->declare_parameter("commands.axes_left_pad_left_right", 0);
     nh_->declare_parameter("commands.axes_left_pad_up_down", 1);
     nh_->declare_parameter("commands.axes_right_pad_left_right", 2);

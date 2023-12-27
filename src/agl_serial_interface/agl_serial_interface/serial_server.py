@@ -15,6 +15,7 @@ class CmdVelPublisherSubscriber(Node):
       parameters=[
         ('device', '/dev/ttyACM0'), #device we are trasmitting to & recieving messages from
           ('topic', 'TwoAngularSpeeds'),
+          ('subs_topic', 'cmd_vel'),
           ('radius', 5.0),
           ('wheel_separation', 32.0)
       ]
@@ -22,6 +23,7 @@ class CmdVelPublisherSubscriber(Node):
 
       self.device_name = self.get_param_str('device')
       self.topic = self.get_param_str('topic')
+      self.subs_topic = self.get_param_str('subs_topic')
       self.radius = self.get_param_float('radius')
       self.wheel_separation = self.get_param_float('wheel_separation')
       self.ser = serial.Serial(self.device_name,
@@ -32,10 +34,12 @@ class CmdVelPublisherSubscriber(Node):
 
       self.timer_period = 0.4  # In seconds
 
+      # We should subscribe to cmd_vel and publish via custom message.
+
       self.publisher = self.create_publisher(TwoAngularSpeeds, self.topic, 10)
       self.timer = self.create_timer(self.timer_period, self.timer_callback)
 
-      self.subscriber = self.create_subscription(TwoAngularSpeeds, self.topic, self.listener_callback,10)
+      self.subscriber = self.create_subscription(Twist, self.subs_topic, self.listener_callback, 10)
       self.subscriber # See if necessary
 
   def get_param_float(self, name):
@@ -50,31 +54,24 @@ class CmdVelPublisherSubscriber(Node):
       pass
 
   def listener_callback(self, msg):
+        # This function will recieve data from joystick so it's necessary to process cmd_vel information not from the custom message we just created.
+
         # self.get_logger().info('He escuchado: "%s"' % msg)
-        
-        self.rightLinearSpeed = msg.right_wheel_angular_speed * (self.radius)
-        self.leftLinearSpeed = msg.left_wheel_angular_speed * (self.radius)
 
-        self.rightWheelAngularSpeed = (self.rightLinearSpeed + msg.right_wheel_angular_speed * self.wheel_separation / 2) / self.radius
-        self.leftWheelAngularSpeed = (self.leftLinearSpeed - msg.left_wheel_angular_speed * self.wheel_separation / 2) / self.radius
+        self.rightWheelAngularSpeed = (msg.linear.x + msg.angular.z * self.wheel_separation / 2) / self.radius
+        self.leftWheelAngularSpeed = (msg.linear.x - msg.angular.z * self.wheel_separation / 2) / self.radius
 
-        self.valueToSendRightWheel = (int)(self.rightWheelAngularSpeed * 100)
-        self.valueToSendLeftWheel = (int)(self.leftWheelAngularSpeed * 100)
+        self.valueToSendRightWheel = (int)(msg.angular.z * 100)
+        self.valueToSendLeftWheel = (int)(msg.angular.z * 100)
+
+        # self.valueToSendRightWheel = 500
 
         self.write(str(self.valueToSendRightWheel) + "\n")
         self.write(str(self.valueToSendLeftWheel )+ "\n")
 
-        # self.valueToSendRightWheel = (int)(msg.angular.z * 100)
-        # self.rightWheelAngularSpeed = (msg.linear.x + msg.angular.z * self.wheel_separation / 2) / self.radius;
-        # self.leftWheelAngularSpeed = (msg.linear.x - msg.angular.z * self.wheel_separation / 2) / self.radius;
-        # self.write(str(self.rightWheelAngularSpeed) + "\n")
-        # self.write(str(self.leftWheelAngularSpeed )+ "\n")
-
-        # self.valueToSendRightWheel = 500
-        # self.write(str(self.valueToSendRightWheel) + "\n")
-        # self.write(str(self.valueToSendRightWheel) + "\n")
-
   def timer_callback(self):
+    # Once we've published the feedback from arduino we should listen to this information in the odom package. (Subscriber to TwoAngularSpeeds)
+
     # Read Wr, Wl, in that order, via serial from arduino.
     value = self.recv()
 

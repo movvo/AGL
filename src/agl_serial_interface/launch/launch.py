@@ -14,7 +14,7 @@ def generate_launch_description():
             parameters=[
                 {'device': '/dev/ttyACM0'}
                 ,
-                {'topic': 'cmd_vel'}
+                {'topic': '/TwoAngularSpeeds'}
             ]
         ),
     ])

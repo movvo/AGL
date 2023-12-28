@@ -14,8 +14,8 @@ class CmdVelPublisherSubscriber(Node):
       namespace='',
       parameters=[
         ('device', '/dev/ttyACM0'), #device we are trasmitting to & recieving messages from
-          ('topic', 'TwoAngularSpeeds'),
-          ('subs_topic', 'cmd_vel'),
+          ('topic', '/TwoAngularSpeeds'),
+          ('subs_topic', '/cmd_vel'),
           ('radius', 5.0),
           ('wheel_separation', 32.0)
       ]
@@ -32,10 +32,10 @@ class CmdVelPublisherSubscriber(Node):
       
       self.ser.reset_input_buffer()
 
-      self.timer_period = 0.4  # In seconds
+      self.timer_period = 0.6  # In seconds
 
       # We should subscribe to cmd_vel and publish via custom message.
-      self.subscription = self.create_subscription(Twist,'/cmd_velocity',self.listener_callback,10)
+      self.subscription = self.create_subscription(Twist,self.subs_topic,self.listener_callback,10)
       self.subscription 
 
       self.publisher = self.create_publisher(TwoAngularSpeeds, self.topic, 10)
@@ -61,8 +61,14 @@ class CmdVelPublisherSubscriber(Node):
     self.rightWheelAngularSpeed = (msg.linear.x + msg.angular.z * self.wheel_separation / 2) / self.radius
     self.leftWheelAngularSpeed = (msg.linear.x - msg.angular.z * self.wheel_separation / 2) / self.radius
 
-    self.valueToSendRightWheel = (int)(msg.angular.z * 100)
-    self.valueToSendLeftWheel = (int)(msg.angular.z * 100)
+    self.valueToSendRightWheel = (int)(self.rightWheelAngularSpeed * 1000)
+    self.valueToSendLeftWheel = (int)(self.leftWheelAngularSpeed * 1000)
+
+    # The values of valueToSendRightWheel and valueToSendLeftWheel should be between 420 and 620 more or less. 
+    # With (int)(self.rightWheelAngularSpeed * 100), currently we have *1000 to make it work, we are getting values from 4 to 68, once we arrive to arduino
+    # we'll divide it into 100 gathering 0.04 min and 0.68 max, we should map the speeds in order to send them.
+
+    # Watch the possibility of changing the motor pins's high-low combination in order to 
 
     # self.valueToSendRightWheel = 500
 

@@ -61,8 +61,14 @@ class CmdVelPublisherSubscriber(Node):
     self.rightWheelAngularSpeed = (msg.linear.x + msg.angular.z * self.wheel_separation / 2) / self.radius
     self.leftWheelAngularSpeed = (msg.linear.x - msg.angular.z * self.wheel_separation / 2) / self.radius
 
-    self.valueToSendRightWheel = (int)(self.rightWheelAngularSpeed * 1000)
-    self.valueToSendLeftWheel = (int)(self.leftWheelAngularSpeed * 1000)
+    OldRange = (68 - 0)  
+    NewRange = (620 - 0)  
+    NewValue = (((self.rightWheelAngularSpeed - 0) * NewRange) / OldRange) + 0
+    NewValue2 = (((self.leftWheelAngularSpeed - 0) * NewRange) / OldRange) + 0
+
+    # self.valueToSendRightWheel = (int)(self.rightWheelAngularSpeed * 1000)
+    self.valueToSendRightWheel = (int)(NewValue * 100)
+    self.valueToSendLeftWheel = (int)(NewValue2 * 100)
 
     # The values of valueToSendRightWheel and valueToSendLeftWheel should be between 420 and 620 more or less. 
     # With (int)(self.rightWheelAngularSpeed * 100), currently we have *1000 to make it work, we are getting values from 4 to 68, once we arrive to arduino

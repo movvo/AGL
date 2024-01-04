@@ -32,7 +32,8 @@ class CmdVelPublisherSubscriber(Node):
       
       self.ser.reset_input_buffer()
 
-      self.timer_period = 0.6  # In seconds
+      self.timer_period = 0.4  # In seconds
+      self.setVelZero = True
 
       # We should subscribe to cmd_vel and publish via custom message.
       self.subscription = self.create_subscription(Twist,self.subs_topic,self.listener_callback,10)
@@ -57,26 +58,38 @@ class CmdVelPublisherSubscriber(Node):
     # This function will recieve data from joystick so it's necessary to process cmd_vel information not from the custom message we just created.
 
     # self.get_logger().info('He escuchado: "%s"' % msg)
+      
+    if msg.angular.z != 0 or msg.linear.x != 0:
 
-    self.rightWheelAngularSpeed = (msg.linear.x + msg.angular.z * self.wheel_separation / 2) / self.radius
-    self.leftWheelAngularSpeed = (msg.linear.x - msg.angular.z * self.wheel_separation / 2) / self.radius
+      self.setVelZero = True
 
-    OldRange = (68 - 0)  
-    NewRange = (620 - 0)  
-    NewValue = (((self.rightWheelAngularSpeed - 0) * NewRange) / OldRange) + 0
-    NewValue2 = (((self.leftWheelAngularSpeed - 0) * NewRange) / OldRange) + 0
+      self.rightWheelAngularSpeed = (msg.linear.x + msg.angular.z * self.wheel_separation / 2) / self.radius
+      self.leftWheelAngularSpeed = (msg.linear.x - msg.angular.z * self.wheel_separation / 2) / self.radius
 
-    # self.valueToSendRightWheel = (int)(self.rightWheelAngularSpeed * 1000)
-    self.valueToSendRightWheel = (int)(NewValue * 100)
-    self.valueToSendLeftWheel = (int)(NewValue2 * 100)
+      if msg.angular.z == 0.0:
+        # To transform only the linear velocity, we can use a simple proportional relationship.
+        # Our joystick values range from [-0.2; 0] U [0; 0.2] for linear velocity.
+        # We can consider only the positive values.
+        # By using a proportional relationship for values between 0 and 2, we can determine the equivalent values in [0, 620].
+        # There's no need to check for values greater than 420, as the Arduino part already takes care of these aspects.
 
-    # The values of valueToSendRightWheel and valueToSendLeftWheel should be between 420 and 620 more or less. 
-    # With (int)(self.rightWheelAngularSpeed * 100), currently we have *1000 to make it work, we are getting values from 4 to 68, once we arrive to arduino
-    # we'll divide it into 100 gathering 0.04 min and 0.68 max, we should map the speeds in order to send them.
+        correctedVel = (msg.linear.x * 620)/0.2
+        self.valueToSendRightWheel = (int)(correctedVel)
+        self.valueToSendLeftWheel = (int)(correctedVel)
+      else:
+        correctedVelRight = (self.rightWheelAngularSpeed * 620)/0.68
+        correctedVelLeft = (self.leftWheelAngularSpeed * 620)/0.68
+        self.valueToSendRightWheel = (int)(correctedVelRight)
+        self.valueToSendLeftWheel = (int)(correctedVelLeft)
 
-    # Watch the possibility of changing the motor pins's high-low combination in order to 
+      # Watch the possibility of changing the motor pins's high-low combination in order to go backwards and let the rotation be faster. Should detect negative number in arduino.
 
-    # self.valueToSendRightWheel = 500
+    else:
+
+      if self.setVelZero:
+        self.setVelZero = False
+        self.valueToSendRightWheel = 0
+        self.valueToSendLeftWheel = 0
 
     self.write(str(self.valueToSendRightWheel) + "\n")
     self.write(str(self.valueToSendLeftWheel )+ "\n")

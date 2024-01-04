@@ -32,7 +32,7 @@ class CmdVelPublisherSubscriber(Node):
       
       self.ser.reset_input_buffer()
 
-      self.timer_period = 0.4  # In seconds
+      self.timer_period = 0.2  # In seconds
       self.setVelZero = True
 
       # We should subscribe to cmd_vel and publish via custom message.
@@ -81,6 +81,9 @@ class CmdVelPublisherSubscriber(Node):
         correctedVelLeft = (self.leftWheelAngularSpeed * 620)/0.68
         self.valueToSendRightWheel = (int)(correctedVelRight)
         self.valueToSendLeftWheel = (int)(correctedVelLeft)
+        
+      self.write(str(self.valueToSendRightWheel) + "\n")
+      self.write(str(self.valueToSendLeftWheel )+ "\n")
 
       # Watch the possibility of changing the motor pins's high-low combination in order to go backwards and let the rotation be faster. Should detect negative number in arduino.
 
@@ -90,9 +93,11 @@ class CmdVelPublisherSubscriber(Node):
         self.setVelZero = False
         self.valueToSendRightWheel = 0
         self.valueToSendLeftWheel = 0
+        
+        self.write(str(self.valueToSendRightWheel) + "\n")
+        self.write(str(self.valueToSendLeftWheel )+ "\n")
 
-    self.write(str(self.valueToSendRightWheel) + "\n")
-    self.write(str(self.valueToSendLeftWheel )+ "\n")
+    
 
   def timer_callback(self):
     # Once we've published the feedback from arduino we should listen to this information in the odom package. (Subscriber to TwoAngularSpeeds)

@@ -27,12 +27,10 @@ class CmdVelPublisherSubscriber(Node):
       self.radius = self.get_param_float('radius')
       self.wheel_separation = self.get_param_float('wheel_separation')
       self.ser = serial.Serial(self.device_name,
-                            115200, #Note: Baud Rate must be the same in the arduino program, otherwise signal is not recieved!
+                            230400, #Note: Baud Rate must be the same in the arduino program, otherwise signal is not recieved!
                             timeout=0.1)
       
-      self.ser.reset_input_buffer()
-
-      self.timer_period = 0.2  # In seconds
+      self.timer_period = 0.25  # In seconds
       self.setVelZero = True
 
       # We should subscribe to cmd_vel and publish via custom message.
@@ -81,7 +79,8 @@ class CmdVelPublisherSubscriber(Node):
         correctedVelLeft = (self.leftWheelAngularSpeed * 620)/0.68
         self.valueToSendRightWheel = (int)(correctedVelRight)
         self.valueToSendLeftWheel = (int)(correctedVelLeft)
-        
+
+      self.ser.reset_output_buffer()
       self.write(str(self.valueToSendRightWheel) + "\n")
       self.write(str(self.valueToSendLeftWheel )+ "\n")
 
@@ -93,9 +92,11 @@ class CmdVelPublisherSubscriber(Node):
         self.setVelZero = False
         self.valueToSendRightWheel = 0
         self.valueToSendLeftWheel = 0
-        
+
+        self.ser.reset_output_buffer()
         self.write(str(self.valueToSendRightWheel) + "\n")
         self.write(str(self.valueToSendLeftWheel )+ "\n")
+    
 
     
 

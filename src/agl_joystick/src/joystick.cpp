@@ -96,7 +96,7 @@ bool Joystick::Initialize()
     joy_sub_ = nh_->create_subscription<sensor_msgs::msg::Joy>("joy", rclcpp::QoS(rclcpp::KeepLast(10)),
                                                                     std::bind(&Joystick::JoyCallback, this, _1));
     
-    joystick_timer_ = nh_->create_wall_timer(200ms, std::bind(&Joystick::RunJoystick,this));
+    joystick_timer_ = nh_->create_wall_timer(25ms, std::bind(&Joystick::RunJoystick,this));
     
     ResetVelocities();
     first_connection_ = true;

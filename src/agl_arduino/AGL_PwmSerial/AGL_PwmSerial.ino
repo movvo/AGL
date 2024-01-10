@@ -94,7 +94,7 @@ void setup()
 
   attachInterrupt(digitalPinToInterrupt(encoderR), REncoder, FALLING); // PIN Interruption set to detect a falling flank in encoderR pin, it'll activate REncoder function.
   attachInterrupt(digitalPinToInterrupt(encoderL), LEncoder, FALLING); 
-  Serial.begin(115200);  // Start of Serial communication.
+  Serial.begin(230400);  // Start of Serial communication.
   Serial.setTimeout(1);
                                                
 }
@@ -193,11 +193,18 @@ void SerialReading()
   {
     noDataSerialReadCounter++;
   }
+  else if(Serial.available() == Serial.availableForWrite())
+  {
+    while(Serial.available() > 0)
+    {
+      char cositas = Serial.read();
+    }
+    Serial.flush();
+  }
   else{
     noDataSerialReadCounter = 0;
 
       ros2DataRightWheel = Serial.readStringUntil('\n');
-//      Serial.print(ros2DataRightWheel);
       ros2DataRightWheelRead = true;
 
     if (Serial.available() > 0){
@@ -246,7 +253,7 @@ void checkIfShouldWriteSerial(int intWr, int intWl){
   }
 }
 
-void checkIntegralLimitsWindup(float eIntegral){
+float checkIntegralLimitsWindup(float eIntegral){
   if (eIntegral > eIntegralLimit)
   {
     eIntegral = eIntegralLimit;
@@ -255,6 +262,7 @@ void checkIntegralLimitsWindup(float eIntegral){
   {
     eIntegral = -eIntegralLimit;
   }
+  return eIntegral;
 }
 
 void RightServoControllerPI(){
@@ -267,10 +275,10 @@ void RightServoControllerPI(){
     // Angular velocity to PWM transformation via polinomial regression.
     float kpR = 0.5;
     float kiR = 0.1;
-    float eR = wtRightWheel - Wr;
+    float eR = abs(wtRightWheel) - Wr;
     eintegralR = eintegralR + eR * deltaInterruptionTimeR;
 
-    checkIntegralLimitsWindup(eintegralR);
+    eintegralR = checkIntegralLimitsWindup(eintegralR);
 
     float uR = kpR * eR + kiR * eintegralR;
 
@@ -285,14 +293,19 @@ void RightServoControllerPI(){
 
     if (pwrR > 255)
       pwrR = 255;
+
+    if (pwrR < 0)
+      pwrR = 0;
   }
   else if(abs(wtRightWheel) >= 4.2 && Wr == 0){
     // This condition serves as start motor instructions (we could have the situation where the previous speed is 0 if robot halted or no angular speed recieved --> controller PI not necessary)
-    pwrR = (int)(11.5142749480926 * pow(wtRightWheel, 2) - 29.7178828449269 * wtRightWheel + 2.95629260770791);
+    pwrR = (int)(11.5142749480926 * pow(abs(wtRightWheel), 2) - 29.7178828449269 * abs(wtRightWheel) + 2.95629260770791);
     if (pwrR > 255)
       pwrR = 255;
+    if (pwrR < 0)
+      pwrR = 0;
   }
-  else if(wtRightWheel < 4.2 && wtRightWheel >= 0)
+  else if(abs(wtRightWheel) < 4.2 && abs(wtRightWheel) >= 0)
     pwrR = 0;
   
   if(wtRightWheel < 0)
@@ -313,10 +326,10 @@ void LeftServoControllerPI(){
     // Angular velocity to PWM transformation via polinomial regression.
     float kpL = 0.5;
     float kiL = 0.1;
-    float eL = wtLeftWheel - Wl;
+    float eL = abs(wtLeftWheel) - Wl;
     eintegralL = eintegralL + eL * deltaInterruptionTimeL;
 
-    checkIntegralLimitsWindup(eintegralL);
+    eintegralL = checkIntegralLimitsWindup(eintegralL);
 
     float uL = kpL * eL + kiL * eintegralL;
 
@@ -331,14 +344,19 @@ void LeftServoControllerPI(){
 
     if (pwrL > 255)
       pwrL = 255;
+
+    if (pwrL < 0)
+      pwrL = 0;
   }
   else if(abs(wtLeftWheel) >= 4.2 && Wl == 0){
     // This condition serves as start motor instructions (we could have the situation where the previous speed is 0 if robot halted or no angular speed recieved --> controller PI not necessary)
-    pwrL = (int)(11.5142749480926 * pow(wtLeftWheel, 2) - 29.7178828449269 * wtLeftWheel + 2.95629260770791);
+    pwrL = (int)(11.5142749480926 * pow(abs(wtLeftWheel), 2) - 29.7178828449269 * abs(wtLeftWheel) + 2.95629260770791);
     if (pwrL > 255)
+      pwrL = 255;
+    if (pwrL < 0)
       pwrL = 0;
   }
-  else if (wtLeftWheel < 4.2 && wtLeftWheel >= 0)
+  else if (abs(wtLeftWheel) < 4.2 && abs(wtLeftWheel) >= 0)
     pwrL = 0;
   
   if(wtLeftWheel < 0)
@@ -347,7 +365,6 @@ void LeftServoControllerPI(){
     digitalWrite(IN2_ML, LOW);
   }
 }
-
 void loop()
 {
   // SERIAL COMS READ
@@ -377,9 +394,6 @@ void loop()
                 
   // SEND RPM TO SERIAL
   checkIfShouldWriteSerial(intWr, intWl);
-//
-//  Serial.print(wtRightWheel);
-//  Serial.println(wtLeftWheel);
 
   // LINEAR REGRESSION FOR PWM CALCULATION FOR DESIRED ANGULAR SPEEDS.
   RightServoControllerPI();

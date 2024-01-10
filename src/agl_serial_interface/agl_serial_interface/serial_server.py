@@ -106,7 +106,7 @@ class CmdVelPublisherSubscriber(Node):
     # Read Wr, Wl, in that order, via serial from arduino.
     value = self.recv()
 
-    print(f"RECEIVED DATA: {value}") 
+    print(f"RECEIVED DATA: {value} we'll take last two recieved values.") 
     
     try:
       decoded = value.decode("ascii")
@@ -114,7 +114,7 @@ class CmdVelPublisherSubscriber(Node):
       msgAngularSpeedsOfWheels = TwoAngularSpeeds()
       # Accessing arduino's cmd_vel_array based on its length allow us to gather the last two values from the serial buffer (Could be reading slower than we write in buffer).
       msgAngularSpeedsOfWheels.right_wheel_angular_speed = float(cmd_vel_array[len(cmd_vel_array) - 2])/100.0   # Arduino's speeds are in 100 order, divide by 100 to get real speeds.
-      msgLeftWheel.left_wheel_angular_speed = float(cmd_vel_array[len(cmd_vel_array) - 1])/100.0
+      msgAngularSpeedsOfWheels.left_wheel_angular_speed = float(cmd_vel_array[len(cmd_vel_array) - 1])/100.0
       self.publisher.publish(msgAngularSpeedsOfWheels)
       self.get_logger().info('Publishing: "%s"' % msgAngularSpeedsOfWheels)
     except:

@@ -26,6 +26,8 @@ float wtRightWheel = 0.0;   //With this declaration we should be able to keep pr
 float wtLeftWheel = 0.0;
 bool ros2DataRightWheelRead = false;    // Control of wt speed setting.
 bool ros2DataLeftWheelRead = false;
+bool rightWheelGoingForward = true;    // Control of wt speed setting.
+bool leftWheelGoingForward = true;
 
 int IN3_MR = 5;
 int IN4_MR = 4;
@@ -269,6 +271,7 @@ void RightServoControllerPI(){
   // Default servo direction
   digitalWrite(IN3_MR, HIGH);
   digitalWrite(IN4_MR, LOW);
+  rightWheelGoingForward = true;
   
   if (abs(wtRightWheel) >= 4.2 && Wr != 0)
   {
@@ -314,12 +317,14 @@ void RightServoControllerPI(){
     // For the right wheel the distribution necessary to go backwards is as it follows:
     digitalWrite(IN3_MR, LOW);
     digitalWrite(IN4_MR, HIGH);
+    rightWheelGoingForward = false;
   }
 }
 
 void LeftServoControllerPI(){
   digitalWrite(IN1_ML, LOW);  // Different order as the servo is rotated.
   digitalWrite(IN2_ML, HIGH);
+  leftWheelGoingForward = true;
   
   if (abs(wtLeftWheel) >= 4.2 && Wl != 0)
   {
@@ -363,6 +368,7 @@ void LeftServoControllerPI(){
   {
     digitalWrite(IN1_ML, HIGH);  
     digitalWrite(IN2_ML, LOW);
+    leftWheelGoingForward = false;
   }
 }
 void loop()
@@ -392,12 +398,20 @@ void loop()
   float rounded_downWl = floorf(Wl * 100);                       
   int intWl = (int)rounded_downWl;   
                 
-  // SEND RPM TO SERIAL
-  checkIfShouldWriteSerial(intWr, intWl);
-
   // LINEAR REGRESSION FOR PWM CALCULATION FOR DESIRED ANGULAR SPEEDS.
   RightServoControllerPI();
   LeftServoControllerPI();
+
+  if(!rightWheelGoingForward){
+    intWr = -intWr;
+  }
+
+  if(!leftWheelGoingForward){
+    intWl = -intWl;
+  }
+
+  // SEND RPM TO SERIAL
+  checkIfShouldWriteSerial(intWr, intWl);
 
   analogWrite(rWheel, pwrR); // PWM applied to right servo.
   analogWrite(lWheel, pwrL); // PWM applied to left servo.

@@ -63,7 +63,7 @@ class OdomPublisherSubscriber(Node):
     # A self.angular_vel deberíamos restarle la velocidad angular de la rueda loca?
 
     # Haremos un acumulativo con suma para sumarle o restarle a las posiciones u orientación y ver un cambio respecto a datos anteriores.
-    self.orientation = self.orientation + (self.angular_vel * self.deltaTimes)
+    self.orientation =  (self.orientation + (self.angular_vel * self.deltaTimes)) % (2*math.pi)
     self.x_position = self.x_position + (self.linear_vel * math.cos(self.orientation) * self.deltaTimes) 
     self.y_position = self.y_position + (self.linear_vel * math.sin(self.orientation) * self.deltaTimes) 
 

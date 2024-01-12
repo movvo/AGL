@@ -3,8 +3,8 @@ from rclpy.node import Node
 import serial
 import time
 from geometry_msgs.msg import Twist
+from nav_msgs.msg import Odometry
 from agl_interfaces.msg import TwoAngularSpeeds
-from agl_interfaces.msg import OdometryMsg
 import math
 
 class OdomPublisherSubscriber(Node):
@@ -16,7 +16,7 @@ class OdomPublisherSubscriber(Node):
       namespace='',
       parameters=[
           ('subs_topic', '/TwoAngularSpeeds'),
-          ('pub_topic', '/OdometryMsg'),
+          ('pub_topic', '/Odometry'),
           ('radius', 5.0),
           ('wheel_separation', 32.0)
       ]
@@ -32,7 +32,7 @@ class OdomPublisherSubscriber(Node):
       self.x_position = 0.0
       self.y_position = 0.0
 
-      self.publisher = self.create_publisher(OdometryMsg, self.pub_topic, 10)
+      self.publisher = self.create_publisher(Odometry, self.pub_topic, 10)
       self.subscription = self.create_subscription(TwoAngularSpeeds,self.subs_topic,self.listener_callback,10)
       self.subscription 
 
@@ -67,10 +67,15 @@ class OdomPublisherSubscriber(Node):
     self.x_position = self.x_position + (self.linear_vel * math.cos(self.orientation) * self.deltaTimes) 
     self.y_position = self.y_position + (self.linear_vel * math.sin(self.orientation) * self.deltaTimes) 
 
-    self.OdometryMsg = OdometryMsg()
-    self.OdometryMsg.orientation = self.orientation
-    self.OdometryMsg.x_position = self.x_position
-    self.OdometryMsg.y_position = self.y_position
+    self.OdometryMsg = Odometry()
+
+    self.OdometryMsg.header.stamp = time.time()
+    # self.OdometryMsg.header.frame_id = parameters.frame_id.as_string()
+    # self.OdometryMsg.child_frame_id = parameters.child_frame_id.as_string()
+    self.OdometryMsg.pose.pose.position.x = self.x_position
+    self.OdometryMsg.pose.pose.position.y = self.y_position
+    self.OdometryMsg.pose.pose.position.z = 0.0
+    self.OdometryMsg.pose.pose.orientation = self.orientation
 
     self.publisher.publish(self.OdometryMsg)
     self.get_logger().info('Publishing: "%s"' % self.OdometryMsg)

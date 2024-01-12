@@ -3,6 +3,7 @@ from rclpy.node import Node
 import serial
 import time
 from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Quaternion
 from nav_msgs.msg import Odometry
 from agl_interfaces.msg import TwoAngularSpeeds
 import math
@@ -75,7 +76,14 @@ class OdomPublisherSubscriber(Node):
     self.OdometryMsg.pose.pose.position.x = self.x_position
     self.OdometryMsg.pose.pose.position.y = self.y_position
     self.OdometryMsg.pose.pose.position.z = 0.0
-    self.OdometryMsg.pose.pose.orientation = self.orientation
+
+    self.odom_quat = Quaternion()
+    self.odom_quat.x = 0.0
+    self.odom_quat.y = 0.0
+    self.odom_quat.z = math.sin(self.orientation/2)
+    self.odom_quat.w = math.cos(self.orientation/2)
+
+    self.OdometryMsg.pose.pose.orientation = self.odom_quat
 
     self.publisher.publish(self.OdometryMsg)
     self.get_logger().info('Publishing: "%s"' % self.OdometryMsg)

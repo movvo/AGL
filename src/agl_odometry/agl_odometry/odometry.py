@@ -70,7 +70,7 @@ class OdomPublisherSubscriber(Node):
 
     self.OdometryMsg = Odometry()
 
-    self.OdometryMsg.header.stamp = time.time()
+    # self.OdometryMsg.header.stamp = time.time()
     # self.OdometryMsg.header.frame_id = parameters.frame_id.as_string()
     # self.OdometryMsg.child_frame_id = parameters.child_frame_id.as_string()
     self.OdometryMsg.pose.pose.position.x = self.x_position

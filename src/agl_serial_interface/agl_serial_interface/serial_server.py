@@ -14,10 +14,7 @@ class CmdVelPublisherSubscriber(Node):
       namespace='',
       parameters=[
         ('device', '/dev/ttyACM0'), #device we are trasmitting to & recieving messages from
-          ('topic', '/TwoAngularSpeeds'),
-          ('subs_topic', '/cmd_vel'),
-          ('radius', 5.0),
-          ('wheel_separation', 32.0)
+          ('topic', 'cmd_vel'),
       ]
       )
 

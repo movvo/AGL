@@ -12,9 +12,8 @@ def generate_launch_description():
             output='screen',
             emulate_tty=True,
             parameters=[
-                {'device': '/dev/ttyACM0'}
-                ,
-                {'topic': '/TwoAngularSpeeds'}
+                {'device': '/dev/ttyACM0'},
+                {'topic': 'cmd_vel'}
             ]
         ),
     ])

@@ -4,6 +4,7 @@ import serial
 from time import sleep
 from geometry_msgs.msg import Twist
 from agl_interfaces.msg import TwoAngularSpeeds
+debug = False
 
 class CmdVelPublisherSubscriber(Node):
 
@@ -54,8 +55,9 @@ class CmdVelPublisherSubscriber(Node):
 
   def listener_callback(self, msg):
     # This function will recieve data from joystick so it's necessary to process cmd_vel information not from the custom message we just created.
-
-    # self.get_logger().info('He escuchado: "%s"' % msg)
+    
+    if debug:
+      self.get_logger().info('He escuchado: "%s"' % msg)
       
     if msg.angular.z != 0 or msg.linear.x != 0:
 
@@ -106,7 +108,8 @@ class CmdVelPublisherSubscriber(Node):
     # Read Wr, Wl, in that order, via serial from arduino.
     value = self.recv()
 
-    print(f"RECEIVED DATA: {value} we'll take last two recieved values.") 
+    if debug:
+      print(f"RECEIVED DATA: {value} we'll take last two recieved values.") 
     
     try:
       decoded = value.decode("ascii")
@@ -116,7 +119,8 @@ class CmdVelPublisherSubscriber(Node):
       msgAngularSpeedsOfWheels.right_wheel_angular_speed = float(cmd_vel_array[len(cmd_vel_array) - 2])/100.0   # Arduino's speeds are in 100 order, divide by 100 to get real speeds.
       msgAngularSpeedsOfWheels.left_wheel_angular_speed = float(cmd_vel_array[len(cmd_vel_array) - 1])/100.0
       self.publisher.publish(msgAngularSpeedsOfWheels)
-      self.get_logger().info('Publishing: "%s"' % msgAngularSpeedsOfWheels)
+      if debug:
+        self.get_logger().info('Publishing: "%s"' % msgAngularSpeedsOfWheels)
     except:
       self.get_logger().warn('Fallo buffer')
 
@@ -126,7 +130,8 @@ class CmdVelPublisherSubscriber(Node):
     return data
 
   def write(self, x):
-    print(f"Valor que estamos enviando a nuestro arduino: {x}")
+    if debug:
+      print(f"Valor que estamos enviando a nuestro arduino: {x}")
     self.ser.write(bytes(x, 'utf-8'))
 
 def main(args=None):

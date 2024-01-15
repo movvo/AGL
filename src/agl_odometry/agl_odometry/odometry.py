@@ -8,6 +8,7 @@ from nav_msgs.msg import Odometry
 from agl_interfaces.msg import TwoAngularSpeeds
 import math
 # from tf import
+debug = False
 
 class OdomPublisherSubscriber(Node):
 
@@ -61,14 +62,11 @@ class OdomPublisherSubscriber(Node):
       self.deltaTimes = self.currentTime - self.lastTime
 
     self.linear_vel = (self.radius/2) * (msg.right_wheel_angular_speed + msg.left_wheel_angular_speed)
-    print(f"Linear velocity recieved: {self.linear_vel}") 
     self.angular_vel = (self.radius/self.wheel_separation) * (msg.right_wheel_angular_speed - msg.left_wheel_angular_speed)
-    print(f"Angular velocity recieved: {self.angular_vel}")
-    # self.angular_vel = (1/self.wheel_separation) * (self.linear_vel)
-    # A self.angular_vel deberíamos restarle la velocidad angular de la rueda loca?
+      
+    # See necessity of substracting angular velocity of idler wheel.
 
-    # Haremos un acumulativo con suma para sumarle o restarle a las posiciones u orientación y ver un cambio respecto a datos anteriores.
-    # self.orientation =  (self.orientation + (self.angular_vel * self.deltaTimes)) % (2*math.pi)
+    # We'll acumulate in positions variables the increment or decrement of robot's x,y coordinates. 
     self.orientation =  (self.orientation + (self.angular_vel * self.deltaTimes))
     self.x_position = self.x_position + (self.linear_vel * math.cos(self.orientation) * self.deltaTimes)
     self.y_position = self.y_position + (self.linear_vel * math.sin(self.orientation) * self.deltaTimes)
@@ -77,7 +75,6 @@ class OdomPublisherSubscriber(Node):
 
     self.OdometryMsg.header.stamp = rclpy.clock.Clock().now().to_msg()
     self.OdometryMsg.header.frame_id = "OdometryMsg"
-    # self.OdometryMsg.child_frame_id = parameters.child_frame_id.as_string()
 
     self.OdometryMsg.pose.pose.position.x = self.x_position
     self.OdometryMsg.pose.pose.position.y = self.y_position
@@ -93,13 +90,14 @@ class OdomPublisherSubscriber(Node):
     self.odom_quat.z = math.sin(self.orientation/2)
     self.odom_quat.w = math.cos(self.orientation/2)
 
-    # q = quaternion_from_euler(0, 0, self.orientation)
-    # msg = Quaternion(*q)
-
     self.OdometryMsg.pose.pose.orientation = self.odom_quat
 
     self.publisher.publish(self.OdometryMsg)
-    self.get_logger().info('Publishing: "%s"' % self.OdometryMsg)
+    
+    if debug:
+      print(f"Linear velocity recieved: {self.linear_vel}") 
+      print(f"Angular velocity recieved: {self.angular_vel}")
+      self.get_logger().info('Publishing: "%s"' % self.OdometryMsg)
 
     self.lastTime = time.time()
 

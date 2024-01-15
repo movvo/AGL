@@ -70,9 +70,10 @@ class OdomPublisherSubscriber(Node):
 
     self.OdometryMsg = Odometry()
 
-    # self.OdometryMsg.header.stamp = time.time()
-    # self.OdometryMsg.header.frame_id = parameters.frame_id.as_string()
+    self.OdometryMsg.header.stamp = rclpy.clock.Clock().now().to_msg()
+    self.OdometryMsg.header.frame_id = "OdometryMsg"
     # self.OdometryMsg.child_frame_id = parameters.child_frame_id.as_string()
+
     self.OdometryMsg.pose.pose.position.x = self.x_position
     self.OdometryMsg.pose.pose.position.y = self.y_position
     self.OdometryMsg.pose.pose.position.z = 0.0

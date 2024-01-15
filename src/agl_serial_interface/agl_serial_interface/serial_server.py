@@ -16,8 +16,8 @@ class CmdVelPublisherSubscriber(Node):
         ('device', '/dev/ttyACM0'), #device we are trasmitting to & recieving messages from
           ('topic', '/TwoAngularSpeeds'),
           ('subs_topic', '/cmd_vel'),
-          ('radius', 5.0),
-          ('wheel_separation', 32.0)
+          ('radius', 0.05),
+          ('wheel_separation', 0.32)
       ]
       )
 

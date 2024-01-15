@@ -7,6 +7,7 @@ from geometry_msgs.msg import Quaternion
 from nav_msgs.msg import Odometry
 from agl_interfaces.msg import TwoAngularSpeeds
 import math
+# from tf import
 
 class OdomPublisherSubscriber(Node):
 
@@ -18,8 +19,8 @@ class OdomPublisherSubscriber(Node):
       parameters=[
           ('subs_topic', '/TwoAngularSpeeds'),
           ('pub_topic', '/Odometry'),
-          ('radius', 5.0),
-          ('wheel_separation', 32.0)
+          ('radius', 0.05),
+          ('wheel_separation', 0.32)
       ]
       )
 
@@ -60,13 +61,17 @@ class OdomPublisherSubscriber(Node):
       self.deltaTimes = self.currentTime - self.lastTime
 
     self.linear_vel = (self.radius/2) * (msg.right_wheel_angular_speed + msg.left_wheel_angular_speed)
+    print(f"Linear velocity recieved: {self.linear_vel}") 
     self.angular_vel = (self.radius/self.wheel_separation) * (msg.right_wheel_angular_speed - msg.left_wheel_angular_speed)
+    print(f"Angular velocity recieved: {self.angular_vel}")
+    # self.angular_vel = (1/self.wheel_separation) * (self.linear_vel)
     # A self.angular_vel deberíamos restarle la velocidad angular de la rueda loca?
 
     # Haremos un acumulativo con suma para sumarle o restarle a las posiciones u orientación y ver un cambio respecto a datos anteriores.
-    self.orientation =  (self.orientation + (self.angular_vel * self.deltaTimes)) % (2*math.pi)
-    self.x_position = self.x_position + (self.linear_vel * math.cos(self.orientation) * self.deltaTimes) 
-    self.y_position = self.y_position + (self.linear_vel * math.sin(self.orientation) * self.deltaTimes) 
+    # self.orientation =  (self.orientation + (self.angular_vel * self.deltaTimes)) % (2*math.pi)
+    self.orientation =  (self.orientation + (self.angular_vel * self.deltaTimes))
+    self.x_position = self.x_position + (self.linear_vel * math.cos(self.orientation) * self.deltaTimes)
+    self.y_position = self.y_position + (self.linear_vel * math.sin(self.orientation) * self.deltaTimes)
 
     self.OdometryMsg = Odometry()
 
@@ -78,11 +83,18 @@ class OdomPublisherSubscriber(Node):
     self.OdometryMsg.pose.pose.position.y = self.y_position
     self.OdometryMsg.pose.pose.position.z = 0.0
 
+    self.OdometryMsg.twist.twist.linear.x = self.linear_vel
+    self.OdometryMsg.twist.twist.linear.y = 0.0
+    self.OdometryMsg.twist.twist.angular.z = self.angular_vel
+
     self.odom_quat = Quaternion()
     self.odom_quat.x = 0.0
     self.odom_quat.y = 0.0
     self.odom_quat.z = math.sin(self.orientation/2)
     self.odom_quat.w = math.cos(self.orientation/2)
+
+    # q = quaternion_from_euler(0, 0, self.orientation)
+    # msg = Quaternion(*q)
 
     self.OdometryMsg.pose.pose.orientation = self.odom_quat
 

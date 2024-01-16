@@ -12,9 +12,11 @@ def generate_launch_description():
             output='screen',
             emulate_tty=True,
             parameters=[
-                {'device': '/dev/ttyACM0'}
-                ,
-                {'topic': '/TwoAngularSpeeds'}
+                ('device', '/dev/ttyACM0'), #device we are trasmitting to & recieving messages from
+                ('topic', 'TwoAngularSpeeds'),
+                ('subs_topic', '/cmd_vel'),
+                ('radius', 0.05),
+                ('wheel_separation', 0.32)
             ]
         ),
     ])

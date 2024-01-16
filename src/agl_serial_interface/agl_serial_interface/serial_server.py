@@ -45,6 +45,7 @@ class ArduinoRosSerialServer(Node):
       
   def get_param_float(self, name):
     return float(self.get_parameter(name).get_parameter_value().double_value)
+    
   def get_param_str(self, name):
     return self.get_parameter(name).get_parameter_value().string_value
 

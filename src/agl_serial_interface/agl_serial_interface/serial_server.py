@@ -70,11 +70,9 @@ class ArduinoRosSerialServer(Node):
         valueToSendLeftWheel = (int)(correctedVel)
       else:
         correctedVelRight = (self.rightWheelAngularSpeed * 620)/4.64
-        correctedVelLeft = (self.leftWheelAngularSpeed * 620)/3.36
+        correctedVelLeft = (self.leftWheelAngularSpeed * 620)/4.64
         valueToSendRightWheel = (int)(correctedVelRight)
         valueToSendLeftWheel = (int)(correctedVelLeft)
-
-      # Watch the possibility of changing the motor pins's high-low combination in order to go backwards and let the rotation be faster. Should detect negative number in arduino.
 
     else:
 

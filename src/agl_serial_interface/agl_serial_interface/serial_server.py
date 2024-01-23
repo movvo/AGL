@@ -71,6 +71,11 @@ class ArduinoRosSerialServer(Node):
         correctedVel = (self.rightWheelAngularSpeed * 620)/4
         valueToSendRightWheel = (int)(correctedVel)
         valueToSendLeftWheel = (int)(correctedVel)
+      elif msg.linear.x == 0:
+        correctedVelRight = (self.rightWheelAngularSpeed * 620)/0.64
+        correctedVelLeft = (self.leftWheelAngularSpeed * 620)/0.64
+        valueToSendRightWheel = (int)(correctedVelRight)
+        valueToSendLeftWheel = (int)(correctedVelLeft)
       else:
         correctedVelRight = (self.rightWheelAngularSpeed * 620)/4.64
         correctedVelLeft = (self.leftWheelAngularSpeed * 620)/4.64

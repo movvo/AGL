@@ -13,6 +13,7 @@ def generate_launch_description():
     # Get config file
     config_file = os.path.join(get_package_share_directory(PACKAGE_NAME), "config", "params.yaml")
 
+
     return LaunchDescription([
         Node(
             package=PACKAGE_NAME,

@@ -14,10 +14,10 @@ class ArduinoRosSerialServer(Node):
         namespace='',
         parameters=[
           ('device', '/dev/ttyACM0'), #device we are trasmitting to & recieving messages from
-            ('topic', 'TwoAngularSpeeds'),
-            ('subs_topic', '/cmd_vel'),
-            ('radius', 0.05),
-            ('wheel_separation', 0.32)
+          ('topic', 'TwoAngularSpeeds'),
+          ('subs_topic', '/cmd_vel'),
+          ('radius', 0.05),
+          ('wheel_separation', 0.32)
         ]
       )
 
@@ -27,12 +27,10 @@ class ArduinoRosSerialServer(Node):
       self.radius = self.get_param_float('radius')
       self.wheel_separation = self.get_param_float('wheel_separation')
       self.ser = serial.Serial(self.device_name,
-                            115200, #Note: Baud Rate must be the same in the arduino program, otherwise signal is not recieved!
+                            230400, #Note: Baud Rate must be the same in the arduino program, otherwise signal is not recieved!
                             timeout=0.1)
       
-      self.ser.reset_input_buffer()
-
-      self.timer_period = 0.4  # In seconds
+      self.timer_period = 0.25  # In seconds
       self.setVelZero = True
 
       # We should subscribe to cmd_vel and publish via custom message.
@@ -75,6 +73,10 @@ class ArduinoRosSerialServer(Node):
         valueToSendRightWheel = (int)(correctedVelRight)
         valueToSendLeftWheel = (int)(correctedVelLeft)
 
+      self.ser.reset_output_buffer()
+      self.write(str(valueToSendRightWheel) + "\n")
+      self.write(str(valueToSendLeftWheel )+ "\n")
+
     else:
 
       if self.setVelZero:
@@ -82,8 +84,12 @@ class ArduinoRosSerialServer(Node):
         valueToSendRightWheel = 0
         valueToSendLeftWheel = 0
 
-    self.write(str(valueToSendRightWheel) + "\n")
-    self.write(str(valueToSendLeftWheel )+ "\n")
+        self.ser.reset_output_buffer()
+        self.write(str(valueToSendRightWheel) + "\n")
+        self.write(str(valueToSendLeftWheel )+ "\n")
+    
+
+    
 
   def timer_callback(self):
     # Once we've published the feedback from arduino we should listen to this information in the odom package. (Subscriber to TwoAngularSpeeds)

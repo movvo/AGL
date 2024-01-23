@@ -28,7 +28,8 @@ bool ros2DataRightWheelRead = false;    // Control of wt speed setting.
 bool ros2DataLeftWheelRead = false;
 bool rightWheelGoingForward = true;    // Control of wt speed setting.
 bool leftWheelGoingForward = true;
-
+  digitalWrite(IN2_ML, HIGH);
+    leftWheelGoingForward = true;
 int IN3_MR = 5;
 int IN4_MR = 4;
 
@@ -105,27 +106,22 @@ void REncoder() // Interruption function for right wheel encoder.
 {
   CRr++;
 
-  if (CRr == tickCounter && firstEncoderReadR == false)
-  {
+  if (CRr == tickCounter && firstEncoderReadR == false){
     float mean = 0;
     currentInterruptionTimeR = millis();
     deltaInterruptionTimeR = currentInterruptionTimeR - pastInterruptionTimeR; // Time difference between encoder reads/ticks.
 
-    for (int i = 0; i < vecSize - 1; i++)
-    {
+    for (int i = 0; i < vecSize - 1; i++){
       rVector[i] = rVector[i + 1]; // Vector filling for later mean calculation.
     }
     rVector[vecSize - 1] = deltaInterruptionTimeR; // Vector last value.
 
-    if (encoderCounterFilterR < vecSize)
-    {
+    if (encoderCounterFilterR < vecSize){
       encoderCounterFilterR++;
       rFrequency = (1000) / deltaInterruptionTimeR; // Right wheel frequency.
     }
-    else
-    {
-      for (int i = 0; i < vecSize; i++)
-      {
+    else{
+      for (int i = 0; i < vecSize; i++){
         mean = rVector[i] + mean; // Vector's mean calculation.
       }
       mean = mean / vecSize;
@@ -138,8 +134,7 @@ void REncoder() // Interruption function for right wheel encoder.
     CRr = 0;                                           // Counter for tickCounter reset.
   }
 
-  if (CRr == tickCounter && firstEncoderReadR == true)
-  {
+  if (CRr == tickCounter && firstEncoderReadR == true){
     firstEncoderReadR = false;
     CRr = 0; // Counter for tickCounter reset.
   }
@@ -149,27 +144,22 @@ void LEncoder()
 {
   CRl++;
 
-  if (CRl == tickCounter && firstEncoderReadL == false)
-  {
+  if (CRl == tickCounter && firstEncoderReadL == false){
     float mean = 0;
     currentInterruptionTimeL = millis();
     deltaInterruptionTimeL = currentInterruptionTimeL - pastInterruptionTimeL; 
 
-    for (int i = 0; i < vecSize - 1; i++)
-    {
+    for (int i = 0; i < vecSize - 1; i++){
       lVector[i] = lVector[i + 1]; 
     }
     lVector[vecSize - 1] = deltaInterruptionTimeL; 
 
-    if (encoderCounterFilterL < vecSize)
-    {
+    if (encoderCounterFilterL < vecSize){
       encoderCounterFilterL++;
       lFrequency = (1000) / deltaInterruptionTimeL;
     }
-    else
-    {
-      for (int i = 0; i < vecSize; i++)
-      {
+    else{
+      for (int i = 0; i < vecSize; i++){
         mean = lVector[i] + mean; 
       }
       mean = mean / vecSize;
@@ -182,8 +172,7 @@ void LEncoder()
     CRl = 0;                                           
   }
 
-  if (CRl == tickCounter && firstEncoderReadL == true)
-  {
+  if (CRl == tickCounter && firstEncoderReadL == true){
     firstEncoderReadL = false;
     CRl = 0; 
   }
@@ -191,15 +180,12 @@ void LEncoder()
 
 void SerialReading()
 {
-  if(Serial.available() <= 0)
-  {
+  if(Serial.available() <= 0){
     noDataSerialReadCounter++;
   }
-  else if(Serial.available() == Serial.availableForWrite())
-  {
-    while(Serial.available() > 0)
-    {
-      char cositas = Serial.read();
+  else if(Serial.available() == Serial.availableForWrite()){
+    while(Serial.available() > 0){
+      char dumpAllSerialInfo = Serial.read();
     }
     Serial.flush();
   }
@@ -241,7 +227,8 @@ void SerialReadingTimeout(){
   }
 }
 
-void checkIfShouldWriteSerial(int intWr, int intWl){
+void checkIfShouldWriteSerial(int intWr, int intWl)
+{
   if(firstSerialWrite || ((currentTime - lastSerialWrite) >= 150)){
     firstSerialWrite = false;
 
@@ -255,26 +242,20 @@ void checkIfShouldWriteSerial(int intWr, int intWl){
   }
 }
 
-float checkIntegralLimitsWindup(float eIntegral){
-  if (eIntegral > eIntegralLimit)
-  {
+float checkIntegralLimitsWindup(float eIntegral)
+{
+  if (eIntegral > eIntegralLimit){
     eIntegral = eIntegralLimit;
   }
-  else if (eIntegral < -eIntegralLimit)
-  {
+  else if (eIntegral < -eIntegralLimit){
     eIntegral = -eIntegralLimit;
   }
   return eIntegral;
 }
 
-void RightServoControllerPI(){
-  // Default servo direction
-  digitalWrite(IN3_MR, HIGH);
-  digitalWrite(IN4_MR, LOW);
-  rightWheelGoingForward = true;
-  
-  if (abs(wtRightWheel) >= 4.2 && Wr != 0)
-  {
+void RightServoControllerPI()
+{
+  if (abs(wtRightWheel) >= 4.2 && Wr != 0){
     // Angular velocity to PWM transformation via polinomial regression.
     float kpR = 0.5;
     float kiR = 0.1;
@@ -285,49 +266,52 @@ void RightServoControllerPI(){
 
     float uR = kpR * eR + kiR * eintegralR;
 
-    if (uR > 0)
-    {
+    if (uR > 0){
       pwrR = (int)(11.5142749480926 * pow(uR, 2) - 29.7178828449269 * uR + 2.95629260770791); // Set the motor speed
     }
-    else
-    {
+    else{
       pwrR = 0;
     }
 
-    if (pwrR > 255)
+    if (pwrR > 255){
       pwrR = 255;
+    }
 
-    if (pwrR < 0)
+    if (pwrR < 0){
       pwrR = 0;
+    }
   }
   else if(abs(wtRightWheel) >= 4.2 && Wr == 0){
     // This condition serves as start motor instructions (we could have the situation where the previous speed is 0 if robot halted or no angular speed recieved --> controller PI not necessary)
     pwrR = (int)(11.5142749480926 * pow(abs(wtRightWheel), 2) - 29.7178828449269 * abs(wtRightWheel) + 2.95629260770791);
-    if (pwrR > 255)
+    if (pwrR > 255){
       pwrR = 255;
-    if (pwrR < 0)
+    }
+    if (pwrR < 0){
       pwrR = 0;
+    }
   }
-  else if(abs(wtRightWheel) < 4.2 && abs(wtRightWheel) >= 0)
+  else if(abs(wtRightWheel) < 4.2 && abs(wtRightWheel) >= 0){
     pwrR = 0;
+  }
   
-  if(wtRightWheel < 0)
-  {
+  if(wtRightWheel < 0){
     // For values lower than zero we must change HIGH-LOW distribution of current servo, this implies that we'll be setting said distribution two times (for positive and negative desired speeds)
     // For the right wheel the distribution necessary to go backwards is as it follows:
     digitalWrite(IN3_MR, LOW);
     digitalWrite(IN4_MR, HIGH);
     rightWheelGoingForward = false;
   }
+  else{
+    // Default servo direction
+    digitalWrite(IN3_MR, HIGH);
+    digitalWrite(IN4_MR, LOW);
+    rightWheelGoingForward = true;
+  }
 }
 
-void LeftServoControllerPI(){
-  digitalWrite(IN1_ML, LOW);  // Different order as the servo is rotated.
-  digitalWrite(IN2_ML, HIGH);
-  leftWheelGoingForward = true;
-  
-  if (abs(wtLeftWheel) >= 4.2 && Wl != 0)
-  {
+void LeftServoControllerPI(){  
+  if (abs(wtLeftWheel) >= 4.2 && Wl != 0){
     // Angular velocity to PWM transformation via polinomial regression.
     float kpL = 0.5;
     float kiL = 0.1;
@@ -338,37 +322,46 @@ void LeftServoControllerPI(){
 
     float uL = kpL * eL + kiL * eintegralL;
 
-    if (uL > 0)
-    {
+    if (uL > 0){
       pwrL = (int)(11.5142749480926 * pow(uL, 2) - 29.7178828449269 * uL + 2.95629260770791); // Inspect possibility of modeling servo behavior as it could be different than the other.
     }
-    else
-    {
+    else{
       pwrL = 0;
     }
 
-    if (pwrL > 255)
+    if (pwrL > 255){
       pwrL = 255;
+    }
 
-    if (pwrL < 0)
+    if (pwrL < 0){
       pwrL = 0;
+    }
   }
   else if(abs(wtLeftWheel) >= 4.2 && Wl == 0){
     // This condition serves as start motor instructions (we could have the situation where the previous speed is 0 if robot halted or no angular speed recieved --> controller PI not necessary)
     pwrL = (int)(11.5142749480926 * pow(abs(wtLeftWheel), 2) - 29.7178828449269 * abs(wtLeftWheel) + 2.95629260770791);
-    if (pwrL > 255)
+    if (pwrL > 255){
       pwrL = 255;
-    if (pwrL < 0)
+    }
+      
+    if (pwrL < 0){
       pwrL = 0;
+    }
   }
-  else if (abs(wtLeftWheel) < 4.2 && abs(wtLeftWheel) >= 0)
+  else if (abs(wtLeftWheel) < 4.2 && abs(wtLeftWheel) >= 0){
     pwrL = 0;
+  }
+    
   
-  if(wtLeftWheel < 0)
-  {
+  if(wtLeftWheel < 0){
     digitalWrite(IN1_ML, HIGH);  
     digitalWrite(IN2_ML, LOW);
     leftWheelGoingForward = false;
+  }
+  else{
+    digitalWrite(IN1_ML, LOW);  // Different order as the servo is rotated.
+    digitalWrite(IN2_ML, HIGH);
+    leftWheelGoingForward = true;
   }
 }
 void loop()
@@ -383,11 +376,14 @@ void loop()
   float realDeltaR = (currentTime - pastInterruptionTimeR);
   float realDeltaL = (currentTime - pastInterruptionTimeL);
 
-  if (realDeltaR >= 8 * tickCounter) // At 0 velocity our frequency should be 0.
+  if (realDeltaR >= 8 * tickCounter){ // At 0 velocity our frequency should be 0.
     rFrequency = 0; // The longest elapsed time between reads is no more than 20ms, we put 24ms.
+  }
 
-  if (realDeltaL >= 8 * tickCounter) 
+  if (realDeltaL >= 8 * tickCounter){
     lFrequency = 0; 
+  }
+    
 
   Wr = (tickCounter * ((2 * 3.141516) / N) * rFrequency) / gear; // Angular speed Rad/s.
   Wl = (tickCounter * ((2 * 3.141516) / N) * lFrequency) / gear; 

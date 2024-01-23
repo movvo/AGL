@@ -73,9 +73,9 @@ class ArduinoRosSerialServer(Node):
         valueToSendRightWheel = (int)(correctedVelRight)
         valueToSendLeftWheel = (int)(correctedVelLeft)
 
-        self.ser.reset_output_buffer()
-        self.write(str(valueToSendRightWheel) + "\n")
-        self.write(str(valueToSendLeftWheel )+ "\n")
+      self.ser.reset_output_buffer()
+      self.write(str(valueToSendRightWheel) + "\n")
+      self.write(str(valueToSendLeftWheel )+ "\n")
 
     else:
 

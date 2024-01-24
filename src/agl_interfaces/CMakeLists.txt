@@ -12,6 +12,7 @@ find_package(std_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/TwoAngularSpeeds.msg"
+  "msg/OdometryMsg.msg"
   "srv/GenerateDifferentialSpeeds.srv"
   DEPENDENCIES std_msgs
 )

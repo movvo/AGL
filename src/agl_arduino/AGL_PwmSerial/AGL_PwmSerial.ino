@@ -28,8 +28,7 @@ bool ros2DataRightWheelRead = false;    // Control of wt speed setting.
 bool ros2DataLeftWheelRead = false;
 bool rightWheelGoingForward = true;    // Control of wt speed setting.
 bool leftWheelGoingForward = true;
-  digitalWrite(IN2_ML, HIGH);
-    leftWheelGoingForward = true;
+
 int IN3_MR = 5;
 int IN4_MR = 4;
 

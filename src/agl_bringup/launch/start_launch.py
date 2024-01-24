@@ -10,6 +10,7 @@ import sys
 import yaml
 import rclpy
 from typing import Tuple, Dict
+import subprocess
 
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node, SetParameter
@@ -42,6 +43,7 @@ def BringupParams(config_file: str):
     return packages_list
 
 def generate_launch_description():
+
     # Configs files
     start = os.path.join(get_package_share_directory(PACKAGE_NAME), "config", "start.sample.yaml")
 

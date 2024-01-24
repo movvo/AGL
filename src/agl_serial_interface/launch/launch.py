@@ -6,7 +6,6 @@ from socket import gethostname
 
 #if you run the launch file using ros2 launch after changing the parameter values, you need to rerun colcon build
 
-NAMESPACE = 'agl'
 PACKAGE_NAME = 'agl_serial_interface'
 
 def generate_launch_description():
@@ -17,7 +16,6 @@ def generate_launch_description():
     return LaunchDescription([
         Node(
             package=PACKAGE_NAME,
-            namespace=NAMESPACE,
             executable='serial_server',
             name='serial_server_node',
             output='screen',

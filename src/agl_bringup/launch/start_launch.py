@@ -43,23 +43,6 @@ def BringupParams(config_file: str):
     return packages_list
 
 def generate_launch_description():
-    # Specify the path to the desired working directory
-    new_working_directory = '/home/david/workspace/agl_ws/src/AGL'
-
-    # Change the current working directory
-    os.chdir(new_working_directory)
-
-    # Define the command as a list of strings
-    command = ["colcon", "build", "--symlink-install"]
-
-    # Run the command using subprocess.run
-    result = subprocess.run(command, capture_output=True, text=True)
-
-    # Check the result
-    if result.returncode == 0:
-        print("Command executed successfully.")
-    else:
-        print(f"Command failed with error:\n{result.stderr}")
 
     # Configs files
     start = os.path.join(get_package_share_directory(PACKAGE_NAME), "config", "start.sample.yaml")

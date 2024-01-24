@@ -15,3 +15,8 @@ Start:
     - agl_joystick:
       - Joystick
       - Joy
+    - agl_odometry:
+      - odometry_node
+    - agl_serial_interface:
+      - serial_server_node
+    # - agl_interfaces: Not possible as it doesnt have nor need a launch file.

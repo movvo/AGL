@@ -21,10 +21,10 @@ StateMachine::StateMachine (rclcpp::Node::SharedPtr nh_)
     nh = nh_;
     std::string child_node = nh->get_name();
     // status_timer_group_ = nh->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-    diagnostics_pub = nh->rclcpp::Node::create_publisher<ageve_interfaces::msg::Diagnostics>("~/status",10);
+    diagnostics_pub = nh->rclcpp::Node::create_publisher<atlas_interfaces::msg::Diagnostics>("~/status",10);
     // publisher_timer = nh->rclcpp::Node::create_wall_timer(100ms,std::bind(&StateMachine::DiagnosticsPub_Task_Callback, this),status_timer_group_);
     publisher_timer = nh->rclcpp::Node::create_wall_timer(100ms,std::bind(&StateMachine::DiagnosticsPub_Task_Callback, this));
-    toggle_state_srv = nh->rclcpp::Node::create_service<ageve_interfaces::srv::ToggleState>(child_node+"/ToggleState",
+    toggle_state_srv = nh->rclcpp::Node::create_service<atlas_interfaces::srv::ToggleState>(child_node+"/ToggleState",
                                                                                             std::bind(&StateMachine::ToggleState_srv_callback,this,_1,_2));
 
 }
@@ -186,8 +186,8 @@ bool StateMachine::ToggleState(rclcpp::TimerBase::SharedPtr timer)
 }
 
 //================================================
-void StateMachine::ToggleState_srv_callback(const std::shared_ptr<ageve_interfaces::srv::ToggleState::Request> request,
-                                            std::shared_ptr<ageve_interfaces::srv::ToggleState::Response> response)
+void StateMachine::ToggleState_srv_callback(const std::shared_ptr<atlas_interfaces::srv::ToggleState::Request> request,
+                                            std::shared_ptr<atlas_interfaces::srv::ToggleState::Response> response)
 //================================================
 {
     if (request->state == UNCONFIGURED){
@@ -291,8 +291,8 @@ void StateMachine::Request_Toggle(std::string node_name,uint8_t state2go)
 {
 	// Creamos un ToggleState client para cada nodo en la lista
     request_succes = false;
-	toggle_state_client = nh->create_client<ageve_interfaces::srv::ToggleState>(node_name+"/ToggleState");
-	auto request_toggle = std::make_shared<ageve_interfaces::srv::ToggleState::Request>();
+	toggle_state_client = nh->create_client<atlas_interfaces::srv::ToggleState>(node_name+"/ToggleState");
+	auto request_toggle = std::make_shared<atlas_interfaces::srv::ToggleState::Request>();
 	request_toggle->state = state2go;
 	RCLCPP_INFO(nh->get_logger(),"Request Toggle state of '%s' to state '%i'",node_name.c_str(),state2go);
 	auto toggle_result = toggle_state_client->async_send_request(request_toggle,std::bind(&StateMachine::RequestToggle_callback,this,_1));
@@ -303,8 +303,8 @@ void StateMachine::Request_Toggle(std::string node_name,uint8_t state2go)
 // {
 //     // Creamos un ToggleState client para cada nodo en la lista
 //     toggle_succes = false;
-// 	toggle_state_public_client = node_handle->create_client<ageve_interfaces::srv::ToggleState>(node_name+"/ToggleState");
-// 	auto request_toggle = std::make_shared<ageve_interfaces::srv::ToggleState::Request>();
+// 	toggle_state_public_client = node_handle->create_client<atlas_interfaces::srv::ToggleState>(node_name+"/ToggleState");
+// 	auto request_toggle = std::make_shared<atlas_interfaces::srv::ToggleState::Request>();
 // 	request_toggle->state = state2go;
 // 	RCLCPP_INFO(node_handle->get_logger(),"Request Toggle state of '%s' to state '%i'",node_name.c_str(),state2go);
 // 	auto toggle_result = toggle_state_public_client->async_send_request(request_toggle,std::bind(&StateMachine::RequestToggle_callback,node_handle,_1));

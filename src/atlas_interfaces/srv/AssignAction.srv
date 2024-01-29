@@ -1,0 +1,7 @@
+string execute_on
+uint32 id_waypoint
+uint32 id_action
+uint32 timeout
+---
+bool status
+string message

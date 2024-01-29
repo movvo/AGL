@@ -72,7 +72,7 @@ bool AceinnaImu::Configure()
 
     // Create Publisher and subscriber
     try {
-        CAN2IMU_sub_ = nh_->create_subscription<ageve_interfaces::msg::CanMsgs>(receive_topic_, 10, std::bind(&AceinnaImu::ros2imu_callback, this, _1));
+        CAN2IMU_sub_ = nh_->create_subscription<atlas_interfaces::msg::CanMsgs>(receive_topic_, 10, std::bind(&AceinnaImu::ros2imu_callback, this, _1));
     }
     catch(...) {
         return false;
@@ -210,7 +210,7 @@ std::vector<float> AceinnaImu::getAngAcc()
 }
 
 //================================================
-void AceinnaImu::ros2imu_callback(ageve_interfaces::msg::CanMsgs::SharedPtr msgs)
+void AceinnaImu::ros2imu_callback(atlas_interfaces::msg::CanMsgs::SharedPtr msgs)
 //================================================
 {
     RCLCPP_DEBUG(nh_->get_logger(), "CAN IMU MESSAGE RECEIVED");

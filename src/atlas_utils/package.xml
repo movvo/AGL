@@ -13,7 +13,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
  
   <depend>rclcpp</depend>
-  <depend>ageve_interfaces</depend>
+  <depend>atlas_interfaces</depend>
   <export>
     <build_type>ament_cmake</build_type>
   </export>

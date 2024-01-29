@@ -1,0 +1,4 @@
+string name
+---
+# Return waypoint id (primary key)
+uint32 id

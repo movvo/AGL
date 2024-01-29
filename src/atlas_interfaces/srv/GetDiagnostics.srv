@@ -1,0 +1,5 @@
+
+---
+bool success
+string[] nodes_list
+string[] nodes_status

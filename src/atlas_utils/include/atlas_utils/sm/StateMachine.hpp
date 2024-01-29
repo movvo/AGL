@@ -18,8 +18,8 @@
 
 // ROS2
 #include "rclcpp/rclcpp.hpp"
-#include "ageve_interfaces/msg/diagnostics.hpp"    
-#include "ageve_interfaces/srv/toggle_state.hpp" 
+#include "atlas_interfaces/msg/diagnostics.hpp"    
+#include "atlas_interfaces/srv/toggle_state.hpp" 
 
 // STATES
 #define  UNCONFIGURED   0
@@ -29,7 +29,7 @@
 #define  FAULT          4
 
 using namespace std::chrono_literals;
-using ToggleStateClientResponse = rclcpp::Client<ageve_interfaces::srv::ToggleState>::SharedFuture;
+using ToggleStateClientResponse = rclcpp::Client<atlas_interfaces::srv::ToggleState>::SharedFuture;
 
 namespace atlas_utils {
 namespace sm {
@@ -103,8 +103,8 @@ class StateMachine: public StateMachineInterface
         ---------------------------------*/
         bool ToggleState(rclcpp::TimerBase::SharedPtr timer);
 
-        void ToggleState_srv_callback(const std::shared_ptr<ageve_interfaces::srv::ToggleState::Request> request,
-                                            std::shared_ptr<ageve_interfaces::srv::ToggleState::Response> response);
+        void ToggleState_srv_callback(const std::shared_ptr<atlas_interfaces::srv::ToggleState::Request> request,
+                                            std::shared_ptr<atlas_interfaces::srv::ToggleState::Response> response);
 
         void Request_Toggle(std::string node_name, uint8_t state2go);
 
@@ -135,23 +135,23 @@ class StateMachine: public StateMachineInterface
         // Request toggle 
         bool request_succes = false;
         void RequestToggle_callback(ToggleStateClientResponse response);
-        rclcpp::Client<ageve_interfaces::srv::ToggleState>::SharedPtr toggle_state_public_client;
+        rclcpp::Client<atlas_interfaces::srv::ToggleState>::SharedPtr toggle_state_public_client;
 
         //srv
-        rclcpp::Service<ageve_interfaces::srv::ToggleState>::SharedPtr toggle_state_srv;
-        rclcpp::Client<ageve_interfaces::srv::ToggleState>::SharedPtr toggle_state_client;
+        rclcpp::Service<atlas_interfaces::srv::ToggleState>::SharedPtr toggle_state_srv;
+        rclcpp::Client<atlas_interfaces::srv::ToggleState>::SharedPtr toggle_state_client;
 
 
     private:
         std::shared_ptr<::rclcpp::Node> nh;
         rclcpp::TimerBase::SharedPtr publisher_timer;
-        rclcpp::Publisher<ageve_interfaces::msg::Diagnostics>::SharedPtr diagnostics_pub;
+        rclcpp::Publisher<atlas_interfaces::msg::Diagnostics>::SharedPtr diagnostics_pub;
         void DiagnosticsPub_Task_Callback();
 
         /*---------------------------------
             VARIABLES PRIVADAS
         ---------------------------------*/
-        ageve_interfaces::msg::Diagnostics diagnostics_msg;
+        atlas_interfaces::msg::Diagnostics diagnostics_msg;
 
 
 

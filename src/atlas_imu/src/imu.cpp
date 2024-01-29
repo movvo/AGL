@@ -197,7 +197,7 @@ bool ImuNode::ConfigureImu() {
         return false;
 	}
 
-    try{
+    try {
         // Initialize publisher
         std::string imu_topic = this->get_name() + std::string("/") + parameters_.imu_topic.as_string();
 	    imu_pub_ = this->create_publisher<sensor_msgs::msg::Imu>(imu_topic, 10);
@@ -272,7 +272,7 @@ rcl_interfaces::msg::SetParametersResult ImuNode::dyn_reconf_callback(const std:
 	result.successful = true;
 	result.reason = "Parameter change accepted";
     for (const auto & parameter : parameters){
-        try{
+        try {
             if (parameter.get_name() == "autorun" && 
                 parameter.as_bool() != parameters_.autorun.as_bool())   {
                 parameters_.autorun = parameter;

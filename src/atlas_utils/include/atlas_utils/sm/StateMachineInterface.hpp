@@ -15,7 +15,7 @@
 
 // ROS2
 #include "rclcpp/rclcpp.hpp"
-#include "ageve_interfaces/srv/toggle_state.hpp" 
+#include "atlas_interfaces/srv/toggle_state.hpp" 
 
 
 namespace atlas_utils {
@@ -78,8 +78,8 @@ class StateMachineInterface
         ---------------------------------*/
         virtual bool ToggleState(rclcpp::TimerBase::SharedPtr timer) = 0;
         virtual void ToggleState_srv_callback(
-            const std::shared_ptr<ageve_interfaces::srv::ToggleState::Request> request,
-            std::shared_ptr<ageve_interfaces::srv::ToggleState::Response> response) = 0;
+            const std::shared_ptr<atlas_interfaces::srv::ToggleState::Request> request,
+            std::shared_ptr<atlas_interfaces::srv::ToggleState::Response> response) = 0;
         virtual void Request_Toggle(std::string node_name, uint8_t state2go) = 0;
 
 };

@@ -8,7 +8,10 @@
 #include "atlas_utils/general/general_funcs.hpp"
 #include "atlas_utils/general/system_funcs.hpp"
 
+#include "ament_index_cpp/get_package_prefix.hpp"
+
 #include "gmock/gmock.h"
+#include <gtest/gtest.h>
 
 using ::testing::_;
 

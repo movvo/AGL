@@ -45,5 +45,24 @@ std::vector<std::string> getLocateOfFilename(std::string filename) {
     return tmp;
 }
 
+std::string GetFullPath(const std::string & path) 
+{
+    if (boost::algorithm::contains(path, "package://")) {
+        std::vector<std::string> path_splited;
+        boost::split(path_splited, path, boost::algorithm::is_any_of("/"));
+        auto & pkg = path_splited[2];
+        std::string reconstructed_path = std::accumulate(
+            path_splited.begin()+3,
+            path_splited.end(),
+            std::string(),
+            [](const std::string& a, const std::string& b) -> std::string {
+                return a.empty() ? b : a + "/" + b;
+            }
+        );
+        return ament_index_cpp::get_package_share_directory(pkg) + "/"s + reconstructed_path;
+    }
+    return path;
+}
+
 }
 }

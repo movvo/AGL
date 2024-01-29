@@ -1,0 +1,4 @@
+
+---
+# Navigation modes defined in atlas_intefaces/msg/NavigationStatus
+uint8 mode

@@ -21,7 +21,7 @@ find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
-find_package(ageve_interfaces REQUIRED)
+find_package(atlas_interfaces REQUIRED)
 find_package(PkgConfig)
 find_package(atlas_utils REQUIRED)
 
@@ -44,7 +44,7 @@ set(dependencies
   geometry_msgs
   nav_msgs
   tf2
-  ageve_interfaces
+  atlas_interfaces
   atlas_utils
 )
 

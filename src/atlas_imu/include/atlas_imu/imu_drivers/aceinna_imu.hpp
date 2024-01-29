@@ -17,7 +17,7 @@
 #include "sensor_msgs/msg/imu.hpp"
 
 // Own interfaces
-#include "ageve_interfaces/msg/can_msgs.hpp"
+#include "atlas_interfaces/msg/can_msgs.hpp"
 
 // Others
 #include "atlas_imu/imu_drivers/driver_abstract.hpp"
@@ -76,9 +76,9 @@ class AceinnaImu : public DriverAbstract
     can_utils::CANdb can_db_;
 
     // Subscriber
-    rclcpp::Subscription<ageve_interfaces::msg::CanMsgs>::SharedPtr CAN2IMU_sub_;
+    rclcpp::Subscription<atlas_interfaces::msg::CanMsgs>::SharedPtr CAN2IMU_sub_;
 
-    void ros2imu_callback(ageve_interfaces::msg::CanMsgs::SharedPtr msgs);
+    void ros2imu_callback(atlas_interfaces::msg::CanMsgs::SharedPtr msgs);
 
     rclcpp::Time imu_subs_time_;
 };

@@ -15,7 +15,7 @@ endif()
 #=====================================
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(ageve_interfaces REQUIRED)
+find_package(atlas_interfaces REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(image_transport REQUIRED)
@@ -34,7 +34,7 @@ include_directories(
 #=====================================
 set(dependencies
   rclcpp
-  ageve_interfaces
+  atlas_interfaces
   OpenCV
   cv_bridge
   image_transport

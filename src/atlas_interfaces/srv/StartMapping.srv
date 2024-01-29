@@ -1,0 +1,7 @@
+# Possible modes
+uint8 LOCALITZATION=0
+uint8 SLAM=2
+
+uint8 mode
+---
+uint8 result

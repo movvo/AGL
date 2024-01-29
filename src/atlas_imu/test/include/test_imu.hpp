@@ -58,8 +58,8 @@ public:
    ---------------------------------*/
    MOCK_METHOD(bool, ToggleState, (rclcpp::TimerBase::SharedPtr timer), (override));
    MOCK_METHOD(void, ToggleState_srv_callback, (
-      const std::shared_ptr<ageve_interfaces::srv::ToggleState::Request> request,
-      std::shared_ptr<ageve_interfaces::srv::ToggleState::Response> response), (override));
+      const std::shared_ptr<atlas_interfaces::srv::ToggleState::Request> request,
+      std::shared_ptr<atlas_interfaces::srv::ToggleState::Response> response), (override));
    MOCK_METHOD(void, Request_Toggle, (std::string node_name, uint8_t state2go), (override));
 
 };

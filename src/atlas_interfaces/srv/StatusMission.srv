@@ -1,0 +1,4 @@
+atlas_interfaces/MissionId id
+---
+float32 percentage
+bool success

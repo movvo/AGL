@@ -13,19 +13,26 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <numeric>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
+#include "ament_index_cpp/get_package_share_directory.hpp"
+
+using namespace std::literals;
+
 namespace atlas_utils{
 namespace utils {
 
-std::string executeCommand(std::string command);
+    std::string executeCommand(std::string command);
 
-std::string getPathOfFilename(std::string filename);
+    std::string getPathOfFilename(std::string filename);
 
-std::vector<std::string> getLocateOfFilename(std::string filename);
+    std::vector<std::string> getLocateOfFilename(std::string filename);
+
+    std::string GetFullPath(const std::string & path);
 
 } // namespace
 }

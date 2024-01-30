@@ -34,7 +34,7 @@ void WitImu::Initialize()
 //================================================
 {
     nh_->declare_parameter(driver_name_+".frame_id", "imu_link");
-	nh_->declare_parameter(driver_name_+".serial_port", "/dev/ttyUSB0");
+	nh_->declare_parameter(driver_name_+".serial_port", "/dev/ttyUSB1");
 	nh_->declare_parameter(driver_name_+".baudrate", 115200);
 }
 
@@ -86,11 +86,7 @@ bool WitImu::Connect()
 	// Try to open port
 	if (!openSerial(serial_port_, baudrate_)) {
 		RCLCPP_ERROR(nh_->get_logger(),"Error opening IMU serial port in USB0");
-
-		if(!openSerial("/dev/ttyUSB1", baudrate_)) {
-			RCLCPP_ERROR(nh_->get_logger(),"Error opening IMU serial port in USB1");
-			return false;
-		}
+		return false;
 	}
 	return true;
 }

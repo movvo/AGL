@@ -17,6 +17,7 @@ Robot interno de investigación. Andresito Jr (AGL)
 Las dependencias del proyecto se encuentran instaladas en el NUC. Al trabajar en local, no hace falta instalar nada via Docker diferente de todas las dependencias necesarias para ejecutar un workspace de ROS2. Ver el tutorial de instalación de ser necesario: https://docs.ros.org/en/humble/Installation.html
 
 sudo apt-get install:
+
 ros-humble-geographic-msgs
 
 

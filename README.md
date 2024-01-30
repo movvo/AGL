@@ -20,6 +20,9 @@ sudo apt-get install:
 
 ros-humble-geographic-msgs
 
+ros-humble-robot-localization
+
+
 
 # A tener en cuenta
 Al clonar el repositorio y probarlo en local dará problemas por no tener la Arduino conectada, no tener el joystick conectado y no tener el Lidar conectado. Es por ello necesaria la conexión remota con el NUC que controla el robot.

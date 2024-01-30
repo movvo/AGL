@@ -1,8 +1,0 @@
-/**:  
-  Filter:
-    ros__parameters:
-      laser_topic1: "Laser_Front/laser_scan"
-      laser_topic2: "Laser_Back/laser_scan"
-      frequency: 1.0
-      angle_min: -3.14
-      angle_max: 3.14

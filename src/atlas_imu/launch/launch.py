@@ -58,6 +58,40 @@ def generate_launch_description():
         condition=IfCondition(valgrind)
     )
 
+    # EKFs
+    local_ekf = Node(
+        package='robot_localization',
+        name='ekf_local',
+        executable='ekf_node',
+        remappings=[
+            ('odometry/filtered', '~/odometry/filtered'), 
+            ('/tf', 'tf'), 
+            ('/tf_static', 'tf_static'),
+            ('/diagnostics', 'diagnostics'),
+            ('cmd_vel', 'Control/cmd_vel')
+        ],
+        parameters=[local_ekf_file],
+        output="screen",
+        emulate_tty=True,
+        condition=IfCondition(PythonExpression(['not ', sim_time]))
+    )
+    
+    global_ekf = Node(
+        package='robot_localization',
+        name='ekf_global',
+        executable='ekf_node',
+        remappings=[
+            ('odometry/filtered', '~/odometry/filtered'), 
+            ('set_pose', 'initialpose'), 
+            ('/tf', 'tf'), 
+            ('/tf_static', 'tf_static')
+        ],
+        parameters=[global_ekf_file],
+        output="screen",
+        emulate_tty=True,
+        condition=IfCondition(PythonExpression(['not ', sim_time]))
+    )
+
     return LaunchDescription([
         GroupAction(
             actions=[
@@ -67,6 +101,8 @@ def generate_launch_description():
                 valgrind_arg,
                 node,
                 node_with_valgrind,
+                local_ekf,
+                global_ekfs
             ]
         )
     ])

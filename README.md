@@ -16,6 +16,10 @@ Robot interno de investigación. Andresito Jr (AGL)
 # Dependencias del proyecto
 Las dependencias del proyecto se encuentran instaladas en el NUC. Al trabajar en local, no hace falta instalar nada via Docker diferente de todas las dependencias necesarias para ejecutar un workspace de ROS2. Ver el tutorial de instalación de ser necesario: https://docs.ros.org/en/humble/Installation.html
 
+sudo apt-get install:
+ros-humble-geographic-msgs
+
+
 # A tener en cuenta
 Al clonar el repositorio y probarlo en local dará problemas por no tener la Arduino conectada, no tener el joystick conectado y no tener el Lidar conectado. Es por ello necesaria la conexión remota con el NUC que controla el robot.
 

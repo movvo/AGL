@@ -22,8 +22,6 @@ def generate_launch_description():
     local_ekf_file = os.path.join(shared_folder, "config", "ekf_local_params.yaml")
     global_ekf_file = os.path.join(shared_folder, "config", "ekf_global_params.yaml")
 
-    
-
     # Launch arguments
     sim_time_arg = DeclareLaunchArgument(
         name='use_sim_time', 

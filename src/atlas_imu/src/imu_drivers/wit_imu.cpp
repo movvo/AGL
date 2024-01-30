@@ -85,8 +85,12 @@ bool WitImu::Connect()
 {
 	// Try to open port
 	if (!openSerial(serial_port_, baudrate_)) {
-		RCLCPP_ERROR(nh_->get_logger(),"Error opening IMU serial port");
-		return false;
+		RCLCPP_ERROR(nh_->get_logger(),"Error opening IMU serial port in USB0");
+
+		if(!openSerial("/dev/ttyUSB1", baudrate_)) {
+			RCLCPP_ERROR(nh_->get_logger(),"Error opening IMU serial port in USB1");
+			return false;
+		}
 	}
 	return true;
 }

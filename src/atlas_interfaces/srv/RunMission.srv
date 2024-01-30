@@ -1,4 +1,0 @@
-int16 mission_id
----
-bool success
-string message

@@ -1,6 +1,0 @@
-string audio_name
-uint32 timeout
----
-bool success
----
-bool reproducing

@@ -1,5 +1,0 @@
-string type # Type must be 'on_trajectory' or 'on_waypoint'
-int16 id
----
-bool success
-string message

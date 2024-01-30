@@ -1,7 +1,0 @@
-float32 objective_dist
-uint32 timeout
----
-bool success
----
-float32 distance_remaining
-float32 spin_radians_remaining

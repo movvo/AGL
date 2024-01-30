@@ -1,5 +1,0 @@
-uint16 id_mission
----
-bool success
-string message
-atlas_interfaces/Waypoint[] waypoints

@@ -1,6 +1,0 @@
-string vehicle_namespace
-uint8 state
-string ip
-string[] node_list
----
-uint8 ok

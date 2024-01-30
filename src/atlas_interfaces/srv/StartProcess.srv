@@ -1,4 +1,0 @@
-int64 id_action
-int64 timeout
----
-bool accepted

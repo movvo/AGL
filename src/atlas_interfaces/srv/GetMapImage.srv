@@ -1,4 +1,0 @@
-string map_name # Name of the map
----
-bool success   # indicate successful run of triggered service
-string message # Base64 encoded image or error message

@@ -1,4 +1,0 @@
-int16 id_waypoint
----
-bool success
-string message

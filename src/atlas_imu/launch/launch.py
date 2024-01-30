@@ -18,8 +18,19 @@ PACKAGE_NAME = 'atlas_imu'
 def generate_launch_description():
     # Configs files
     config_file = os.path.join(get_package_share_directory(PACKAGE_NAME), "config", "params.yaml")
+    shared_folder = get_package_share_directory(PACKAGE_NAME)
+    local_ekf_file = os.path.join(shared_folder, "config", "ekf_local_params.yaml")
+    global_ekf_file = os.path.join(shared_folder, "config", "ekf_global_params.yaml")
+
+    
 
     # Launch arguments
+    sim_time_arg = DeclareLaunchArgument(
+        name='use_sim_time', 
+        default_value='False', 
+        choices=['True', 'False'],
+        description='Parameter use_sim_time')
+
     valgrind_arg = DeclareLaunchArgument(
         name='valgrind', 
         default_value='False', 
@@ -27,6 +38,7 @@ def generate_launch_description():
         description='Debug with valgrind')
 
     # Launch configration
+    sim_time = LaunchConfiguration('use_sim_time')
     valgrind = LaunchConfiguration('valgrind')
 
     remaps=[
@@ -98,11 +110,14 @@ def generate_launch_description():
                 PushRosNamespace(
                     os.getenv('ATLAS_NAMESPACE') if 'ATLAS_NAMESPACE' in os.environ.keys() else ""
                 ),
+                # sim_time_arg,
+                # valgrind_arg,
+                # SetParameter("use_sim_time", sim_time),
                 valgrind_arg,
                 node,
                 node_with_valgrind,
-                local_ekf,
-                global_ekfs
+                # local_ekf,
+                # global_ekf
             ]
         )
     ])

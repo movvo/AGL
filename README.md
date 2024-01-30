@@ -18,3 +18,7 @@ Las dependencias del proyecto se encuentran instaladas en el NUC. Al trabajar en
 
 # A tener en cuenta
 Al clonar el repositorio y probarlo en local dará problemas por no tener la Arduino conectada, no tener el joystick conectado y no tener el Lidar conectado. Es por ello necesaria la conexión remota con el NUC que controla el robot.
+
+Aún estando configurado en la NUC tendremos que asegurarnos que los submodulos están el la rama correcta:
+![image](https://github.com/movvo/AGL/assets/146711583/c3e4a2c0-4819-4294-a639-9fadbe1bb6c0)
+

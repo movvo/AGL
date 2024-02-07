@@ -8,8 +8,8 @@ Start:
   # Por lo tanto en esta lista deberia aparecer unicamente lo siguiente:
 
   packages_list:
-    - agl_lidar:       
-      - Lidar
+    # - agl_lidar:       
+    #   - Lidar
     # - agl_description:
     #   - Description
     - agl_joystick:
@@ -19,4 +19,8 @@ Start:
       - odometry_node
     - agl_serial_interface:
       - serial_server_node
-    # - agl_interfaces: Not possible as it doesnt have nor need a launch file.
+    - atlas_imu:
+      - ekf_local
+      - ekf_global
+      - imu_node
+

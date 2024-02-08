@@ -19,7 +19,7 @@ class OdomPublisherSubscriber(Node):
       namespace='',
       parameters=[
           ('subs_topic', '/TwoAngularSpeeds'),
-          ('pub_topic', '/Odometry'),
+          ('pub_topic', '/Odometry/odom'),
           ('radius', 0.05),
           ('wheel_separation', 0.32)
       ]
@@ -74,7 +74,7 @@ class OdomPublisherSubscriber(Node):
     self.OdometryMsg = Odometry()
 
     self.OdometryMsg.header.stamp = rclpy.clock.Clock().now().to_msg()
-    self.OdometryMsg.header.frame_id = "odom"
+    self.OdometryMsg.header.frame_id = "base_link"
 
     self.OdometryMsg.pose.pose.position.x = self.x_position
     self.OdometryMsg.pose.pose.position.y = self.y_position

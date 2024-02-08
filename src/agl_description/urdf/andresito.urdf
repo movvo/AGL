@@ -154,4 +154,6 @@
     <origin xyz="0 0 0.08"/>
     <axis xyz="0 0 1"/>
   </joint>
+
+  <odometry_frame>odom</odometry_frame>
 </robot>

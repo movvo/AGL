@@ -5,7 +5,7 @@
    Contact: support.idi@ageve.net
 */
 
-#include "atlas_imu/imu.hpp"
+#include "agl_imu/imu.hpp"
 
 #include "gmock/gmock.h"
 
@@ -64,11 +64,11 @@ public:
 
 };
 
-class WrapImuNode: public atlas_imu::ImuNode
+class WrapImuNode: public agl_imu::ImuNode
 {
 public:
    WrapImuNode(std::shared_ptr<atlas_utils::sm::StateMachineInterface> /*sm*/,
-                 rclcpp::Node::SharedPtr /*nh*/) : atlas_imu::ImuNode() {}
+                 rclcpp::Node::SharedPtr /*nh*/) : agl_imu::ImuNode() {}
    ~WrapImuNode() {};
 };
 

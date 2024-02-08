@@ -10,11 +10,11 @@
 
 #include <string>
 #include <iostream>
-#include "atlas_imu/imu.hpp"
-#include "atlas_imu/imu_drivers/wit_imu.hpp"
-#include "atlas_imu/imu_drivers/aceinna_imu.hpp"
+#include "agl_imu/imu.hpp"
+#include "agl_imu/imu_drivers/wit_imu.hpp"
+#include "agl_imu/imu_drivers/aceinna_imu.hpp"
 
-namespace atlas_imu {
+namespace agl_imu {
 
 class ImuFactory {
     public:
@@ -49,6 +49,6 @@ class ImuFactory {
         }
 };
 
-} // namespace atlas_imu
+} // namespace agl_imu
 
 #endif // IMU_FACTORY_HPP 

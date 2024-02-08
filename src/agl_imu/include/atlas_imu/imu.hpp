@@ -25,13 +25,13 @@
 #include "atlas_utils/general/system_funcs.hpp"
 
 // IMU Interface
-#include "atlas_imu/imu_interface.hpp"
+#include "agl_imu/imu_interface.hpp"
 #include "imu_errors.hpp"
-#include "atlas_imu/imu_drivers/driver_abstract.hpp"
+#include "agl_imu/imu_drivers/driver_abstract.hpp"
 
 using namespace std::chrono_literals;
 
-namespace atlas_imu {
+namespace agl_imu {
 
 class ImuNode : public rclcpp::Node, public atlas_utils::sm::StateMachine{
     public:
@@ -78,6 +78,6 @@ class ImuNode : public rclcpp::Node, public atlas_utils::sm::StateMachine{
         rcl_interfaces::msg::SetParametersResult dyn_reconf_callback(const std::vector<rclcpp::Parameter> & parameters);
 };
 
-} // namespace atlas_imu
+} // namespace agl_imu
 
 #endif // IMU_NODE_HPP

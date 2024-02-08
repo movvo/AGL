@@ -6,13 +6,13 @@
 */
 
 
-#include "atlas_imu/imu_factory.hpp"
+#include "agl_imu/imu_factory.hpp"
 
 
 int main(int argc, char *argv[])
 {
     rclcpp::init(argc, argv);
-    rclcpp::spin(atlas_imu::ImuFactory::create());
+    rclcpp::spin(agl_imu::ImuFactory::create());
     rclcpp::shutdown();
 
     return 0;

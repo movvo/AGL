@@ -13,7 +13,7 @@ from launch.actions import DeclareLaunchArgument, GroupAction
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration, PythonExpression
 
-PACKAGE_NAME = 'atlas_imu'
+PACKAGE_NAME = 'agl_imu'
 
 def generate_launch_description():
     # Configs files
@@ -47,7 +47,7 @@ def generate_launch_description():
     # Nodes to launch
     node = Node(
         package=PACKAGE_NAME,
-        executable='atlas_imu',
+        executable='agl_imu',
         name = 'imu_node',
         arguments=['--ros-args', '--log-level', 'info'],
         parameters=[config_file],
@@ -59,7 +59,7 @@ def generate_launch_description():
     
     node_with_valgrind = Node(
         package=PACKAGE_NAME,
-        executable='atlas_imu',
+        executable='agl_imu',
         arguments=['--ros-args', '--log-level', 'info'],
         prefix=["valgrind --leak-check=yes -s"],
         parameters=[config_file],

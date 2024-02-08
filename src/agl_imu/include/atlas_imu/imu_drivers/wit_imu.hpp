@@ -22,8 +22,8 @@
 #include "sensor_msgs/msg/imu.hpp"
 #include "std_srvs/srv/empty.hpp"
 
-#include "atlas_imu/imu_drivers/driver_abstract.hpp"
-#include "atlas_imu/imu_errors.hpp"
+#include "agl_imu/imu_drivers/driver_abstract.hpp"
+#include "agl_imu/imu_errors.hpp"
 // #include "atlas_utils/sm/StateMachine.hpp"
 #include "atlas_utils/general/system_funcs.hpp"
 
@@ -32,7 +32,7 @@ using std::placeholders::_2;
 using namespace std::chrono_literals;
 using namespace LibSerial;
 
-namespace atlas_imu {
+namespace agl_imu {
 namespace imu_drivers {
 
 //================================================
@@ -122,6 +122,6 @@ class WitImu : public DriverAbstract
 };
 
 } // namespace imu_drivers
-} // namespace atlas_imu
+} // namespace agl_imu
 
 #endif // WIT_IMU_HPP_

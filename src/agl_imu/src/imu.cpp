@@ -8,7 +8,7 @@
 #include <thread>
 #include <chrono>         // std::chrono::seconds
 
-#include "atlas_imu/imu.hpp"
+#include "agl_imu/imu.hpp"
 #include <stdexcept>
 
 using std::placeholders::_1;
@@ -16,7 +16,7 @@ using std::placeholders::_2;
 using namespace std::chrono_literals;
 using namespace atlas_utils::sm;
 
-namespace atlas_imu {
+namespace agl_imu {
 
 // Constructor
 //================================================
@@ -311,4 +311,4 @@ rcl_interfaces::msg::SetParametersResult ImuNode::dyn_reconf_callback(const std:
 }
 
 
-} // namespace atlas_imu
+} // namespace agl_imu

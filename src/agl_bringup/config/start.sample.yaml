@@ -19,7 +19,7 @@ Start:
       - odometry_node
     - agl_serial_interface:
       - serial_server_node
-    - atlas_imu:
+    - agl_imu:
       - ekf_local
       - ekf_global
       - imu_node

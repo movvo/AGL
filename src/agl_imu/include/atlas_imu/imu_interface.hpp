@@ -11,7 +11,7 @@
 #include <memory>
 #include <vector>
 
-namespace atlas_imu {
+namespace agl_imu {
 
 class ImuInterface {
     public:
@@ -52,6 +52,6 @@ class ImuInterface {
         virtual std::string GetName() = 0;
 };
 
-} // namespace atlas_imu
+} // namespace agl_imu
 
 #endif // IMU_INTERFACE_HPP 

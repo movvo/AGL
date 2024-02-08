@@ -7,11 +7,11 @@
 */
 
 
-#include "atlas_imu/imu_drivers/wit_imu.hpp"
+#include "agl_imu/imu_drivers/wit_imu.hpp"
 
 const double PI = 3.14159265;
 
-namespace atlas_imu{
+namespace agl_imu{
 namespace imu_drivers{
 
 /*****************************************************************************
@@ -528,4 +528,4 @@ std::vector<int> WitImu::writeQuery(std::vector<uint8_t> query)
 }
 
 } // namespace imu_drivers
-} // namespace atlas_imu
+} // namespace agl_imu

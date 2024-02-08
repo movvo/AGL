@@ -20,16 +20,16 @@
 #include "atlas_interfaces/msg/can_msgs.hpp"
 
 // Others
-#include "atlas_imu/imu_drivers/driver_abstract.hpp"
-#include "atlas_imu/imu_errors.hpp"
-#include "atlas_imu/can_utils/CANdb.hpp"
+#include "agl_imu/imu_drivers/driver_abstract.hpp"
+#include "agl_imu/imu_errors.hpp"
+#include "agl_imu/can_utils/CANdb.hpp"
 // #include "atlas_utils/sm/StateMachine.hpp"
 
 // using std::placeholders::_1;
 // using std::placeholders::_2;
 using namespace std::chrono_literals;
 
-namespace atlas_imu {
+namespace agl_imu {
 namespace imu_drivers {
 
 //================================================
@@ -84,6 +84,6 @@ class AceinnaImu : public DriverAbstract
 };
 
 } // namespace imu_drivers
-} // namespace atlas_imu
+} // namespace agl_imu
 
 #endif // ACEINNA_IMU_HPP_

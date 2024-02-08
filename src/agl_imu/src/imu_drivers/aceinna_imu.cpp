@@ -6,13 +6,13 @@
 */
 
 
-#include "atlas_imu/imu_drivers/aceinna_imu.hpp"
+#include "agl_imu/imu_drivers/aceinna_imu.hpp"
 
 using std::placeholders::_1;
 
 const float PI = 3.14159265;
 
-namespace atlas_imu {
+namespace agl_imu {
 namespace imu_drivers {
 
 //================================================
@@ -227,4 +227,4 @@ void AceinnaImu::ros2imu_callback(atlas_interfaces::msg::CanMsgs::SharedPtr msgs
 }
 
 } // namespace imu_drivers
-} // namespace atlas_imu
+} // namespace agl_imu

@@ -5,8 +5,8 @@
    Contact: support.idi@movvo.eu
 */
 
-#ifndef ATLAS_IMU_DRIVER_ABSTRACT_HPP
-#define ATLAS_IMU_DRIVER_ABSTRACT_HPP
+#ifndef agl_imu_DRIVER_ABSTRACT_HPP
+#define agl_imu_DRIVER_ABSTRACT_HPP
 
 /*
     Abstract class for generic Imu drivers
@@ -14,10 +14,10 @@
 
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
-#include <atlas_imu/imu_interface.hpp>
+#include <agl_imu/imu_interface.hpp>
 #include "atlas_utils/sm/StateMachine.hpp"
 
-namespace atlas_imu {
+namespace agl_imu {
 namespace imu_drivers {
 
 class DriverAbstract : public ImuInterface {
@@ -76,6 +76,6 @@ class DriverAbstract : public ImuInterface {
 };
 
 } // namespace imu_drivers
-} // namespace atlas_imu
+} // namespace agl_imu
 
-#endif // ATLAS_IMU_DRIVER_ABSTRACT_HPP
+#endif // agl_imu_DRIVER_ABSTRACT_HPP

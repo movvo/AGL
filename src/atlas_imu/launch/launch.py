@@ -48,6 +48,7 @@ def generate_launch_description():
     node = Node(
         package=PACKAGE_NAME,
         executable='atlas_imu',
+        name = 'imu_node',
         arguments=['--ros-args', '--log-level', 'info'],
         parameters=[config_file],
         remappings=remaps,
@@ -108,13 +109,13 @@ def generate_launch_description():
                 PushRosNamespace(
                     os.getenv('ATLAS_NAMESPACE') if 'ATLAS_NAMESPACE' in os.environ.keys() else ""
                 ),
-                # sim_time_arg,
+                sim_time_arg,
                 # valgrind_arg,
                 # SetParameter("use_sim_time", sim_time),
                 valgrind_arg,
                 node,
                 node_with_valgrind,
-                # local_ekf,
+                local_ekf
                 # global_ekf
             ]
         )

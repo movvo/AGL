@@ -155,5 +155,33 @@
     <axis xyz="0 0 1"/>
   </joint>
 
+  <!--**************************************************************-->
+  <!-- IMU -->
+  <!--**************************************************************-->
+  <link name="imu_link">
+    <!--INERTIA-->
+    <!--Not calling macro, just small values-->
+    <inertial>
+      <mass value="0.005"/>
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+    </inertial>
+    <collision>
+      <geometry>
+        <box size="0.0 0.0 0.0"/>
+      </geometry>
+    </collision>
+    <visual>
+      <geometry>
+        <box size="0.0 0.0 0.0"/>
+      </geometry>
+      <material name="dark"/>
+    </visual>
+  </link>
+  <joint name="imu_joint" type="fixed">
+    <origin rpy="3.1415922 0 3.1415922" xyz="-0.646 0.0 -0.055"/>
+    <child link="imu_link"/>
+    <parent link="base_link"/>
+  </joint>
+
   <odometry_frame>odom</odometry_frame>
 </robot>

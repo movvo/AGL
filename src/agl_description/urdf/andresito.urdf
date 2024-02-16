@@ -177,8 +177,11 @@
       <material name="dark"/>
     </visual>
   </link>
+
   <joint name="imu_joint" type="fixed">
-    <origin rpy="3.1415922 0 3.1415922" xyz="-0.646 0.0 -0.055"/>
+    <!-- <origin rpy="3.1415922 0 3.1415922" xyz="-0.646 0.0 -0.055"/> -->
+    <origin xyz="0.03 0 0.08"/>
+    <axis xyz="0 0 1"/>
     <child link="imu_link"/>
     <parent link="base_link"/>
   </joint>

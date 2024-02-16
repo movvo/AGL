@@ -22,6 +22,10 @@ ros-humble-geographic-msgs
 
 ros-humble-robot-localization
 
+ros-humble-realsense2-camera
+
+ros-humble-imu-tools
+
 
 
 # A tener en cuenta

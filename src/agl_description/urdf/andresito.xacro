@@ -5,6 +5,7 @@
 
   <!-- PROPERTIES -->
   <xacro:include filename="properties.xacro" />
+  <xacro:property name="deg_to_rad"  value="0.01745329"/>
    
   <!-- MACROS -->
   <xacro:include filename="wheel.xacro" />
@@ -46,7 +47,15 @@
   <xacro:wheel side="right" position="front"/>
   <xacro:wheel side="right" position="back"/>
   
+  <!-- <odometry_frame>odom</odometry_frame> -->
+
   <!-- JOINTS -->
+
+  <!-- <joint name="odom_base_footprint" type="fixed">
+    <parent link="odom"/>
+    <child link="base_footprint" />
+  </joint> -->
+
   <joint name="base_joint" type="fixed">
     <origin xyz="0 -${robot_depth/2} ${wheels_height}"/>
     <parent link="base_footprint"/>
@@ -86,6 +95,21 @@
     <child link="laser"/>
     <origin xyz="0 0 ${robot_height}"/>  
     <axis xyz="0 0 1"/>
+  </joint>
+
+  <!-- CAMERA LINKS and JOINT -->
+  <xacro:include filename="$(find realsense2_description)/urdf/_d455.urdf.xacro" />
+
+  <link name="${camera_link}" />
+  <xacro:sensor_d455 parent="${camera_link}" use_nominal_extrinsics="true">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:sensor_d455>
+
+  <joint name="base_link_to_${camera_link}" type="fixed">
+    <axis xyz="0 1 1"/>
+    <parent link="base_link"/>
+    <child link="${camera_link}"/>
+    <origin xyz="${camera_x} ${camera_y} ${camera_z}" rpy="0 0 ${camera_rotation_z}"/>
   </joint>
 
 </robot>

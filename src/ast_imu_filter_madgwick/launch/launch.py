@@ -43,7 +43,7 @@ def generate_launch_description():
     # Nodes to launch
     node = Node(
         package='imu_filter_madgwick',
-        namespace=NAMESPACE,
+        # namespace=NAMESPACE,
         executable='imu_filter_madgwick_node',
         name='imu_filter_madgwick',
         remappings=remaps,    

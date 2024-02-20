@@ -41,7 +41,7 @@ def generate_launch_description():
     
     node = Node(
             package='realsense2_camera',
-            namespace=NAMESPACE,
+            # namespace=NAMESPACE,
             name="Camera",
             executable='realsense2_camera_node',
             parameters=[config_file],

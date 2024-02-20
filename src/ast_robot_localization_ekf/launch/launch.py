@@ -41,7 +41,7 @@ def generate_launch_description():
     
     node = Node(
         package='robot_localization',
-        namespace=NAMESPACE,
+        # namespace=NAMESPACE,
         executable='ekf_node',
         name='EKF_Node',
         parameters=[config_file],

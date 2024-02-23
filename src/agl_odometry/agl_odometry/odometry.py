@@ -56,20 +56,37 @@ class OdomPublisherSubscriber(Node):
     self.currentTime = time.time()
 
     if self.first_time_in_subs_callback:
-       self.deltaTimes = 1.0
+       deltaTimes = 1.0
        self.first_time_in_subs_callback = False
     else:
-      self.deltaTimes = self.currentTime - self.lastTime
+      deltaTimes = self.currentTime - self.lastTime
 
     self.linear_vel = (self.radius/2) * (msg.right_wheel_angular_speed + msg.left_wheel_angular_speed)
     self.angular_vel = (self.radius/self.wheel_separation) * (msg.right_wheel_angular_speed - msg.left_wheel_angular_speed)
       
-    # See necessity of substracting angular velocity of idler wheel.
+    # # See necessity of substracting angular velocity of idler wheel.
 
-    # We'll acumulate in positions variables the increment or decrement of robot's x,y coordinates. 
-    self.orientation =  (self.orientation + (self.angular_vel * self.deltaTimes))
-    self.x_position = self.x_position + (self.linear_vel * math.cos(self.orientation) * self.deltaTimes)
-    self.y_position = self.y_position + (self.linear_vel * math.sin(self.orientation) * self.deltaTimes)
+    # # We'll acumulate in positions variables the increment or decrement of robot's x,y coordinates. 
+    self.orientation =  (self.orientation + (self.angular_vel * deltaTimes))
+    self.x_position = self.x_position + (self.linear_vel * math.cos(self.orientation) * deltaTimes)
+    self.y_position = self.y_position + (self.linear_vel * math.sin(self.orientation) * deltaTimes)
+
+    # linear_vel_r = self.radius * msg.right_wheel_angular_speed
+    # linear_vel_l = self.radius * msg.left_wheel_angular_speed
+
+    # right_wheel_traveled_distance = linear_vel_r * deltaTimes
+    # left_wheel_traveled_distance = linear_vel_l * deltaTimes
+
+    # meanDistance = (right_wheel_traveled_distance + left_wheel_traveled_distance)/2
+
+    # self.orientation =  self.orientation + (right_wheel_traveled_distance + left_wheel_traveled_distance)/self.wheel_separation
+    # self.x_position = self.x_position + (meanDistance * math.cos(self.orientation))
+    # self.y_position = self.y_position + (meanDistance * math.sin(self.orientation))
+
+    if self.orientation > 6.28:
+      self.orientation -= 6.28
+    elif self.orientation < -6.28:
+      self.orientation += 6.28
 
     self.OdometryMsg = Odometry()
 

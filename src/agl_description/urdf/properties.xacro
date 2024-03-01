@@ -15,12 +15,13 @@
     <xacro:property name="wheel_radius" value="0.05" />
 
     <!-- CAMERA -->
-    <!-- <xacro:property name="camera_link" value="realsense_link" />
+    <xacro:property name="camera_size" value="0.01" />
+    <xacro:property name="camera_link" value="realsense_link" />
     <xacro:property name="camera_relative_to" value="puller_base" />
-    <xacro:property name="camera_x" value="-${puller_depth/2-0.03}" />
-    <xacro:property name="camera_y" value="0.0" />
-    <xacro:property name="camera_z" value="0.24" />
-    <xacro:property name="camera_rotation_z" value="${180*deg_to_rad}" /> -->
+    <xacro:property name="camera_x" value="0.04" />
+    <xacro:property name="camera_y" value="0.04" />
+    <xacro:property name="camera_z" value="0.0" />
+    <xacro:property name="camera_rotation_z" value="${180*deg_to_rad}" />
 
     <!-- PROPERTIES -->
     <material name="blue">

@@ -1,3 +1,60 @@
 <sdf version='1.7'>
-  <model name='andresito'/>
+  <model name='andresito'>
+    <link name='base_footprint'>
+      <inertial>
+        <pose>0.02885 -0.2175 0.0145 0 -0 0</pose>
+        <mass>0.072</mass>
+        <inertia>
+          <ixx>0.00388124</ixx>
+          <ixy>-1.53418e-09</ixy>
+          <ixz>0</ixz>
+          <iyy>0.00049894</iyy>
+          <iyz>2.71051e-20</iyz>
+          <izz>0.00387926</izz>
+        </inertia>
+      </inertial>
+      <collision name='base_footprint_fixed_joint_lump__base_link_collision'>
+        <pose>0 -0.21 0 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.42 0.32 0.08</size>
+          </box>
+        </geometry>
+      </collision>
+      <collision name='base_footprint_fixed_joint_lump__camera_link_collision_1'>
+        <pose>0.0373 -0.17 0.0145 0 -0 3.14159</pose>
+        <geometry>
+          <box>
+            <size>0.026 0.124 0.029</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='base_footprint_fixed_joint_lump__base_link_visual'>
+        <pose>0 -0.21 0 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.42 0.32 0.08</size>
+          </box>
+        </geometry>
+      </visual>
+      <visual name='base_footprint_fixed_joint_lump__laser_visual_1'>
+        <pose>0 -0.21 0.08 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.12</length>
+            <radius>0.05</radius>
+          </cylinder>
+        </geometry>
+      </visual>
+      <visual name='base_footprint_fixed_joint_lump__camera_link_visual_2'>
+        <pose>0.0242 -0.17 0.0145 1.5708 -0 -1.5708</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>file:///opt/ros/humble/share/realsense2_description/meshes/d455.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
 </sdf>

@@ -4,6 +4,7 @@ import serial
 from time import sleep
 from geometry_msgs.msg import Twist
 from agl_interfaces.msg import TwoAngularSpeeds
+debug = False
 
 class ArduinoRosSerialServer(Node):
 
@@ -49,7 +50,10 @@ class ArduinoRosSerialServer(Node):
 
   def listener_callback(self, msg):
     # This function will recieve data from joystick so it's necessary to process cmd_vel information not from the custom message we just created.
-
+    
+    if debug:
+      self.get_logger().info('He escuchado: "%s"' % msg)
+      
     if msg.angular.z != 0 or msg.linear.x != 0:
 
       self.setVelZero = True
@@ -67,6 +71,11 @@ class ArduinoRosSerialServer(Node):
         correctedVel = (self.rightWheelAngularSpeed * 620)/4
         valueToSendRightWheel = (int)(correctedVel)
         valueToSendLeftWheel = (int)(correctedVel)
+      elif msg.linear.x == 0:
+        correctedVelRight = (self.rightWheelAngularSpeed * 620)/0.64
+        correctedVelLeft = (self.leftWheelAngularSpeed * 620)/0.64
+        valueToSendRightWheel = (int)(correctedVelRight)
+        valueToSendLeftWheel = (int)(correctedVelLeft)
       else:
         correctedVelRight = (self.rightWheelAngularSpeed * 620)/4.64
         correctedVelLeft = (self.leftWheelAngularSpeed * 620)/4.64
@@ -97,11 +106,18 @@ class ArduinoRosSerialServer(Node):
     # Read Wr, Wl, in that order, via serial from arduino.
     left_right_wheel_speed_arduino_feedback = self.recv()    
     if len(left_right_wheel_speed_arduino_feedback) > 0:
+
+      if debug:
+        print(f"RECEIVED DATA: {left_right_wheel_speed_arduino_feedback} we'll take last two recieved values.") 
+    
       msgAngularSpeedsOfWheels = TwoAngularSpeeds()
       # Accessing arduino's cmd_vel_array based on its length allow us to gather the last two values from the serial buffer (Could be reading slower than we write in buffer).
-      msgAngularSpeedsOfWheels.right_wheel_angular_speed = float(left_right_wheel_speed_arduino_feedback[len(left_right_wheel_speed_arduino_feedback) - 2])/100.0   # Arduino's speeds are in 100 order, divide by 100 to get real speeds.
-      msgAngularSpeedsOfWheels.left_wheel_angular_speed = float(left_right_wheel_speed_arduino_feedback[len(left_right_wheel_speed_arduino_feedback) - 1])/100.0
+      # The product of the last two elements of the array per 2 is in order to make the counts per revolution 12 instead of 24, if changed in arduino wheels slow down for some reaseon.
+      msgAngularSpeedsOfWheels.right_wheel_angular_speed = (float(left_right_wheel_speed_arduino_feedback[len(left_right_wheel_speed_arduino_feedback) - 2])*2)/100.0   # Arduino's speeds are in 100 order, divide by 100 to get real speeds.
+      msgAngularSpeedsOfWheels.left_wheel_angular_speed = (float(left_right_wheel_speed_arduino_feedback[len(left_right_wheel_speed_arduino_feedback) - 1])*2)/100.0
       self.publisher.publish(msgAngularSpeedsOfWheels)
+      if debug:
+        self.get_logger().info('Publishing: "%s"' % msgAngularSpeedsOfWheels)
 
   def recv(self):
     dataBytesRead = self.ser.inWaiting()
@@ -116,6 +132,8 @@ class ArduinoRosSerialServer(Node):
     return cmd_vel_array
 
   def write(self, x):
+    if debug:
+      print(f"Valor que estamos enviando a nuestro arduino: {x}")
     self.ser.write(bytes(x, 'utf-8'))
 
 def main(args=None):

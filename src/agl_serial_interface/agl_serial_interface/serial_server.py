@@ -112,8 +112,9 @@ class ArduinoRosSerialServer(Node):
     
       msgAngularSpeedsOfWheels = TwoAngularSpeeds()
       # Accessing arduino's cmd_vel_array based on its length allow us to gather the last two values from the serial buffer (Could be reading slower than we write in buffer).
-      msgAngularSpeedsOfWheels.right_wheel_angular_speed = float(left_right_wheel_speed_arduino_feedback[len(left_right_wheel_speed_arduino_feedback) - 2])/100.0   # Arduino's speeds are in 100 order, divide by 100 to get real speeds.
-      msgAngularSpeedsOfWheels.left_wheel_angular_speed = float(left_right_wheel_speed_arduino_feedback[len(left_right_wheel_speed_arduino_feedback) - 1])/100.0
+      # The product of the last two elements of the array per 2 is in order to make the counts per revolution 12 instead of 24, if changed in arduino wheels slow down for some reaseon.
+      msgAngularSpeedsOfWheels.right_wheel_angular_speed = (float(left_right_wheel_speed_arduino_feedback[len(left_right_wheel_speed_arduino_feedback) - 2])*2)/100.0   # Arduino's speeds are in 100 order, divide by 100 to get real speeds.
+      msgAngularSpeedsOfWheels.left_wheel_angular_speed = (float(left_right_wheel_speed_arduino_feedback[len(left_right_wheel_speed_arduino_feedback) - 1])*2)/100.0
       self.publisher.publish(msgAngularSpeedsOfWheels)
       if debug:
         self.get_logger().info('Publishing: "%s"' % msgAngularSpeedsOfWheels)

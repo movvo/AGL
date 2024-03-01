@@ -62,7 +62,8 @@ int pwrL = 0;
 bool firstEncoderReadL = true;                     
 int encoderCounterFilterL = 0;                     
 float lVector[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; 
-float N = 24.0;                                  
+float N = 24.0;                                   // N is the count of servo revolutions while detecting only the falling edge of the channel's signal (12), we use FALLING in encoders.       
+                                                  // We have to leave 24 otherwise the servos behave incorrectly, we multily per 2 in ros2 before sending feedback speeds.                             
 float gear = 74.83;                              
 float diameter = 10;                              
 float length = 35;                                

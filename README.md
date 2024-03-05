@@ -26,6 +26,8 @@ ros-humble-realsense2-camera
 
 ros-humble-imu-tools
 
+ros-humble-slam-toolbox
+
 
 
 # A tener en cuenta

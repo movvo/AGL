@@ -13,6 +13,8 @@ Robot interno de investigación. Andresito Jr (AGL)
 
 6.- Pulsar la key R1 y mover todos los botones para que el controller funcione.
 
+Para lanzar el mapeado, lanzar desde el proyecto: ros2 launch slam_toolbox online_async_launch.py params_file:=src/mapper_params_online_async.yaml use_sim_time:=false y cambiar los parámetros que se vieran necesarios.
+
 # Dependencias del proyecto
 Las dependencias del proyecto se encuentran instaladas en el NUC. Al trabajar en local, no hace falta instalar nada via Docker diferente de todas las dependencias necesarias para ejecutar un workspace de ROS2. Ver el tutorial de instalación de ser necesario: https://docs.ros.org/en/humble/Installation.html
 

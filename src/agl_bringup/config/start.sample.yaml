@@ -8,8 +8,8 @@ Start:
   # Por lo tanto en esta lista deberia aparecer unicamente lo siguiente:
 
   packages_list:
-    # - agl_lidar:       
-    #   - Lidar
+    - agl_lidar:       
+      - Lidar
     - agl_description:
       - Description
     - agl_joystick:

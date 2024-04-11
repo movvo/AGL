@@ -1,16 +1,15 @@
-# /**:
-agl:
-    Lidar:
-      ros__parameters:
-        topic_name: 'scan'
-        channel_type: 'serial'
-        tcp_ip: '192.168.0.7'
-        tcp_port: 20108
-        serial_port: '/dev/ttyUSB0'
-        serial_baudrate: 256000
-        frame_id: 'laser'
-        inverted: false
-        angle_compensate: true
-        scan_mode: 'Sensitivity'
-
+/**:
+# agl:
+#     Lidar:
+  ros__parameters:
+    topic_name: 'scan'
+    channel_type: 'serial'
+    tcp_ip: '192.168.0.7'
+    tcp_port: 20108
+    serial_port: '/dev/ttyUSB0'
+    serial_baudrate: 256000
+    frame_id: 'laser'
+    inverted: false
+    angle_compensate: true
+    scan_mode: 'Sensitivity'
         

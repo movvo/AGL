@@ -5,7 +5,7 @@ Robot interno de investigación. Andresito Jr (AGL)
 
 2.- Esperar hasta que la NUC permita conexión via AnyDesk y conectarse con ella. Trabajar desde ella. 
 
-3.- Hacer el source install/setup.bash y el colcon build --symlink-install.
+3.- Hacer el source install/setup.bash y el colcon build --symlink-install en workspace/AGL
 
 4.- Conectar via Bluetooth un controller cualquiera (joystick).
 

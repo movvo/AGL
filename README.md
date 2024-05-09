@@ -13,7 +13,7 @@ Robot interno de investigación. Andresito Jr (AGL)
 
 6.- Pulsar la key R1 y mover todos los botones para que el controller funcione.
 
-Para lanzar el mapeado, lanzar desde el proyecto: ros2 launch slam_toolbox online_async_launch.py params_file:=src/mapper_params_online_async.yaml use_sim_time:=false y cambiar los parámetros que se vieran necesarios.
+Para lanzar el mapeado, lanzar desde el proyecto: ros2 launch slam_toolbox online_async_launch.py slam_params_file:=src/mapper_params_online_async.yaml use_sim_time:=false y cambiar los parámetros que se vieran necesarios.
 
 Es posible que se quiera comparar la odometría alcanzada, para eso seguir https://ros2-industrial-workshop.readthedocs.io/en/latest/_source/navigation/ROS2-Turtlebot.html#check-packages para instalar turtlebot y mediante la herramienta de rqt (robot_steering) que transmite cmd_vel se pueden generar trayectorias que al ser grabadas con rosabg (ros2 bag record /topic_name) podrán ser comparadas con evo_traj (evo_traj tum odom1.tum odom2.tum -p --plot_mode xy) después de haber instalado el repositorio evo (https://github.com/MichaelGrupp/evo) y después de haber transformado los rosbag2 a tum mediante evo_traj bag2 /odom1 --save_as_tum --all_topics (si queremos guardarlos todos en tum, puede ser posible que solo queramos el de odometría por ejemplo).
 

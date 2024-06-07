@@ -7,3 +7,6 @@
 [submodule "src/atlas_interfaces"]
 	path = src/atlas_interfaces
 	url = https://github.com/movvo/atlas_interfaces.git
+[submodule "src/slam_toolbox"]
+	path = src/slam_toolbox
+	url = https://github.com/SteveMacenski/slam_toolbox.git

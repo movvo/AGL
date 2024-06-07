@@ -19,10 +19,10 @@ Start:
       - odometry_node
     - agl_serial_interface:
       - serial_server_node
-    - ast_camera:
-      - Camera
-    - ast_imu_filter_madgwick:
-      - imu_filter_madgwick
-    - ast_robot_localization_ekf:
-      - EKF_Node
+    # - ast_camera:
+    #   - Camera
+    # - ast_imu_filter_madgwick:
+    #   - imu_filter_madgwick
+    # - ast_robot_localization_ekf:
+    #   - EKF_Node
 

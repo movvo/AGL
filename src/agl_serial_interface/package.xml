@@ -4,7 +4,7 @@
   <name>agl_serial_interface</name>
   <version>0.0.0</version>
   <description>AGL Serial Interface which will let us communicate via serial port with our Arduino controlling the robot's HW</description>
-  <maintainer email="davidvalenciac01@gmail.com">David</maintainer>
+  <maintainer email="davidvalenciac01@gmail.com">DavValCal</maintainer>
   <license>See LICENSE</license>
 
   <exec_depend>rclpy</exec_depend>

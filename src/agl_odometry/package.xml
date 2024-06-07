@@ -3,9 +3,9 @@
 <package format="3">
   <name>agl_odometry</name>
   <version>0.0.0</version>
-  <description>AGL Odometry Package</description>
+  <description>AGL Odometry Package for encoder only localization</description>
   <maintainer email="davidvalenciac01@gmail.com">david</maintainer>
-  <license>Movvo Robotics 2023. All rights reserved</license>
+  <license>See LICENSE</license>
 
   <exec_depend>rclpy</exec_depend>
   <exec_depend>std_msgs</exec_depend>

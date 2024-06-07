@@ -4,13 +4,10 @@
   <name>agl_bringup</name>
   <version>0.0.0</version>
   <description>Package to launch all the agl system</description>
-  <maintainer email="support.idi@ageve.net">
-        iggyrrieta, 
-        albertarla, 
-        MartiBolet,
+  <maintainer email="davidvalenciac01@gmail.com">
         DavidValencia
   </maintainer> 
-  <license>TODO: License declaration</license>
+  <license>See LICENSE in root</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   

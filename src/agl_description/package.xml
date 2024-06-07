@@ -3,16 +3,12 @@
 <package format="3">
   <name>agl_description</name>
   <version>0.0.0</version>
-  <description>AGL description</description>
-  <maintainer email="support.idi@movvo.eu">
-        AlbertArla, 
-        MartiBolet,
-        BernatGaston,
-        MariaMercade, 
+  <description>AGL robot model description for transforms and simulation</description>
+  <maintainer email="davidvalenciac01@gmail.com">
         DavidValencia
   </maintainer> 
 
-  <license>Movvo Robotics 2023. All rights reserved</license>
+  <license>See LICENSE</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   

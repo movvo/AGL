@@ -3,9 +3,9 @@
 <package format="3">
   <name>agl_serial_interface</name>
   <version>0.0.0</version>
-  <description>AGL Serial Interface</description>
-  <maintainer email="davidvalenciac01@gmail.com">marti</maintainer>
-  <license>Movvo Robotics 2023. All rights reserved</license>
+  <description>AGL Serial Interface which will let us communicate via serial port with our Arduino controlling the robot's HW</description>
+  <maintainer email="davidvalenciac01@gmail.com">David</maintainer>
+  <license>See LICENSE</license>
 
   <exec_depend>rclpy</exec_depend>
   <exec_depend>std_msgs</exec_depend>

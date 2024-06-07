@@ -1,0 +1,28 @@
+
+# ===================
+#     START
+# ===================
+Start:
+  # ----- NODOS A EJECTUAR, Solo estos se arrancaran mediante start_launch.py -----
+  # Tener en cuenta que los nodos son del tipo --> <modelo>_<nombrePackage> (i.e me00_laser)
+  # Por lo tanto en esta lista deberia aparecer unicamente lo siguiente:
+
+  packages_list:
+    - agl_lidar:       
+      - Lidar
+    - agl_description:
+      - Description
+    - agl_joystick:
+      - Joystick
+      - Joy
+    - agl_odometry:
+      - odometry_node
+    - agl_serial_interface:
+      - serial_server_node
+    # - ast_camera:
+    #   - Camera
+    # - ast_imu_filter_madgwick:
+    #   - imu_filter_madgwick
+    # - ast_robot_localization_ekf:
+    #   - EKF_Node
+

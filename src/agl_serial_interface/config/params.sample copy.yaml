@@ -1,0 +1,7 @@
+/**:
+  ros__parameters:
+    device: '/dev/ttyACM0'
+    topic: 'TwoAngularSpeeds'
+    subs_topic: '/cmd_vel'
+    radius: 0.05
+    wheel_separation: 0.32

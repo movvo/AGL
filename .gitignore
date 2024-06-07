@@ -20,6 +20,10 @@
 
 **/params.yaml
 
+**/start.yaml
+
+**/start_simulation.yaml
+
 # Jupyter
 # Notebooks/.ipynb_checkpoints
 # src/me00_bringup/launch/__pycache__/launch_class.cpython-38.pyc

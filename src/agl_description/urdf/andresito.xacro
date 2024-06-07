@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="andresito">
+
+  <!-- <preserveFixedJoint>true</preserveFixedJoint> -->
+
+  <!-- PROPERTIES -->
+  <xacro:include filename="properties.xacro" />
+  <xacro:property name="deg_to_rad"  value="0.01745329"/>
+   
+  <!-- MACROS -->
+  <xacro:include filename="wheel.xacro" />
+  <!-- <xacro:include filename="leg.xacro" />
+  <xacro:include filename="leg_support.xacro" />
+  <xacro:include filename="gazebo.xacro" /> -->
+ 
+  <!-- LINKS -->
+  <link name="base_footprint" />
+
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="${robot_depth} ${robot_width} ${robot_height}"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${robot_depth} ${robot_width} ${robot_height}"/>
+      </geometry>
+    </collision>
+  </link>
+    
+  <!-- <link name="center_rotation"></link> -->
+
+  <link name="laser"> 
+    <visual>
+      <geometry>
+        <cylinder length="${2*wheel_width}" radius="${wheel_radius}"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="black"/>
+    </visual>
+  </link>
+
+  <xacro:wheel side="left" position="front"/>
+  <xacro:wheel side="left" position="back"/>
+  <xacro:wheel side="right" position="front"/>
+  <xacro:wheel side="right" position="back"/>
+  
+  <!-- <odometry_frame>odom</odometry_frame> -->
+
+  <!-- JOINTS -->
+
+  <!-- <joint name="odom_base_footprint" type="fixed">
+    <parent link="odom"/>
+    <child link="base_footprint" />
+  </joint> -->
+
+  <!-- <joint name="base_joint" type="fixed">
+    <origin xyz="0 -${robot_depth/2} ${wheels_height}"/>
+    <parent link="base_footprint"/>
+    <child link="base_link" />
+  </joint> -->
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="base_footprint"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="base_link_left_front_wheel" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_front_wheel"/>
+    <origin xyz="${robot_width/2} ${robot_depth/2} ${wheels_height}"/>  
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <joint name="base_link_left_back_wheel" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_back_wheel"/>
+    <origin xyz="${robot_width/2} -${robot_depth/2} ${wheels_height}"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <joint name="base_link_right_front_wheel" type="continuous">
+    <parent link="base_link"/>
+    <child link="right_front_wheel"/>
+    <origin xyz="-${robot_width/2} ${robot_depth/2} ${wheels_height}"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <joint name="base_link_right_back_wheel" type="continuous">
+    <parent link="base_link"/>
+    <child link="right_back_wheel"/>
+    <origin xyz="-${robot_width/2} -${robot_depth/2} ${wheels_height}"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <joint name="base_link_laser" type="fixed">
+    <parent link="base_link"/>
+    <child link="laser"/>
+    <origin xyz="0 0 ${robot_height}" rpy="0 0 ${camera_rotation_z}"/>  
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <!-- CAMERA LINKS and JOINT -->
+  <xacro:include filename="$(find realsense2_description)/urdf/_d455.urdf.xacro" />
+
+  <link name="${camera_link}" />
+  <xacro:sensor_d455 parent="${camera_link}" use_nominal_extrinsics="true">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:sensor_d455>
+
+  <joint name="base_link_to_${camera_link}" type="fixed">
+    <axis xyz="0 0 1"/>
+    <parent link="base_link"/>
+    <child link="${camera_link}"/>
+    <!-- <origin xyz="${camera_x} ${camera_y} ${camera_z}" rpy="0 0 ${camera_rotation_z}"/> -->
+    <origin xyz="${camera_x} ${camera_y} ${camera_z}"/>
+  </joint>
+
+</robot>

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="properties">
+    <!-- ROS -->
+    <xacro:property name="namespace" value="movvo" />
+
+    <!-- BODY -->
+    <xacro:property name="robot_width" value="0.32" />
+    <xacro:property name="robot_depth"  value="0.42" />
+    <xacro:property name="robot_height" value="0.08" />
+    <xacro:property name="wheels_height" value="0.00" />
+
+
+    <!-- WHEEL -->
+    <xacro:property name="wheel_width" value="0.06" />
+    <xacro:property name="wheel_radius" value="0.05" />
+
+    <!-- CAMERA -->
+    <xacro:property name="camera_size" value="0.01" />
+    <xacro:property name="camera_link" value="realsense_link" />
+    <xacro:property name="camera_relative_to" value="puller_base" />
+    <xacro:property name="camera_x" value="0.04" />
+    <xacro:property name="camera_y" value="0.04" />
+    <xacro:property name="camera_z" value="0.0" />
+    <xacro:property name="camera_rotation_z" value="${180*deg_to_rad}" />
+
+    <!-- PROPERTIES -->
+    <material name="blue">
+        <color rgba="0 0 0.9 1"/>
+    </material>
+    <material name="black">
+        <color rgba="0 0 0 1"/>
+    </material>
+    <material name="white">
+        <color rgba="1 1 1 1"/>
+    </material>
+</robot>

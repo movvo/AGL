@@ -1,0 +1,12 @@
+[submodule "src/rplidar_ros"]
+	path = src/rplidar_ros
+	url = https://github.com/Slamtec/rplidar_ros.git
+[submodule "src/robot_localization"]
+	path = src/robot_localization
+	url = https://github.com/cra-ros-pkg/robot_localization.git
+[submodule "src/atlas_interfaces"]
+	path = src/atlas_interfaces
+	url = https://github.com/movvo/atlas_interfaces.git
+[submodule "src/slam_toolbox"]
+	path = src/slam_toolbox
+	url = https://github.com/SteveMacenski/slam_toolbox.git

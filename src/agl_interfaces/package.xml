@@ -3,9 +3,9 @@
 <package format="3">
   <name>agl_interfaces</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Custom messages and services for AGL</description>
   <maintainer email="davidvalenciac01@gmail.com">david</maintainer>
-  <license>TODO: License declaration</license>
+  <license>See LICENSE</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

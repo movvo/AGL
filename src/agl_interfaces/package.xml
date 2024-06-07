@@ -4,7 +4,7 @@
   <name>agl_interfaces</name>
   <version>0.0.0</version>
   <description>Custom messages and services for AGL</description>
-  <maintainer email="davidvalenciac01@gmail.com">david</maintainer>
+  <maintainer email="davidvalenciac01@gmail.com">DavValCal</maintainer>
   <license>See LICENSE</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
